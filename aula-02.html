@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Live Semanal · Aula 02</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafaf8; --text:#111111;
+  --muted:rgba(17,17,17,.46); --subtle:rgba(17,17,17,.28);
+  --border:rgba(0,0,0,.08); --surface:rgba(0,0,0,.035);
+  --grad:linear-gradient(120deg,#f97316,#e11d48 45%,#7c3aed);
+  --orange:#f97316;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;background:#e6e5e2;font-family:'Inter',system-ui,sans-serif;overflow:hidden;}
+
+/* ══════════ SLIDE CARD ══════════ */
+.slide{width:1280px;height:720px;background:var(--bg);border-radius:20px;overflow:hidden;color:var(--text);position:relative;flex-shrink:0;}
+.slide::after{content:'ARRIVE IN DIGITAL · LIVE SEMANAL';position:absolute;bottom:20px;right:26px;font-size:.58rem;font-weight:700;letter-spacing:.16em;color:rgba(17,17,17,.18);pointer-events:none;}
+.pad{position:absolute;inset:0;padding:6.5% 7.5%;display:flex;flex-direction:column;}
+.gradtext{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.rule{width:44px;height:3px;background:var(--grad);border-radius:2px;}
+
+.s-wait{background:radial-gradient(ellipse at 96% 96%,rgba(124,58,237,.06) 0%,transparent 45%),radial-gradient(ellipse at 4% 4%,rgba(249,115,22,.05) 0%,transparent 38%),var(--bg);}
+.s-wait .pad{justify-content:center;align-items:center;text-align:center;padding-top:4%;}
+.wait-eye{display:flex;align-items:center;gap:10px;font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.wait-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:waitpulse 1.4s ease-in-out infinite;}
+@keyframes waitpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.75);}}
+.wait-title{font-family:'Caveat',cursive;font-size:4.4rem;font-weight:700;letter-spacing:-.01em;line-height:1;color:var(--text);}
+.wait-diagram{position:relative;width:900px;height:400px;margin-top:6px;}
+.wd-lines line{stroke:rgba(17,17,17,.14);stroke-width:1.6;}
+.wd-hub{position:absolute;left:450px;top:200px;transform:translate(-50%,-50%);width:112px;height:112px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-align:center;line-height:1.35;box-shadow:0 14px 34px rgba(124,58,237,.28);}
+.wd-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:7px;width:150px;}
+.wd-n{width:28px;height:28px;border-radius:50%;background:linear-gradient(var(--bg),var(--bg)) padding-box,var(--grad) border-box;border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-size:.76rem;font-weight:800;color:var(--text);}
+.wd-t{font-size:.74rem;font-weight:600;color:var(--text);line-height:1.25;}
+
+.s-cover{background:radial-gradient(ellipse at 96% 96%,rgba(124,58,237,.055) 0%,transparent 45%),radial-gradient(ellipse at 4% 4%,rgba(249,115,22,.04) 0%,transparent 38%),var(--bg);}
+.s-cover .pad{justify-content:flex-end;}
+.s-cover .eyebrow{margin-bottom:auto;}
+.s-cover .rule{margin-bottom:20px;}
+.s-cover h1{font-size:3.6rem;font-weight:800;letter-spacing:-.045em;line-height:1.1;}
+
+.s-section{background:#111111;}
+.s-section .pad{justify-content:center;}
+.s-section::after{color:rgba(255,255,255,.12);}
+.sec-eye{font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
+.sec-rule{width:44px;height:3px;background:var(--grad);border-radius:2px;margin-bottom:24px;}
+.sec-title{font-size:3.6rem;font-weight:800;letter-spacing:-.045em;line-height:1.06;color:#fff;}
+.sec-sub{margin-top:22px;font-size:1.05rem;color:rgba(255,255,255,.5);max-width:76%;line-height:1.65;font-weight:400;}
+
+.s-statement .pad{justify-content:center;}
+.slabel{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+.stmt{font-size:2.5rem;font-weight:800;letter-spacing:-.04em;line-height:1.15;max-width:92%;}
+.items{margin-top:28px;display:flex;flex-direction:column;}
+.sitem{display:flex;align-items:flex-start;gap:14px;padding:13px 0;border-top:1px solid var(--border);font-size:1.05rem;font-weight:500;color:var(--text);line-height:1.45;}
+.sitem:last-child{border-bottom:1px solid var(--border);}
+.sitem .sn{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0;padding-top:4px;min-width:36px;}
+.snote{margin-top:18px;font-size:.92rem;color:var(--muted);line-height:1.65;}
+
+.s-key .pad{justify-content:center;}
+.key-eye{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;}
+.key-q{font-size:2.9rem;font-weight:800;letter-spacing:-.04em;line-height:1.15;max-width:92%;}
+.key-sub{margin-top:26px;font-size:1.05rem;color:var(--muted);max-width:78%;line-height:1.65;font-weight:400;}
+
+.s-compare .pad{justify-content:center;}
+.s-compare h2{font-size:1.9rem;font-weight:800;letter-spacing:-.035em;margin-bottom:24px;max-width:94%;line-height:1.25;}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ccol{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 26px;}
+.ccol .ctitle{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.ccol ul{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.ccol ul li{font-size:1rem;font-weight:500;display:flex;align-items:flex-start;gap:10px;line-height:1.4;}
+.ccol ul li::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;background:rgba(0,0,0,.2);margin-top:8px;}
+.ccol.strong{border-color:rgba(249,115,22,.25);}
+.ccol.strong ul li::before{background:var(--orange);}
+.cmp-note{margin-top:16px;font-size:.92rem;color:var(--muted);font-style:italic;text-align:center;}
+
+.s-list .pad{justify-content:center;}
+.listttl{font-size:1.9rem;font-weight:800;letter-spacing:-.035em;margin-bottom:8px;max-width:92%;line-height:1.25;}
+.ls-sub{font-size:.88rem;color:var(--muted);font-weight:400;margin-bottom:20px;line-height:1.5;}
+ol.clean{list-style:none;display:flex;flex-direction:column;}
+ol.clean li{display:flex;align-items:flex-start;gap:18px;padding:12px 0;border-top:1px solid var(--border);font-size:1rem;font-weight:500;color:var(--text);line-height:1.4;}
+ol.clean li:last-child{border-bottom:1px solid var(--border);}
+ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;padding-top:4px;min-width:26px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.li-main{line-height:1.35;}
+.dtl{display:block;font-size:.8rem;color:var(--muted);font-weight:400;line-height:1.4;margin-top:3px;}
+
+.s-insight{background:radial-gradient(ellipse at 100% 100%,rgba(124,58,237,.06) 0%,transparent 48%),var(--bg);}
+.s-insight .pad{justify-content:center;}
+.insight-text{font-size:3.1rem;font-weight:800;letter-spacing:-.045em;line-height:1.15;max-width:90%;}
+.next-label{margin-top:42px;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;}
+.next-label::before{content:'→';color:var(--orange);font-size:.9rem;letter-spacing:0;}
+
+.s-stat{background:radial-gradient(ellipse at 96% 10%,rgba(124,58,237,.06) 0%,transparent 45%),var(--bg);}
+.s-stat .pad{justify-content:center;align-items:flex-start;}
+.stat-eye{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;}
+.stat-number{font-size:6.2rem;font-weight:900;letter-spacing:-.04em;line-height:1;}
+.stat-label{margin-top:10px;font-size:1.3rem;font-weight:700;letter-spacing:-.02em;}
+.stat-sub{margin-top:20px;font-size:1rem;color:var(--muted);max-width:74%;line-height:1.6;}
+
+/* ── PROFILE (print do Instagram) ── */
+.s-profile .pad{flex-direction:row;align-items:center;gap:60px;justify-content:center;}
+.pf-eyebrow{position:absolute;top:6.5%;left:7.5%;}
+.pf-avatar{width:280px;height:280px;border-radius:50%;padding:6px;background:var(--grad);flex-shrink:0;}
+.pf-avatar-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;background:#1a1a1a;display:flex;align-items:center;justify-content:center;}
+.pf-avatar-inner img{width:100%;height:100%;object-fit:cover;display:block;}
+.pf-avatar-fallback{color:#fff;font-size:3.5rem;font-weight:800;font-family:'Inter',sans-serif;}
+.pf-info{max-width:520px;}
+.pf-handle{display:flex;align-items:center;gap:8px;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;}
+.pf-badge{width:22px;height:22px;flex-shrink:0;}
+.pf-name{margin-top:6px;font-size:1.05rem;color:var(--muted);font-weight:500;}
+.pf-stats{display:flex;gap:28px;margin-top:22px;padding:18px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.pf-stat-n{font-size:1.4rem;font-weight:800;letter-spacing:-.02em;}
+.pf-stat-l{font-size:.78rem;color:var(--muted);margin-top:2px;}
+.pf-bio{margin-top:20px;display:flex;flex-direction:column;gap:6px;}
+.pf-bio div{font-size:.98rem;font-weight:500;line-height:1.5;}
+
+/* ══════════ PALCO (público) ══════════ */
+#stage-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
+#stage{position:relative;}
+#stage .slide{position:absolute;top:0;left:0;box-shadow:0 32px 96px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.1);opacity:0;transform:scale(.98);transition:opacity .32s ease,transform .32s ease;pointer-events:none;}
+#stage .slide.active{opacity:1;transform:scale(1);pointer-events:auto;}
+#fsHint{position:fixed;bottom:14px;right:18px;font-size:.68rem;color:rgba(0,0,0,.28);letter-spacing:.03em;z-index:5;}
+
+/* ══════════ LAUNCHER ══════════ */
+#launcher{position:fixed;inset:0;background:#0d0d0d;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:34px;color:#fff;font-family:'Inter',sans-serif;}
+#launcher .lg{font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.4);}
+#launcher h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;text-align:center;max-width:600px;line-height:1.3;}
+#launcher .opts{display:flex;gap:20px;}
+.lbtn{cursor:pointer;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);border-radius:16px;padding:28px 32px;width:260px;text-align:left;transition:.15s;}
+.lbtn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.28);transform:translateY(-2px);}
+.lbtn .lt{font-size:1.05rem;font-weight:700;margin-bottom:8px;}
+.lbtn .ld{font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.5;}
+.lbtn.primary{background:linear-gradient(120deg,#f97316,#e11d48 45%,#7c3aed);border:none;}
+.lbtn.primary .ld{color:rgba(255,255,255,.85);}
+#launcher .warn{max-width:560px;font-size:.8rem;color:rgba(255,255,255,.45);text-align:center;line-height:1.6;border:1px solid rgba(249,115,22,.3);background:rgba(249,115,22,.06);border-radius:10px;padding:12px 16px;}
+#launcher .warn b{color:#f97316;}
+
+/* ══════════ PRESENTER ══════════ */
+#presenter{position:fixed;inset:0;background:#161616;color:#fff;display:flex;flex-direction:column;font-family:'Inter',sans-serif;}
+#presenter header{display:flex;align-items:center;gap:20px;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+#presenter .p-title{font-weight:800;font-size:.95rem;letter-spacing:-.01em;}
+#presenter .p-status{display:flex;align-items:center;gap:8px;font-size:.78rem;color:rgba(255,255,255,.6);}
+.dot{width:8px;height:8px;border-radius:50%;background:#e11d48;flex-shrink:0;}
+.dot.on{background:#22c55e;}
+#presenter button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;border-radius:8px;padding:7px 14px;font-size:.78rem;font-weight:600;font-family:inherit;}
+#presenter button:hover{background:rgba(255,255,255,.12);}
+#presenter .p-timer{font-variant-numeric:tabular-nums;font-size:.85rem;color:rgba(255,255,255,.55);cursor:pointer;margin-left:auto;}
+#presenter .p-counter{font-variant-numeric:tabular-nums;font-size:.85rem;font-weight:700;background:rgba(255,255,255,.06);padding:5px 12px;border-radius:100px;}
+#presenter .p-block{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(249,115,22,.15);color:#f97316;padding:5px 12px;border-radius:100px;}
+#presenter main{flex:1;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:auto 1fr;gap:16px;padding:18px 22px;overflow:hidden;}
+.pv-col{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0;overflow:hidden;}
+.pv-label{font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+.pv-box{border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.4);background:#000;flex-shrink:0;max-width:100%;}
+.pv-box .slide{position:static;transform-origin:top left;}
+#nowWrap{grid-column:1;grid-row:1;}
+#nextWrap{grid-column:2;grid-row:1;}
+#notesWrap{grid-column:1/3;grid-row:2;min-height:0;}
+#notesList{list-style:none;display:flex;flex-direction:column;gap:10px;overflow-y:auto;height:100%;padding-right:6px;}
+#notesList li{font-size:1rem;line-height:1.5;color:rgba(255,255,255,.88);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;}
+#notesList li b{color:#fff;}
+#presenter footer{display:flex;align-items:center;gap:14px;padding:14px 22px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+#presenter footer .hint{margin-left:auto;font-size:.74rem;color:rgba(255,255,255,.35);}
+#jumpBox{display:flex;align-items:center;gap:6px;}
+#jumpInput{width:48px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;text-align:center;padding:6px 4px;font-family:inherit;font-size:.78rem;}
+</style>
+</head>
+<body>
+
+<div id="launcher">
+  <div class="lg">Arrive In Digital · Live Semanal</div>
+  <h1>Apresentação — Aula 02<br>A Estratégia do Lucas Felt</h1>
+  <div class="opts">
+    <div class="lbtn primary" onclick="location.href='?view=presenter'">
+      <div class="lt">🎤 Modo apresentador</div>
+      <div class="ld">Pra você. Mostra o slide atual, o próximo, e o que falar em cada um — dá pra conduzir a aula inteira só por essa tela.</div>
+    </div>
+    <div class="lbtn" onclick="location.href='?view=audience'">
+      <div class="lt">🖥️ Modo público</div>
+      <div class="ld">Pra compartilhar no Google Meet. Mostra só o slide atual, sem controles.</div>
+    </div>
+  </div>
+  <div class="warn">⚠️ No Meet, use <b>"Apresentar agora → Uma guia do Chrome"</b> — NÃO "Uma janela". Compartilhar janela trava/não atualiza quando ela sai de foco. Guia do Chrome continua atualizando mesmo em segundo plano. Detalhes em <code>como-usar-apresentacao.md</code>.</div>
+</div>
+
+<div id="stage-wrap" style="display:none">
+  <div id="stage"></div>
+</div>
+<div id="fsHint" style="display:none">F — tela cheia</div>
+
+<div id="presenter" style="display:none">
+  <header>
+    <div class="p-title">Live Semanal · Aula 02</div>
+    <div class="p-block" id="pBlock">Bloco 1</div>
+    <div class="p-status"><span class="dot" id="connDot"></span><span id="connLabel">Público desconectado</span></div>
+    <button id="openAudienceBtn">Abrir tela do público ↗</button>
+    <div class="p-timer" id="timer" title="Clique pra zerar">00:00</div>
+    <div class="p-counter" id="pCounter">1 / 22</div>
+  </header>
+  <main>
+    <div class="pv-col" id="nowWrap">
+      <div class="pv-label">Agora, no telão</div>
+      <div class="pv-box" id="nowBox"></div>
+    </div>
+    <div class="pv-col" id="nextWrap">
+      <div class="pv-label">Próximo slide</div>
+      <div class="pv-box" id="nextBox"></div>
+    </div>
+    <div class="pv-col" id="notesWrap">
+      <div class="pv-label">O que falar</div>
+      <ul id="notesList"></ul>
+    </div>
+  </main>
+  <footer>
+    <button id="prevBtn">‹ Anterior</button>
+    <button id="nextBtn">Próximo ›</button>
+    <div id="jumpBox">
+      <input id="jumpInput" type="number" min="1" placeholder="#">
+      <button id="jumpBtn">Ir</button>
+    </div>
+    <span class="hint">← → ou espaço navegam · clique no número pra pular</span>
+  </footer>
+</div>
+
+<script>
+/* Namespace único pra essa aula — evita colisão de localStorage se aula-01 e aula-02 ficarem abertas no mesmo navegador */
+const LIVE_ID = 'aula02_lucasfelt';
+const K_IDX = LIVE_ID+'_idx', K_ALIVE = LIVE_ID+'_alive', WIN_NAME = LIVE_ID+'_audience_win';
+
+/* ═══════════════════════ DADOS DOS SLIDES ═══════════════════════ */
+const SLIDES = [
+{type:'wait', block:'', eyebrow:'LIVE SEMANAL · ARRIVE IN DIGITAL', title:'Começamos em breve', hub:'AULA<br>AO VIVO',
+ nodes:[
+   {i:1,x:450,y:25,t:'A crença que trava o corretor'},
+   {i:2,x:573.7,y:76.3,t:'Aparecer e vender não são inimigos'},
+   {i:3,x:625,y:200,t:'Frente 1: Branding'},
+   {i:4,x:573.7,y:323.7,t:'Frente 2: Performance'},
+   {i:5,x:450,y:375,t:'Por que rodam juntas'},
+   {i:6,x:326.3,y:323.7,t:'O que muda no seu orçamento'},
+   {i:7,x:275,y:200,t:'A operação por trás do resultado'},
+   {i:8,x:326.3,y:76.3,t:'Como aplicar essa semana'}],
+ notes:['Slide de espera — deixar aberto enquanto as pessoas entram.','Mostra o conteúdo que vai ser ensinado, não a mecânica da aula.']},
+
+{type:'cover', block:'Bloco 1 — Entrada', eyebrow:'ANÁLISE AO VIVO',
+ title:'Um corretor roda duas frentes de marketing ao mesmo tempo. <span class="gradtext">E é por isso que ele vende tanto.</span>',
+ notes:['Falar direto, sem rodeio: "Um dos corretores mais respeitados do Brasil roda duas frentes de marketing ao mesmo tempo. E é exatamente por isso que ele vende tanto."','Não dizer o nome ainda — segurar 1 frase antes de revelar no próximo slide.']},
+
+{type:'profile', block:'Bloco 1 — Entrada', eyebrow:'ISSO É O LUCAS FELT',
+ img:'assets/print-perfil-lucas-felt.png', avatarFallback:'LF',
+ handle:'feltnegociosimobiliarios', name:'Lucas Felt | Imóveis em Alphaville',
+ stats:[{n:'3.006',l:'posts'},{n:'465 mil',l:'seguidores'},{n:'2.080',l:'seguindo'}],
+ bio:['⭐ Corretor das Estrelas','📍 Alphaville','💼 Corretor de Imóveis | Empresário | Mentor','🎓 Sócio @colegiolapa'],
+ notes:['"Isso é o Lucas Felt."','Deixar o número respirar — 465 mil seguidores, carteira de alto padrão em Alphaville.','"Repara no tamanho disso. Isso não é sorte. É estrutura."','Print precisa estar salvo em assets/print-perfil-lucas-felt.png antes da live — ver pendência no roteiro.']},
+
+{type:'key', block:'Bloco 1 — Entrada', eyebrow:'QUEM TE ENSINA HOJE',
+ q:'Eu vivi essa mesma lógica na prática.',
+ sub:'Sócio-fundador da Arrive In Digital. Estruturei conteúdo e anúncio de uma imobiliária de +R$200 milhões de VGV por ano.',
+ notes:['"Eu sou o Miguel, sócio-fundador da Arrive In Digital — a gente trabalha com posicionamento, conteúdo e anúncio pra corretor e imobiliária em todo o Brasil."','Curto — 2 frases, não mais. Não é o foco da aula.']},
+
+{type:'insight', block:'Bloco 1 — Entrada', text:'No final, você sai sabendo aplicar essa lógica no seu orçamento — não no dele.',
+ next:'mas antes, uma crença precisa cair',
+ notes:['Fecha o Bloco 1 com o loop aberto pro final da aula.']},
+
+{type:'section', block:'Bloco 2 — Reposicionamento', eyebrow:'ANTES DE ENSINAR', title:'Uma crença que trava quase todo corretor',
+ sub:'E o tamanho da operação do Lucas Felt prova que ela está errada.',
+ notes:['Transição: "Antes de eu te mostrar como funciona, eu preciso derrubar uma ideia que quase todo corretor carrega sem perceber."']},
+
+{type:'statement', block:'Bloco 2 — Reposicionamento', label:'A CRENÇA ERRADA', stmt:'"Eu tenho que escolher: ou apareço, ou vendo."',
+ items:[{n:'①',text:'Não dá pra investir nas duas coisas ao mesmo tempo'},{n:'②',text:'Meu orçamento não permite'},{n:'③',text:'Um vira concorrente do outro'}],
+ notes:['Essa crença parece razoável — por isso ela prende tanta gente.','"É o motivo pelo qual a maioria fica presa: ou vira perfil bonito que não vende, ou vitrine que ninguém confia."']},
+
+{type:'key', block:'Bloco 2 — Reposicionamento', eyebrow:'A VERDADE',
+ q:'Você não precisa escolher entre aparecer e vender.',
+ sub:'Você precisa parar de tratar as duas coisas como concorrentes.',
+ notes:['Frase-chave da aula inteira — falar devagar, deixar sedimentar.','"O Lucas Felt não tem 465 mil seguidores porque decidiu ser só marca, ou só vendedor."']},
+
+{type:'section', block:'Bloco 3 — Ensino', eyebrow:'A ESTRATÉGIA', title:'Duas frentes',
+ sub:'Branding e Performance, rodando ao mesmo tempo.',
+ notes:['Ponte: "aqui está a lógica por trás do tamanho que você viu."']},
+
+{type:'key', block:'Bloco 3 — Ensino', eyebrow:'FRENTE 1', q:'Branding',
+ sub:'Presença constante. Reconhecimento. Sem oferta, sem preço, sem pedido de contato.',
+ notes:['Objetivo não é vender agora — é virar familiar.','"Quando alguém pensar em comprar um imóvel na sua região, seu nome já tá na cabeça dela — antes dela estar pronta."']},
+
+{type:'list', block:'Bloco 3 — Ensino', title:'O que vira Branding na prática', sub:'Pro corretor comum, sem o orçamento de uma operação grande',
+ items:[
+   {n:'1',main:'Bastidor da rotina',dtl:'Mostra o profissional, não só o imóvel'},
+   {n:'2',main:'Opinião sobre o mercado',dtl:'Constrói autoridade'},
+   {n:'3',main:'Presença de marca constante',dtl:'Repetição — não é 1 post, é frequência'}],
+ notes:['Isso é o que substitui o orçamento que o Lucas tem — conteúdo orgânico fazendo o trabalho de Branding sem custo de anúncio.']},
+
+{type:'key', block:'Bloco 3 — Ensino', eyebrow:'FRENTE 2', q:'Performance',
+ sub:'Oferta direta — imóvel específico, preço, condição, pedido de contato imediato.',
+ notes:['Objetivo aqui é converter quem já está em posição de decidir.']},
+
+{type:'compare', block:'Bloco 3 — Ensino', title:'O que acontece rodando só uma frente',
+ cols:[
+   {title:'SÓ PERFORMANCE',items:['Lead frio, sem confiança prévia','Custo alto, conversão baixa','Cansa rápido']},
+   {title:'SÓ BRANDING',items:['Fica conhecido, não converte agora','Sem venda, sem caixa','Investimento sem retorno direto'],strong:true}],
+ note:'Sozinha, cada frente esbarra num limite.',
+ notes:['As duas colunas mostram o mesmo erro por ângulos opostos — reforça que a resposta certa é rodar as duas.']},
+
+{type:'statement', block:'Bloco 3 — Ensino', label:'POR QUE JUNTAS', stmt:'O Branding baixa o custo e sobe a conversão da Performance. A Performance sustenta o caixa que financia o Branding.',
+ items:[{n:'①',text:'Uma alimenta a outra'},{n:'②',text:'Ao mesmo tempo — não uma depois da outra'}],
+ notes:['Ponto central: não existe "esquenta e depois libera a Performance" — as duas rodam juntas, sempre.']},
+
+{type:'insight', block:'Bloco 3 — Ensino', text:'A venda começa antes da oferta — e não para de acontecer depois que a oferta aparece.',
+ next:'o que isso muda pra você',
+ notes:['Vitória da aula — a pessoa sai daqui entendendo isso por inteiro. Fechar o Bloco 3 com essa frase, sem pressa.']},
+
+{type:'key', block:'Bloco 4 — Gap', eyebrow:'VOCÊ JÁ SABE', q:'Branding e Performance precisam rodar juntas.',
+ sub:'Isso já resolve uma coisa: você não precisa mais escolher.',
+ notes:['Fechar o loop pequeno primeiro, antes de abrir o maior.']},
+
+{type:'insight', block:'Bloco 4 — Gap', text:'Mas saber que precisam rodar juntas é diferente de saber quanto, quando e como — pro seu imóvel, seu público, seu orçamento.',
+ next:'a operação por trás disso',
+ notes:['Sem preço ainda — só a ponte. "Isso não é uma sacada que se aplica uma vez, é uma operação que precisa rodar."']},
+
+{type:'list', block:'Bloco 5 — Chamada', title:'Mentoria Imob In Digital', sub:'5 frentes, com acompanhamento em call',
+ items:[
+   {n:'1',main:'Planejamento',dtl:'Seu negócio e seu público'},
+   {n:'2',main:'Posicionamento digital',dtl:'A declaração que orienta tudo'},
+   {n:'3',main:'Estrutura',dtl:'Site, sistema, gestão de lead'},
+   {n:'4',main:'Conteúdo',dtl:'Sua frente de Branding, sistematizada'},
+   {n:'5',main:'Tráfego',dtl:'Sua frente de Performance, no seu orçamento real'}],
+ notes:['"Não vou te empurrar um link. Libero um número limitado de conversas essa semana."']},
+
+{type:'list', block:'Bloco 5 — Chamada', title:'Pra quem faz sentido agendar uma conversa', sub:'Não é pra qualquer corretor, em qualquer momento',
+ items:[
+   {n:'✓',main:'Já atua como corretor(a) ou gestor(a) imobiliário'},
+   {n:'✓',main:'Já vende, mesmo que pouco'},
+   {n:'✓',main:'Quer aplicar de verdade, não só consumir conteúdo'},
+   {n:'✓',main:'Consegue considerar R$1.497, parcelado'}],
+ notes:['Reforçar: não é pitch de venda, é diagnóstico real.']},
+
+{type:'stat', block:'Bloco 5 — Chamada', eyebrow:'PRÓXIMO PASSO', number:'20–30 min', label:'Uma conversa com o time',
+ sub:'Vagas limitadas essa semana. [inserir instrução de agendamento]',
+ notes:['CTA principal — dar a instrução prática de como agendar (pendência a confirmar).']},
+
+{type:'stat', block:'Bloco 5 — Chamada', eyebrow:'SE AINDA NÃO É O MOMENTO', number:'05/09', label:'Workshop Imob In Digital — R$27',
+ sub:'Um dia inteiro, 100% online, 9h30 às 17h30 — construindo posicionamento, conteúdo e anúncio na prática.',
+ notes:['Mini-pitch separado, sem call — só o link.']},
+
+{type:'insight', block:'Bloco 6 — Saída', text:'Valeu por ficar até aqui.', next:'próxima live, terça/quinta 12h — outro caso',
+ notes:['Gancho pra próxima live — tema ainda não definido, ajustar antes de usar ao vivo.']}
+];
+
+/* ═══════════════════════ RENDER ═══════════════════════ */
+function padHTML(s){
+  switch(s.type){
+    case 'wait':
+      return `<div class="wait-eye"><span class="wait-dot"></span>${s.eyebrow}</div>
+        <div class="wait-title">${s.title}</div>
+        <div class="wait-diagram">
+          <svg class="wd-lines" viewBox="0 0 900 400" width="900" height="400">
+            ${s.nodes.map(n=>`<line x1="450" y1="200" x2="${n.x}" y2="${n.y}"/>`).join('')}
+          </svg>
+          <div class="wd-hub">${s.hub}</div>
+          ${s.nodes.map(n=>`<div class="wd-node" style="left:${n.x}px;top:${n.y}px"><span class="wd-n">${n.i}</span><span class="wd-t">${n.t}</span></div>`).join('')}
+        </div>`;
+    case 'cover':
+      return `<span class="eyebrow">${s.eyebrow}</span><div><div class="rule"></div><h1>${s.title}</h1></div>`;
+    case 'key':
+      return `<span class="key-eye">${s.eyebrow}</span><div class="key-q">${s.q}</div><div class="key-sub">${s.sub}</div>`;
+    case 'statement':
+      return `<span class="slabel">${s.label}</span><div class="stmt">${s.stmt}</div>
+        <div class="items">${s.items.map(it=>`<div class="sitem"><span class="sn">${it.n}</span><span>${it.text}</span></div>`).join('')}</div>
+        ${s.note?`<div class="snote">${s.note}</div>`:''}`;
+    case 'section':
+      return `<span class="sec-eye">${s.eyebrow}</span><div class="sec-rule"></div><div class="sec-title">${s.title}</div><div class="sec-sub">${s.sub}</div>`;
+    case 'compare':
+      return `<h2>${s.title}</h2><div class="compare-grid">${s.cols.map(c=>`
+        <div class="ccol ${c.strong?'strong':''}"><div class="ctitle">${c.title}</div><ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>
+        ${s.note?`<div class="cmp-note">${s.note}</div>`:''}`;
+    case 'list':
+      return `<div class="listttl">${s.title}</div><div class="ls-sub">${s.sub}</div>
+        <ol class="clean">${s.items.map(i=>`<li><span class="n">${i.n}</span><span class="li-main">${i.main}${i.dtl?`<span class="dtl">${i.dtl}</span>`:''}</span></li>`).join('')}</ol>`;
+    case 'insight':
+      return `<div class="insight-text">${s.text}</div><div class="next-label">${s.next}</div>`;
+    case 'stat':
+      return `<span class="stat-eye">${s.eyebrow}</span><div class="stat-number gradtext">${s.number}</div><div class="stat-label">${s.label}</div><div class="stat-sub">${s.sub}</div>`;
+    case 'profile':
+      return `<span class="eyebrow pf-eyebrow">${s.eyebrow}</span>
+        <div class="pf-avatar"><div class="pf-avatar-inner">
+          <img src="${s.img}" alt="Print do perfil" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="pf-avatar-fallback gradtext" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">${s.avatarFallback}</div>
+        </div></div>
+        <div class="pf-info">
+          <div class="pf-handle">@${s.handle} <svg class="pf-badge" viewBox="0 0 24 24" fill="#3897f0"><path d="M12 2l2.4 1.3 2.7-.4 1.4 2.4 2.4 1.4-.4 2.7L22 12l-1.5 2.4.4 2.7-2.4 1.4-1.4 2.4-2.7-.4L12 22l-2.4-1.5-2.7.4-1.4-2.4-2.4-1.4.4-2.7L2 12l1.5-2.4-.4-2.7 2.4-1.4L6.9 2.9l2.7.4L12 2z"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="pf-name">${s.name}</div>
+          <div class="pf-stats">${s.stats.map(st=>`<div><div class="pf-stat-n">${st.n}</div><div class="pf-stat-l">${st.l}</div></div>`).join('')}</div>
+          <div class="pf-bio">${s.bio.map(b=>`<div>${b}</div>`).join('')}</div>
+        </div>`;
+    default: return '';
+  }
+}
+function buildSlideEl(s){
+  const el=document.createElement('div');
+  el.className='slide s-'+s.type;
+  const pad=document.createElement('div');
+  pad.className='pad';
+  pad.innerHTML=padHTML(s);
+  el.appendChild(pad);
+  return el;
+}
+
+/* ═══════════════════════ ROTEAMENTO DE VIEW ═══════════════════════ */
+const params=new URLSearchParams(location.search);
+const view=params.get('view');
+
+if(view==='audience'){
+  document.getElementById('launcher').style.display='none';
+  runAudience();
+}else if(view==='presenter'){
+  document.getElementById('launcher').style.display='none';
+  runPresenter();
+}
+
+/* ═══════════════════════ MODO PÚBLICO ═══════════════════════ */
+function runAudience(){
+  const wrap=document.getElementById('stage-wrap');
+  const stage=document.getElementById('stage');
+  wrap.style.display='flex';
+  document.getElementById('fsHint').style.display='block';
+
+  const els=SLIDES.map(buildSlideEl);
+  els.forEach(e=>stage.appendChild(e));
+
+  function fit(){
+    const scale=Math.min((window.innerWidth-64)/1280,(window.innerHeight-64)/720,1.3);
+    stage.style.width='1280px';stage.style.height='720px';
+    stage.style.transform=`scale(${scale})`;
+  }
+  fit();window.addEventListener('resize',fit);
+
+  let idx=0;
+  const saved=parseInt(localStorage.getItem(K_IDX)||'0',10);
+  if(!isNaN(saved)&&saved>=0&&saved<SLIDES.length) idx=saved;
+
+  function setSlide(i){
+    if(i<0||i>=SLIDES.length) return;
+    idx=i;
+    els.forEach((e,n)=>e.classList.toggle('active',n===idx));
+  }
+  setSlide(idx);
+
+  window.addEventListener('storage',e=>{
+    if(e.key===K_IDX){ const n=parseInt(e.newValue,10); if(!isNaN(n)) setSlide(n); }
+  });
+  window.addEventListener('message',e=>{
+    if(e.data && e.data.type==='goto') setSlide(e.data.i);
+  });
+  setInterval(()=>localStorage.setItem(K_ALIVE,Date.now()),1000);
+
+  /* Nudge de repintura — mitigação extra caso o navegador ainda assim reduza a
+     prioridade da aba em segundo plano. O fix principal é usar "Guia do Chrome"
+     no compartilhamento do Meet, não "Janela" (ver launcher/como-usar). */
+  let nudge=0;
+  function raf(){ nudge=(nudge+1)%2; document.body.style.setProperty('--nudge', nudge); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='f'||e.key==='F'){
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen();
+    }
+  });
+}
+
+/* ═══════════════════════ MODO APRESENTADOR ═══════════════════════ */
+function runPresenter(){
+  document.getElementById('presenter').style.display='flex';
+
+  const nowBox=document.getElementById('nowBox');
+  const nextBox=document.getElementById('nextBox');
+  const notesList=document.getElementById('notesList');
+  const pCounter=document.getElementById('pCounter');
+  const pBlock=document.getElementById('pBlock');
+
+  function scaleBox(box, widthPx){
+    const inner=box.querySelector('.slide');
+    if(!inner) return;
+    const scale=widthPx/1280;
+    box.style.width=widthPx+'px';
+    box.style.height=(720*scale)+'px';
+    inner.style.transform=`scale(${scale})`;
+  }
+
+  let idx=0;
+  function render(){
+    nowBox.innerHTML=''; nextBox.innerHTML='';
+    const cur=SLIDES[idx];
+    nowBox.appendChild(buildSlideEl(cur));
+    scaleBox(nowBox, nowBox.parentElement.clientWidth);
+    const nxt=SLIDES[idx+1];
+    if(nxt){ nextBox.appendChild(buildSlideEl(nxt)); scaleBox(nextBox, nextBox.parentElement.clientWidth); }
+    pCounter.textContent=(idx+1)+' / '+SLIDES.length;
+    pBlock.textContent=cur.block || pBlock.textContent;
+    notesList.innerHTML=(cur.notes&&cur.notes.length)
+      ? cur.notes.map(n=>`<li>${n}</li>`).join('')
+      : '<li style="opacity:.4">— sem observações pra este slide —</li>';
+    localStorage.setItem(K_IDX, idx);
+    broadcastToAudience();
+  }
+
+  let audienceWin=null;
+  function openAudience(){
+    audienceWin=window.open(location.pathname+'?view=audience',WIN_NAME);
+    setTimeout(broadcastToAudience,600);
+  }
+  function broadcastToAudience(){
+    try{ if(audienceWin && !audienceWin.closed) audienceWin.postMessage({type:'goto', i:idx}, '*'); }catch(e){}
+  }
+  document.getElementById('openAudienceBtn').addEventListener('click',openAudience);
+
+  function go(n){ idx=Math.max(0,Math.min(SLIDES.length-1,n)); render(); }
+  document.getElementById('prevBtn').addEventListener('click',()=>go(idx-1));
+  document.getElementById('nextBtn').addEventListener('click',()=>go(idx+1));
+  document.getElementById('jumpBtn').addEventListener('click',()=>{
+    const v=parseInt(document.getElementById('jumpInput').value,10);
+    if(!isNaN(v)) go(v-1);
+  });
+  document.addEventListener('keydown',e=>{
+    if(document.activeElement && document.activeElement.id==='jumpInput') return;
+    if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); go(idx+1); }
+    if(e.key==='ArrowLeft') go(idx-1);
+  });
+
+  const dot=document.getElementById('connDot'), label=document.getElementById('connLabel');
+  setInterval(()=>{
+    const t=parseInt(localStorage.getItem(K_ALIVE)||'0',10);
+    const on=t && (Date.now()-t<3000);
+    dot.classList.toggle('on',!!on);
+    label.textContent=on?'Público conectado':'Público desconectado';
+  },1000);
+
+  const timerEl=document.getElementById('timer');
+  let start=Date.now();
+  timerEl.addEventListener('click',()=>{start=Date.now();});
+  setInterval(()=>{
+    const s=Math.floor((Date.now()-start)/1000);
+    const m=String(Math.floor(s/60)).padStart(2,'0');
+    const ss=String(s%60).padStart(2,'0');
+    timerEl.textContent=m+':'+ss;
+  },1000);
+
+  window.addEventListener('resize',()=>{ scaleBox(nowBox, nowBox.parentElement.clientWidth); scaleBox(nextBox, nextBox.parentElement.clientWidth); });
+
+  render();
+}
+</script>
+</body>
+</html>

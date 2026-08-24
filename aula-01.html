@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Live Semanal · Aula 01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafaf8; --text:#111111;
+  --muted:rgba(17,17,17,.46); --subtle:rgba(17,17,17,.28);
+  --border:rgba(0,0,0,.08); --surface:rgba(0,0,0,.035);
+  --grad:linear-gradient(120deg,#f97316,#e11d48 45%,#7c3aed);
+  --orange:#f97316;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;background:#e6e5e2;font-family:'Inter',system-ui,sans-serif;overflow:hidden;}
+
+/* ══════════ SLIDE CARD (compartilhado entre palco e prévias) ══════════ */
+.slide{
+  width:1280px;height:720px;background:var(--bg);border-radius:20px;overflow:hidden;color:var(--text);
+  position:relative;flex-shrink:0;
+}
+.slide::after{content:'ARRIVE IN DIGITAL · LIVE SEMANAL';position:absolute;bottom:20px;right:26px;font-size:.58rem;font-weight:700;letter-spacing:.16em;color:rgba(17,17,17,.18);pointer-events:none;}
+.pad{position:absolute;inset:0;padding:6.5% 7.5%;display:flex;flex-direction:column;}
+.gradtext{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.rule{width:44px;height:3px;background:var(--grad);border-radius:2px;}
+
+.s-wait{background:radial-gradient(ellipse at 96% 96%,rgba(124,58,237,.06) 0%,transparent 45%),radial-gradient(ellipse at 4% 4%,rgba(249,115,22,.05) 0%,transparent 38%),var(--bg);}
+.s-wait .pad{justify-content:center;align-items:center;text-align:center;padding-top:4%;}
+.wait-eye{display:flex;align-items:center;gap:10px;font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.wait-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:waitpulse 1.4s ease-in-out infinite;}
+@keyframes waitpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.75);}}
+.wait-title{font-family:'Caveat',cursive;font-size:4.4rem;font-weight:700;letter-spacing:-.01em;line-height:1;color:var(--text);}
+
+.wait-diagram{position:relative;width:900px;height:400px;margin-top:6px;}
+.wd-lines line{stroke:rgba(17,17,17,.14);stroke-width:1.6;}
+.wd-hub{position:absolute;left:450px;top:200px;transform:translate(-50%,-50%);width:112px;height:112px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-align:center;line-height:1.35;box-shadow:0 14px 34px rgba(124,58,237,.28);}
+.wd-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:7px;width:150px;}
+.wd-n{width:28px;height:28px;border-radius:50%;background:linear-gradient(var(--bg),var(--bg)) padding-box,var(--grad) border-box;border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-size:.76rem;font-weight:800;color:var(--text);}
+.wd-t{font-size:.74rem;font-weight:600;color:var(--text);line-height:1.25;}
+
+.s-cover{background:radial-gradient(ellipse at 96% 96%,rgba(124,58,237,.055) 0%,transparent 45%),radial-gradient(ellipse at 4% 4%,rgba(249,115,22,.04) 0%,transparent 38%),var(--bg);}
+.s-cover .pad{justify-content:flex-end;}
+.s-cover .eyebrow{margin-bottom:auto;}
+.s-cover .rule{margin-bottom:20px;}
+.s-cover h1{font-size:4rem;font-weight:800;letter-spacing:-.045em;line-height:1.05;}
+
+.s-section{background:#111111;}
+.s-section .pad{justify-content:center;}
+.s-section::after{color:rgba(255,255,255,.12);}
+.sec-eye{font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
+.sec-rule{width:44px;height:3px;background:var(--grad);border-radius:2px;margin-bottom:24px;}
+.sec-title{font-size:3.6rem;font-weight:800;letter-spacing:-.045em;line-height:1.06;color:#fff;}
+.sec-sub{margin-top:22px;font-size:1.05rem;color:rgba(255,255,255,.5);max-width:76%;line-height:1.65;font-weight:400;}
+
+.s-statement .pad{justify-content:center;}
+.slabel{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+.stmt{font-size:2.6rem;font-weight:800;letter-spacing:-.04em;line-height:1.12;max-width:92%;}
+.items{margin-top:28px;display:flex;flex-direction:column;}
+.sitem{display:flex;align-items:flex-start;gap:14px;padding:13px 0;border-top:1px solid var(--border);font-size:1.05rem;font-weight:500;color:var(--text);line-height:1.45;}
+.sitem:last-child{border-bottom:1px solid var(--border);}
+.sitem .sn{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0;padding-top:4px;min-width:36px;}
+.snote{margin-top:18px;font-size:.92rem;color:var(--muted);line-height:1.65;}
+
+.s-key .pad{justify-content:center;}
+.key-eye{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;}
+.key-q{font-size:2.9rem;font-weight:800;letter-spacing:-.04em;line-height:1.15;max-width:92%;}
+.key-sub{margin-top:26px;font-size:1.05rem;color:var(--muted);max-width:78%;line-height:1.65;font-weight:400;}
+
+.s-compare .pad{justify-content:center;}
+.s-compare h2{font-size:1.9rem;font-weight:800;letter-spacing:-.035em;margin-bottom:24px;max-width:94%;line-height:1.25;}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ccol{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 26px;}
+.ccol .ctitle{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.ccol ul{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.ccol ul li{font-size:1rem;font-weight:500;display:flex;align-items:flex-start;gap:10px;line-height:1.4;}
+.ccol ul li::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;background:rgba(0,0,0,.2);margin-top:8px;}
+.ccol.strong{border-color:rgba(249,115,22,.25);}
+.ccol.strong ul li::before{background:var(--orange);}
+.cmp-note{margin-top:16px;font-size:.92rem;color:var(--muted);font-style:italic;text-align:center;}
+
+.s-phases .pad{justify-content:center;}
+.s-phases h2{font-size:1.9rem;font-weight:800;letter-spacing:-.035em;margin-bottom:30px;max-width:94%;line-height:1.25;}
+.phases-grid{display:grid;grid-template-columns:repeat(3,1fr);}
+.phase{padding:22px 26px;}
+.phase+.phase{border-left:1px solid var(--border);}
+.ph-label{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.ph-name{font-size:1.55rem;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:12px;}
+.ph-desc{font-size:.92rem;color:var(--muted);line-height:1.6;}
+
+.s-list .pad{justify-content:center;}
+.listttl{font-size:1.9rem;font-weight:800;letter-spacing:-.035em;margin-bottom:8px;max-width:92%;line-height:1.25;}
+.ls-sub{font-size:.88rem;color:var(--muted);font-weight:400;margin-bottom:20px;line-height:1.5;}
+ol.clean{list-style:none;display:flex;flex-direction:column;}
+ol.clean li{display:flex;align-items:flex-start;gap:18px;padding:12px 0;border-top:1px solid var(--border);font-size:1rem;font-weight:500;color:var(--text);line-height:1.4;}
+ol.clean li:last-child{border-bottom:1px solid var(--border);}
+ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;padding-top:4px;min-width:26px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.li-main{line-height:1.35;}
+.dtl{display:block;font-size:.8rem;color:var(--muted);font-weight:400;line-height:1.4;margin-top:3px;}
+
+.s-insight{background:radial-gradient(ellipse at 100% 100%,rgba(124,58,237,.06) 0%,transparent 48%),var(--bg);}
+.s-insight .pad{justify-content:center;}
+.insight-text{font-size:3.2rem;font-weight:800;letter-spacing:-.045em;line-height:1.1;max-width:90%;}
+.next-label{margin-top:42px;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;}
+.next-label::before{content:'→';color:var(--orange);font-size:.9rem;letter-spacing:0;}
+
+.s-stat{background:radial-gradient(ellipse at 96% 10%,rgba(124,58,237,.06) 0%,transparent 45%),var(--bg);}
+.s-stat .pad{justify-content:center;align-items:flex-start;}
+.stat-eye{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;}
+.stat-number{font-size:6.2rem;font-weight:900;letter-spacing:-.04em;line-height:1;}
+.stat-label{margin-top:10px;font-size:1.3rem;font-weight:700;letter-spacing:-.02em;}
+.stat-sub{margin-top:20px;font-size:1rem;color:var(--muted);max-width:74%;line-height:1.6;}
+
+/* ══════════ PALCO (público) ══════════ */
+#stage-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
+#stage{position:relative;}
+#stage .slide{position:absolute;top:0;left:0;box-shadow:0 32px 96px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.1);opacity:0;transform:scale(.98);transition:opacity .32s ease,transform .32s ease;pointer-events:none;}
+#stage .slide.active{opacity:1;transform:scale(1);pointer-events:auto;}
+#fsHint{position:fixed;bottom:14px;right:18px;font-size:.68rem;color:rgba(0,0,0,.28);letter-spacing:.03em;z-index:5;}
+
+/* ══════════ LAUNCHER ══════════ */
+#launcher{position:fixed;inset:0;background:#0d0d0d;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:34px;color:#fff;font-family:'Inter',sans-serif;}
+#launcher .lg{font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.4);}
+#launcher h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;text-align:center;max-width:600px;line-height:1.3;}
+#launcher .opts{display:flex;gap:20px;}
+.lbtn{cursor:pointer;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);border-radius:16px;padding:28px 32px;width:260px;text-align:left;transition:.15s;}
+.lbtn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.28);transform:translateY(-2px);}
+.lbtn .lt{font-size:1.05rem;font-weight:700;margin-bottom:8px;}
+.lbtn .ld{font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.5;}
+.lbtn.primary{background:linear-gradient(120deg,#f97316,#e11d48 45%,#7c3aed);border:none;}
+.lbtn.primary .ld{color:rgba(255,255,255,.85);}
+
+/* ══════════ PRESENTER ══════════ */
+#presenter{position:fixed;inset:0;background:#161616;color:#fff;display:flex;flex-direction:column;font-family:'Inter',sans-serif;}
+#presenter header{display:flex;align-items:center;gap:20px;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+#presenter .p-title{font-weight:800;font-size:.95rem;letter-spacing:-.01em;}
+#presenter .p-status{display:flex;align-items:center;gap:8px;font-size:.78rem;color:rgba(255,255,255,.6);}
+.dot{width:8px;height:8px;border-radius:50%;background:#e11d48;flex-shrink:0;}
+.dot.on{background:#22c55e;}
+#presenter button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;border-radius:8px;padding:7px 14px;font-size:.78rem;font-weight:600;font-family:inherit;}
+#presenter button:hover{background:rgba(255,255,255,.12);}
+#presenter .p-timer{font-variant-numeric:tabular-nums;font-size:.85rem;color:rgba(255,255,255,.55);cursor:pointer;margin-left:auto;}
+#presenter .p-counter{font-variant-numeric:tabular-nums;font-size:.85rem;font-weight:700;background:rgba(255,255,255,.06);padding:5px 12px;border-radius:100px;}
+#presenter main{flex:1;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:auto 1fr;gap:16px;padding:18px 22px;overflow:hidden;}
+.pv-col{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0;overflow:hidden;}
+.pv-label{font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+.pv-box{border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.4);background:#000;flex-shrink:0;max-width:100%;}
+.pv-box .slide{position:static;transform-origin:top left;}
+#nowWrap{grid-column:1;grid-row:1;}
+#nextWrap{grid-column:2;grid-row:1;}
+#notesWrap{grid-column:1/3;grid-row:2;min-height:0;}
+#notesList{list-style:none;display:flex;flex-direction:column;gap:10px;overflow-y:auto;height:100%;padding-right:6px;}
+#notesList li{font-size:1rem;line-height:1.5;color:rgba(255,255,255,.88);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;}
+#notesList li b{color:#fff;}
+#presenter footer{display:flex;align-items:center;gap:14px;padding:14px 22px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+#presenter footer .hint{margin-left:auto;font-size:.74rem;color:rgba(255,255,255,.35);}
+#jumpBox{display:flex;align-items:center;gap:6px;}
+#jumpInput{width:48px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;text-align:center;padding:6px 4px;font-family:inherit;font-size:.78rem;}
+</style>
+</head>
+<body>
+
+<div id="launcher">
+  <div class="lg">Arrive In Digital · Live Semanal</div>
+  <h1>Apresentação — Aula 01<br>Escolha como abrir</h1>
+  <div class="opts">
+    <div class="lbtn primary" onclick="location.href='?view=presenter'">
+      <div class="lt">🎤 Modo apresentador</div>
+      <div class="ld">Pra você. Mostra o slide atual, o próximo, e o que falar em cada um. Abra essa janela na sua tela.</div>
+    </div>
+    <div class="lbtn" onclick="location.href='?view=audience'">
+      <div class="lt">🖥️ Modo público</div>
+      <div class="ld">Pra compartilhar no Google Meet. Mostra só o slide atual, sem controles. Normalmente você abre essa a partir do modo apresentador.</div>
+    </div>
+  </div>
+</div>
+
+<div id="stage-wrap" style="display:none">
+  <div id="stage"></div>
+</div>
+<div id="fsHint" style="display:none">F — tela cheia</div>
+
+<div id="presenter" style="display:none">
+  <header>
+    <div class="p-title">Live Semanal · Aula 01</div>
+    <div class="p-status"><span class="dot" id="connDot"></span><span id="connLabel">Público desconectado</span></div>
+    <button id="openAudienceBtn">Abrir tela do público ↗</button>
+    <div class="p-timer" id="timer" title="Clique pra zerar">00:00</div>
+    <div class="p-counter" id="pCounter">1 / 30</div>
+  </header>
+  <main>
+    <div class="pv-col" id="nowWrap">
+      <div class="pv-label">Agora, no telão</div>
+      <div class="pv-box" id="nowBox"></div>
+    </div>
+    <div class="pv-col" id="nextWrap">
+      <div class="pv-label">Próximo slide</div>
+      <div class="pv-box" id="nextBox"></div>
+    </div>
+    <div class="pv-col" id="notesWrap">
+      <div class="pv-label">O que falar</div>
+      <ul id="notesList"></ul>
+    </div>
+  </main>
+  <footer>
+    <button id="prevBtn">‹ Anterior</button>
+    <button id="nextBtn">Próximo ›</button>
+    <div id="jumpBox">
+      <input id="jumpInput" type="number" min="1" placeholder="#">
+      <button id="jumpBtn">Ir</button>
+    </div>
+    <span class="hint">← → ou espaço navegam · clique no número pra pular</span>
+  </footer>
+</div>
+
+<script>
+/* ═══════════════════════ DADOS DOS SLIDES ═══════════════════════ */
+const SLIDES = [
+{type:'wait', eyebrow:'LIVE SEMANAL · ARRIVE IN DIGITAL', title:'Começamos em breve', hub:'AULA<br>AO VIVO',
+ nodes:[
+   {i:1,x:450,y:25,t:'O padrão por trás do que funciona'},
+   {i:2,x:573.7,y:76.3,t:'Por que postar mais não resolve'},
+   {i:3,x:625,y:200,t:'Em que momento está seu comprador'},
+   {i:4,x:573.7,y:323.7,t:'Os 3 tipos de conteúdo que vendem'},
+   {i:5,x:450,y:375,t:'Pra que serve o anúncio, de verdade'},
+   {i:6,x:326.3,y:323.7,t:'Conteúdo + anúncio como sistema'},
+   {i:7,x:275,y:200,t:'Aplicando no seu imóvel'},
+   {i:8,x:326.3,y:76.3,t:'Como construir isso na prática'}],
+ notes:['Slide de espera — deixar aberto enquanto as pessoas entram, antes de começar a falar.','Mostra um resumo do conteúdo que vai ser ensinado — cria expectativa do que a pessoa vai aprender, não da mecânica da apresentação.']},
+
+{type:'cover', eyebrow:'AULA AO VIVO E GRATUITA',
+ title:'Como corretores que vendem milhões usam a internet <span class="gradtext">pra vender todo mês</span>',
+ notes:['Abrir direto com a descoberta — não com boas-vindas ainda.','"Analisei mais de 200 perfis de corretores e mais de 1.000 conteúdos no Instagram."']},
+
+{type:'key', eyebrow:'A DESCOBERTA',
+ q:'Analisei mais de 200 perfis de corretores e mais de 1.000 conteúdos no Instagram.',
+ sub:'Separei o que gerava resultado do que não gerava — e encontrei um padrão.',
+ notes:['Reforçar: não é achismo, é análise real.','Gancho: "encontrei um padrão entre os conteúdos que atraem atenção, geram interesse e contribuem pra vender."']},
+
+{type:'statement', label:'O PADRÃO NÃO É', stmt:'Não é sobre fazer mais.',
+ items:[{n:'01',text:'Postar todos os dias'},{n:'02',text:'Fazer vídeo bonito'},{n:'03',text:'Mostrar mais imóvel'}],
+ note:'Existe uma lógica por trás do que funciona — é essa lógica que eu vou te mostrar hoje.',
+ notes:['Deixar claro que não vai dar dica solta.']},
+
+{type:'stat', eyebrow:'NÃO É SÓ TEORIA', number:'+R$200 mi', label:'VGV anual',
+ sub:'Eu não só analisei. Vivi isso no dia a dia do marketing de uma imobiliária real — não é teoria genérica de marketing digital.',
+ notes:['"Eu não só analisei. Eu vivi isso." — escalada de autoridade.','Foi eu que estruturei conteúdo e anúncio dessa operação, com meta de venda em cima.','Só depois disso: boas-vindas — "Bem-vindo, eu sou o Miguel, sócio-fundador da Arrive In Digital."']},
+
+{type:'section', eyebrow:'NOS PRÓXIMOS 60 MINUTOS', title:'O roteiro de hoje',
+ sub:'Por que o que você já faz não funciona. Os 3 tipos de conteúdo. Pra que serve o anúncio, de verdade. Como conectar tudo num sistema.',
+ notes:['Quebra de expectativa: não é aula de "5 dicas de Reels".','Prometer: vai sair sabendo aplicar isso no próximo imóvel que postar.']},
+
+{type:'statement', label:'VOCÊ RECONHECE ESSA CENA?', stmt:'Posta, espera, pouca mensagem, tenta outro imóvel.',
+ items:[{n:'①',text:'Posta o imóvel — foto, preço, bairro'},{n:'②',text:'Espera. Vem visualização, pouca mensagem real'},{n:'③',text:'Impulsiona. Alcance melhora, venda não'},{n:'④',text:'O que converte de verdade ainda é indicação'}],
+ notes:['Contar a cena com calma, deixar a pessoa se reconhecer.','Não é falta de esforço. É falta de estrutura — chegar nisso.']},
+
+{type:'key', eyebrow:'O MOTIVO REAL', q:'Seu problema não é falta de conteúdo. É falta de função para o conteúdo.',
+ sub:'Não é sobre esforço. É sobre estrutura.',
+ notes:['Este é o Ahá 1 — dar tempo pra afirmação respirar.']},
+
+{type:'phases', title:'Nem todo mundo que te vê está no mesmo momento',
+ phases:[
+   {label:'FASE 1',name:'Descobrindo',desc:'Ainda não pesquisou nada. Não sabe bairro, não fez simulação.'},
+   {label:'FASE 2',name:'Considerando',desc:'Já sabe o que quer. Está comparando opções e corretores.'},
+   {label:'FASE 3',name:'Pronta',desc:'Já visitou vários imóveis. Só falta um motivo final pra decidir.'}],
+ notes:['90% de quem vê seu perfil ainda não está pronta — "foto+preço+me chama" só fala com a fase 3.']},
+
+{type:'section', eyebrow:'PARTE 2', title:'O que o mercado te ensina — e por que falha',
+ sub:'"Poste todo dia." "Impulsione tudo." "Tráfego pra imóvel não compensa."',
+ notes:['Não vou dizer que é mentira. Vou mostrar onde quebra.']},
+
+{type:'compare', title:'O erro não é o conselho. É o momento errado.',
+ cols:[
+   {title:'O QUE VOCÊ FAZ',items:['Foto + preço + "me chama"','Direto pra quem nunca te viu','Fundo de funil pra público frio']},
+   {title:'O QUE ISSO EXIGE',items:['Confiança que ainda não existe','Fechar venda com quem te conheceu há 3 segundos','Resultado: lead frio, custo alto'],strong:true}],
+ note:'Não é o anúncio que falha. É a ferramenta errada no momento errado.',
+ notes:['Analogia: fechar venda de R$400 mil com quem rolou o feed e te viu 3 segundos atrás.']},
+
+{type:'insight', text:'Postar todo dia sem função não é estratégia. Impulsionar venda pra desconhecido não é sistema.',
+ next:'o mecanismo',
+ notes:['Atividade não é a mesma coisa que geração de negócio.']},
+
+{type:'section', eyebrow:'PARTE 3', title:'Conteúdo + Anúncio',
+ sub:'Duas partes. Duas funções diferentes. O erro é tratar como se fossem a mesma coisa.',
+ notes:['Ponte: "lembra do padrão dos 200 perfis? é esse padrão que eu vou abrir agora."']},
+
+{type:'phases', title:'Todo conteúdo que funciona faz uma de três coisas',
+ phases:[
+   {label:'TIPO 1',name:'Atrai',desc:'Chama atenção de quem não te conhece. Educativo, provocativo, dor real.'},
+   {label:'TIPO 2',name:'Conecta',desc:'Cria vínculo. Humaniza. Transforma seguidor em fã.'},
+   {label:'TIPO 3',name:'Gera oportunidade',desc:'Mostra o que você tem e convida pra ação. Converte.'}],
+ notes:['Dar 1 exemplo rápido de cada tipo, de cabeça, antes de ir pro próximo slide.']},
+
+{type:'key', eyebrow:'O ERRO MAIS CARO', q:'Fazer só o Tipo 3.',
+ sub:'O perfil vira vitrine. Vitrine ninguém segue, ninguém compartilha, ninguém volta a ver.',
+ notes:['Conectar de volta com o diagnóstico do bloco 3.']},
+
+{type:'list', title:'O mesmo conteúdo não serve pra todo mundo', sub:'Nível de consciência define o que funciona',
+ items:[
+   {n:'1',main:'Descobrindo → conteúdo educativo',dtl:'Te conhece antes de qualquer concorrente'},
+   {n:'2',main:'Considerando → conteúdo que diferencia',dtl:'Mostra o que você sabe que os outros não mostram'},
+   {n:'3',main:'Pronta → conteúdo que valida',dtl:'Prova social, caso real, facilidade de contato'}],
+ notes:['Voltar no slide da fase 1/2/3 mentalmente, conectar os dois frameworks.']},
+
+{type:'key', eyebrow:'O SEGUNDO MAL-ENTENDIDO', q:'O anúncio não cria intenção de compra do zero.',
+ sub:'Quem faz isso é o conteúdo. O anúncio qualifica o público e escala o que já existe.',
+ notes:['Ahá importante — deixar bem marcado antes de seguir.']},
+
+{type:'phases', title:'Anúncio também tem função por etapa',
+ phases:[
+   {label:'TOPO',name:'Reconhecimento',desc:'Fazer quem não te conhece, te conhecer. Branding, alcance.'},
+   {label:'MEIO',name:'Qualificação',desc:'Gerar lead de quem já demonstrou interesse. Remarketing.'},
+   {label:'FUNDO',name:'Conversão',desc:'Converter quem já está quase decidido. WhatsApp direto.'}],
+ notes:['O erro mais comum: rodar só campanha de fundo pra público frio — voltar a mencionar isso.']},
+
+{type:'statement', label:'O SISTEMA', stmt:'Conteúdo constrói a relação e desenvolve demanda. Anúncio qualifica o público e escala a oportunidade.',
+ items:[{n:'①',text:'Um não substitui o outro'},{n:'②',text:'Um constrói o terreno pro outro funcionar melhor'}],
+ notes:['Este é o resumo do mecanismo inteiro — falar devagar.']},
+
+{type:'insight', text:'Você pode ter conteúdo e anúncio funcionando isolados — e ainda assim não ter um sistema.',
+ next:'aplicando na prática',
+ notes:['Ahá final do mecanismo, antes de ir pros exemplos.']},
+
+{type:'section', eyebrow:'PARTE 4', title:'O mesmo imóvel, três conteúdos diferentes',
+ sub:'Vamos aplicar a lógica em situações reais',
+ notes:['Pedir no chat: qual situação bate mais com quem tá assistindo.']},
+
+{type:'phases', title:'Situação 1 — Imóvel novo na carteira',
+ phases:[
+   {label:'ATRAI',name:'Curiosidade do bairro',desc:'"Por que esse imóvel está abaixo do que devia valer"'},
+   {label:'CONECTA',name:'Bastidor da avaliação',desc:'O que você percebeu que o proprietário não tinha reparado'},
+   {label:'GERA OPORTUNIDADE',name:'Ficha completa + CTA',desc:'Agora sim — continuação de uma relação, não o primeiro contato'}],
+ notes:['Mesmo imóvel, mesmo corretor — só muda a função.']},
+
+{type:'phases', title:'Situação 2 — Lançamento',
+ phases:[
+   {label:'ATRAI',name:'Desmistificar o medo',desc:'"O que ninguém te conta sobre comprar na planta"'},
+   {label:'CONECTA',name:'Sua opinião sincera',desc:'Inclusive o que você acha que não é pra todo mundo'},
+   {label:'GERA OPORTUNIDADE',name:'Condição + urgência real',desc:'Tabela, vagas limitadas, prazo — aqui faz sentido'}],
+ notes:[]},
+
+{type:'phases', title:'Situação 3 — Alto padrão',
+ phases:[
+   {label:'ATRAI',name:'Dado que choca',desc:'Valorização da região comparada a outro investimento'},
+   {label:'CONECTA',name:'Seu processo de rigor',desc:'O que você segue antes de indicar esse tipo de imóvel'},
+   {label:'GERA OPORTUNIDADE',name:'Acesso exclusivo',desc:'Tour privado — só pra quem já confia em você'}],
+ notes:[]},
+
+{type:'phases', title:'Situação 4 — Locação',
+ phases:[
+   {label:'ATRAI',name:'Dúvida do 1º aluguel',desc:'A pergunta mais comum de quem aluga sozinho pela primeira vez'},
+   {label:'CONECTA',name:'Um caso real',desc:'Inquilino que quase perdeu um imóvel bom — como você resolveu'},
+   {label:'GERA OPORTUNIDADE',name:'Disponíveis essa semana',desc:'CTA direto pros imóveis de locação'}],
+ notes:['Depois desse, abrir pro chat: pedir exemplo real de quem tá assistindo e aplicar ao vivo.']},
+
+{type:'section', eyebrow:'PARA FECHAR', title:'Entender o mecanismo é uma coisa',
+ sub:'Construir ele com o seu imóvel, seu público, sua rotina — é outra.',
+ notes:['Transição lógica pra oferta — não "compra meu troço".']},
+
+{type:'stat', eyebrow:'PRÓXIMO PASSO', number:'20–30 min', label:'Uma conversa com o time',
+ sub:'Vagas limitadas essa semana.',
+ notes:['CTA principal — falar com urgência real, não fabricada.','Dar a instrução prática de como agendar (pendência a confirmar).']},
+
+{type:'stat', eyebrow:'SE AINDA NÃO É O MOMENTO', number:'05/09', label:'Workshop Imob In Digital — R$27',
+ sub:'Um dia inteiro, 100% online, 9h30 às 17h30 — construindo posicionamento, conteúdo e anúncio na prática',
+ notes:['Mini-pitch separado, sem call — só o link.']},
+
+{type:'insight', text:'Valeu por ficar até aqui.', next:'terça e quinta, 12h — próxima live',
+ notes:['Abrir Q&A antes desse slide final.','Reforçar os dois caminhos: call da Mentoria ou ingresso do Workshop.']}
+];
+
+/* ═══════════════════════ RENDER ═══════════════════════ */
+function esc(s){return s;} // conteúdo já é HTML controlado internamente
+
+function padHTML(s){
+  switch(s.type){
+    case 'wait':
+      return `<div class="wait-eye"><span class="wait-dot"></span>${s.eyebrow}</div>
+        <div class="wait-title">${s.title}</div>
+        <div class="wait-diagram">
+          <svg class="wd-lines" viewBox="0 0 900 400" width="900" height="400">
+            ${s.nodes.map(n=>`<line x1="450" y1="200" x2="${n.x}" y2="${n.y}"/>`).join('')}
+          </svg>
+          <div class="wd-hub">${s.hub}</div>
+          ${s.nodes.map(n=>`<div class="wd-node" style="left:${n.x}px;top:${n.y}px"><span class="wd-n">${n.i}</span><span class="wd-t">${n.t}</span></div>`).join('')}
+        </div>`;
+    case 'cover':
+      return `<span class="eyebrow">${s.eyebrow}</span><div><div class="rule"></div><h1>${s.title}</h1></div>`;
+    case 'key':
+      return `<span class="key-eye">${s.eyebrow}</span><div class="key-q">${s.q}</div><div class="key-sub">${s.sub}</div>`;
+    case 'statement':
+      return `<span class="slabel">${s.label}</span><div class="stmt">${s.stmt}</div>
+        <div class="items">${s.items.map(it=>`<div class="sitem"><span class="sn">${it.n}</span><span>${it.text}</span></div>`).join('')}</div>
+        ${s.note?`<div class="snote">${s.note}</div>`:''}`;
+    case 'section':
+      return `<span class="sec-eye">${s.eyebrow}</span><div class="sec-rule"></div><div class="sec-title">${s.title}</div><div class="sec-sub">${s.sub}</div>`;
+    case 'compare':
+      return `<h2>${s.title}</h2><div class="compare-grid">${s.cols.map(c=>`
+        <div class="ccol ${c.strong?'strong':''}"><div class="ctitle">${c.title}</div><ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>
+        ${s.note?`<div class="cmp-note">${s.note}</div>`:''}`;
+    case 'phases':
+      return `<h2>${s.title}</h2><div class="phases-grid">${s.phases.map(p=>`
+        <div class="phase"><div class="ph-label">${p.label}</div><div class="ph-name">${p.name}</div><div class="ph-desc">${p.desc}</div></div>`).join('')}</div>`;
+    case 'list':
+      return `<div class="listttl">${s.title}</div><div class="ls-sub">${s.sub}</div>
+        <ol class="clean">${s.items.map(i=>`<li><span class="n">${i.n}</span><span class="li-main">${i.main}${i.dtl?`<span class="dtl">${i.dtl}</span>`:''}</span></li>`).join('')}</ol>`;
+    case 'insight':
+      return `<div class="insight-text">${s.text}</div><div class="next-label">${s.next}</div>`;
+    case 'stat':
+      return `<span class="stat-eye">${s.eyebrow}</span><div class="stat-number gradtext">${s.number}</div><div class="stat-label">${s.label}</div><div class="stat-sub">${s.sub}</div>`;
+    default: return '';
+  }
+}
+function buildSlideEl(s){
+  const el=document.createElement('div');
+  el.className='slide s-'+s.type;
+  const pad=document.createElement('div');
+  pad.className='pad';
+  pad.innerHTML=padHTML(s);
+  el.appendChild(pad);
+  return el;
+}
+
+/* ═══════════════════════ ROTEAMENTO DE VIEW ═══════════════════════ */
+const params=new URLSearchParams(location.search);
+const view=params.get('view');
+
+if(view==='audience'){
+  document.getElementById('launcher').style.display='none';
+  runAudience();
+}else if(view==='presenter'){
+  document.getElementById('launcher').style.display='none';
+  runPresenter();
+}
+/* senão, fica no launcher */
+
+/* ═══════════════════════ MODO PÚBLICO ═══════════════════════ */
+function runAudience(){
+  const wrap=document.getElementById('stage-wrap');
+  const stage=document.getElementById('stage');
+  wrap.style.display='flex';
+  document.getElementById('fsHint').style.display='block';
+
+  const els=SLIDES.map(buildSlideEl);
+  els.forEach(e=>stage.appendChild(e));
+
+  function fit(){
+    const scale=Math.min((window.innerWidth-64)/1280,(window.innerHeight-64)/720,1.3);
+    stage.style.width='1280px';stage.style.height='720px';
+    stage.style.transform=`scale(${scale})`;
+  }
+  fit();window.addEventListener('resize',fit);
+
+  let idx=0;
+  const saved=parseInt(localStorage.getItem('imob_live_idx')||'0',10);
+  if(!isNaN(saved)&&saved>=0&&saved<SLIDES.length) idx=saved;
+
+  function setSlide(i){
+    if(i<0||i>=SLIDES.length) return;
+    idx=i;
+    els.forEach((e,n)=>e.classList.toggle('active',n===idx));
+  }
+  setSlide(idx);
+
+  window.addEventListener('storage',e=>{
+    if(e.key==='imob_live_idx'){ const n=parseInt(e.newValue,10); if(!isNaN(n)) setSlide(n); }
+  });
+  window.addEventListener('message',e=>{
+    if(e.data && e.data.type==='goto') setSlide(e.data.i);
+  });
+  setInterval(()=>localStorage.setItem('imob_live_alive',Date.now()),1000);
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='f'||e.key==='F'){
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen();
+    }
+  });
+}
+
+/* ═══════════════════════ MODO APRESENTADOR ═══════════════════════ */
+function runPresenter(){
+  document.getElementById('presenter').style.display='flex';
+
+  const nowBox=document.getElementById('nowBox');
+  const nextBox=document.getElementById('nextBox');
+  const notesList=document.getElementById('notesList');
+  const pCounter=document.getElementById('pCounter');
+
+  function scaleBox(box, widthPx){
+    const inner=box.querySelector('.slide');
+    if(!inner) return;
+    const scale=widthPx/1280;
+    box.style.width=widthPx+'px';
+    box.style.height=(720*scale)+'px';
+    inner.style.transform=`scale(${scale})`;
+  }
+
+  let idx=0;
+  function render(){
+    nowBox.innerHTML=''; nextBox.innerHTML='';
+    const cur=SLIDES[idx];
+    nowBox.appendChild(buildSlideEl(cur));
+    scaleBox(nowBox, nowBox.parentElement.clientWidth);
+    const nxt=SLIDES[idx+1];
+    if(nxt){ nextBox.appendChild(buildSlideEl(nxt)); scaleBox(nextBox, nextBox.parentElement.clientWidth); }
+    pCounter.textContent=(idx+1)+' / '+SLIDES.length;
+    notesList.innerHTML=(cur.notes&&cur.notes.length)
+      ? cur.notes.map(n=>`<li>${n}</li>`).join('')
+      : '<li style="opacity:.4">— sem observações pra este slide —</li>';
+    localStorage.setItem('imob_live_idx', idx);
+    broadcastToAudience();
+  }
+
+  let audienceWin=null;
+  function openAudience(){
+    audienceWin=window.open(location.pathname+'?view=audience','imob_audience_win');
+    setTimeout(broadcastToAudience,600);
+  }
+  function broadcastToAudience(){
+    try{ if(audienceWin && !audienceWin.closed) audienceWin.postMessage({type:'goto', i:idx}, '*'); }catch(e){}
+  }
+  document.getElementById('openAudienceBtn').addEventListener('click',openAudience);
+
+  function go(n){ idx=Math.max(0,Math.min(SLIDES.length-1,n)); render(); }
+  document.getElementById('prevBtn').addEventListener('click',()=>go(idx-1));
+  document.getElementById('nextBtn').addEventListener('click',()=>go(idx+1));
+  document.getElementById('jumpBtn').addEventListener('click',()=>{
+    const v=parseInt(document.getElementById('jumpInput').value,10);
+    if(!isNaN(v)) go(v-1);
+  });
+  document.addEventListener('keydown',e=>{
+    if(document.activeElement && document.activeElement.id==='jumpInput') return;
+    if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); go(idx+1); }
+    if(e.key==='ArrowLeft') go(idx-1);
+  });
+
+  // status de conexão
+  const dot=document.getElementById('connDot'), label=document.getElementById('connLabel');
+  setInterval(()=>{
+    const t=parseInt(localStorage.getItem('imob_live_alive')||'0',10);
+    const on=t && (Date.now()-t<3000);
+    dot.classList.toggle('on',!!on);
+    label.textContent=on?'Público conectado':'Público desconectado';
+  },1000);
+
+  // timer
+  const timerEl=document.getElementById('timer');
+  let start=Date.now();
+  timerEl.addEventListener('click',()=>{start=Date.now();});
+  setInterval(()=>{
+    const s=Math.floor((Date.now()-start)/1000);
+    const m=String(Math.floor(s/60)).padStart(2,'0');
+    const ss=String(s%60).padStart(2,'0');
+    timerEl.textContent=m+':'+ss;
+  },1000);
+
+  window.addEventListener('resize',()=>{ scaleBox(nowBox, nowBox.parentElement.clientWidth); scaleBox(nextBox, nextBox.parentElement.clientWidth); });
+
+  render();
+}
+</script>
+</body>
+</html>
