@@ -262,9 +262,9 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar">➖</button>
     <button class="tool-btn" data-tool="eraser" title="Borracha">🧽</button>
     <span class="tb-sep"></span>
-    <button class="swatch sel" style="background:#ffffff" data-c="#ffffff" title="Branco"></button>
+    <button class="swatch" style="background:#ffffff" data-c="#ffffff" title="Branco"></button>
     <button class="swatch" style="background:#111111;border-color:rgba(255,255,255,.5)" data-c="#111111" title="Preto"></button>
-    <button class="swatch" style="background:#f97316" data-c="#f97316" title="Laranja"></button>
+    <button class="swatch sel" style="background:#f97316" data-c="#f97316" title="Laranja"></button>
     <button class="swatch" style="background:#ef4444" data-c="#ef4444" title="Vermelho"></button>
     <button class="swatch" style="background:#22c55e" data-c="#22c55e" title="Verde"></button>
     <button class="swatch" style="background:#3b82f6" data-c="#3b82f6" title="Azul"></button>
@@ -282,9 +282,9 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar">➖</button>
     <button class="tool-btn" data-tool="eraser" title="Borracha">🧽</button>
     <span class="tb-sep"></span>
-    <button class="swatch sel" style="background:#ffffff" data-c="#ffffff" title="Branco"></button>
+    <button class="swatch" style="background:#ffffff" data-c="#ffffff" title="Branco"></button>
     <button class="swatch" style="background:#111111;border-color:rgba(255,255,255,.5)" data-c="#111111" title="Preto"></button>
-    <button class="swatch" style="background:#f97316" data-c="#f97316" title="Laranja"></button>
+    <button class="swatch sel" style="background:#f97316" data-c="#f97316" title="Laranja"></button>
     <button class="swatch" style="background:#ef4444" data-c="#ef4444" title="Vermelho"></button>
     <button class="swatch" style="background:#22c55e" data-c="#22c55e" title="Verde"></button>
     <button class="swatch" style="background:#3b82f6" data-c="#3b82f6" title="Azul"></button>
@@ -316,7 +316,9 @@ function strokeLine(ctx,d){
     ctx.globalCompositeOperation='source-over';
     ctx.strokeStyle=d.c;
     if(d.tool==='marker'){ ctx.globalAlpha=.35; ctx.lineWidth=16; }
-    else{ ctx.globalAlpha=1; ctx.lineWidth=3; }
+    else{ ctx.globalAlpha=1; ctx.lineWidth=4; }
+    // sombra sutil pra garantir contraste independente do fundo do slide (claro ou escuro)
+    ctx.shadowColor='rgba(0,0,0,.55)'; ctx.shadowBlur=3;
   }
   ctx.lineCap='round'; ctx.lineJoin='round';
   ctx.beginPath(); ctx.moveTo(d.x0*1280,d.y0*720); ctx.lineTo(d.x1*1280,d.y1*720); ctx.stroke();
@@ -689,7 +691,7 @@ function runPresenter(){
   });
 
   /* ── Estado compartilhado de ferramenta (anotação no slide + quadro em branco) ── */
-  let curTool='pen', curColor='#ffffff';
+  let curTool='pen', curColor='#f97316';
   function selectTool(t){
     curTool=t;
     document.querySelectorAll('.tool-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('data-tool')===t));
