@@ -175,6 +175,19 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 .swatch{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.3);cursor:pointer;padding:0;flex-shrink:0;}
 .swatch.sel{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.3);}
 .tb-sep{width:1px;height:22px;background:rgba(255,255,255,.15);margin:0 2px;flex-shrink:0;}
+.eraser-size-ctrl{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:2px 4px;}
+.eraser-size-ctrl button{border:none;background:transparent;width:20px;height:20px;padding:0;font-size:.9rem;line-height:1;}
+.eraser-size-ctrl button:hover{background:rgba(255,255,255,.12);}
+.eraser-size-val{font-size:.7rem;color:rgba(255,255,255,.6);min-width:34px;text-align:center;font-variant-numeric:tabular-nums;}
+.eraser-cursor{position:absolute;top:0;left:0;border:2px solid rgba(255,255,255,.85);border-radius:50%;background:rgba(255,255,255,.15);pointer-events:none;display:none;z-index:20;transform:translate(0,0);box-shadow:0 0 0 1px rgba(0,0,0,.4);}
+#elPropsBar{display:none;align-items:center;gap:10px;padding:8px 18px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(59,130,246,.08);flex-wrap:wrap;}
+#elPropsBar .eplabel{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.05em;}
+.eptarget-btn{font-size:.72rem;padding:6px 10px;}
+.eptarget-btn.active{background:#3b82f6;border-color:#3b82f6;}
+#boardView button, #elPropsBar button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;border-radius:8px;padding:7px 14px;font-size:.78rem;font-weight:600;font-family:inherit;}
+#boardView button:hover, #elPropsBar button:hover{background:rgba(255,255,255,.12);}
+#boardView button.active{background:var(--orange);border-color:var(--orange);}
+#boardView .swatch, #boardView .eraser-size-ctrl button, #boardView .zoom-ctrl button{padding:0;}
 
 /* ══════════ QUADRO EM BRANCO (mapa mental) ══════════ */
 #boardView{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:50;}
@@ -182,14 +195,38 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #boardStageWrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0d0d0d;}
 #boardCanvasWrap{position:relative;width:1280px;height:720px;background:#fafaf8;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);flex-shrink:0;}
 #boardCanvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;}
-#boardElsLayer{position:absolute;inset:0;}
-.board-el{position:absolute;cursor:move;user-select:none;}
+#boardElsLayer{position:absolute;inset:0;pointer-events:none;}
+.board-el{position:absolute;cursor:move;user-select:none;pointer-events:auto;}
+.board-el.selected{outline:3px dashed #3b82f6;outline-offset:4px;}
 .board-el.text{padding:4px 8px;font-size:26px;font-weight:800;color:#111;min-width:30px;outline:none;font-family:'Inter',sans-serif;}
 .board-el.box{border:3px solid #111;border-radius:12px;background:rgba(255,255,255,.7);padding:10px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:19px;font-weight:700;color:#111;font-family:'Inter',sans-serif;outline:none;}
 .board-el .del{position:absolute;top:-11px;right:-11px;width:22px;height:22px;border-radius:50%;background:#ef4444;color:#fff;display:none;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:2px solid #fafaf8;line-height:1;}
 .board-el:hover .del{display:flex;}
 .board-el .rsz{position:absolute;bottom:-6px;right:-6px;width:16px;height:16px;background:#111;border-radius:3px;cursor:nwse-resize;display:none;}
 .board-el.box:hover .rsz{display:block;}
+.board-el.connect-src{outline:3px solid #22c55e;outline-offset:4px;}
+.board-el .conn-handle{position:absolute;top:50%;right:-9px;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:#3b82f6;border:2px solid #fafaf8;display:none;cursor:crosshair;}
+.board-el:hover .conn-handle{display:block;}
+#boardWorld{position:absolute;inset:0;transform-origin:0 0;}
+#boardDots{position:absolute;top:-4000px;left:-4000px;width:9280px;height:8720px;background-image:radial-gradient(circle,rgba(0,0,0,.18) 1.6px,transparent 1.6px);background-size:26px 26px;pointer-events:none;}
+#boardCanvas{position:absolute;top:0;left:0;}
+#boardConnsSvg{position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;overflow:visible;}
+#boardConnsSvg line, #audBoardConnsSvg line{stroke:#3b82f6;stroke-width:3;}
+#boardCanvasWrap.pan-mode{cursor:grab;}
+#boardCanvasWrap.panning{cursor:grabbing;}
+.zoom-ctrl{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:2px 4px;}
+.zoom-ctrl button{border:none;background:transparent;width:24px;height:24px;padding:0;font-size:.95rem;}
+.zoom-ctrl button:hover{background:rgba(255,255,255,.12);}
+.zoom-val{font-size:.7rem;color:rgba(255,255,255,.6);min-width:38px;text-align:center;font-variant-numeric:tabular-nums;}
+#boardMapSelect{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:8px;padding:6px 8px;font-size:.78rem;font-family:'Inter',sans-serif;max-width:160px;}
+@media print{
+  body *{visibility:hidden;}
+  #boardCanvasWrap, #boardCanvasWrap *{visibility:visible;}
+  #boardCanvasWrap{position:fixed;top:0;left:0;box-shadow:none;border-radius:0;}
+  #boardWorld{transform:none!important;}
+  #boardDots{display:none;}
+  @page{size:landscape;margin:8mm;}
+}
 #audBoardView{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#0d0d0d;}
 #audBoardStageWrap{position:relative;width:1280px;height:720px;background:#fafaf8;flex-shrink:0;}
 #audBoardStageWrap .board-el{cursor:default;}
@@ -221,6 +258,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 <div id="audBoardView">
   <div id="audBoardStageWrap">
     <canvas id="audBoardCanvas" width="1280" height="720"></canvas>
+    <svg id="audBoardConnsSvg" viewBox="0 0 1280 720" style="position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;overflow:visible;"></svg>
     <div id="audBoardElsLayer" style="position:absolute;inset:0;"></div>
   </div>
 </div>
@@ -261,6 +299,11 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button class="tool-btn" data-tool="marker" title="Marcador">🖍️</button>
     <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar">➖</button>
     <button class="tool-btn" data-tool="eraser" title="Borracha">🧽</button>
+    <span class="eraser-size-ctrl" title="Tamanho da borracha (Ctrl + roda do mouse sobre o slide)">
+      <button type="button" id="annEraserMinus">−</button>
+      <span class="eraser-size-val" id="annEraserVal">30</span>
+      <button type="button" id="annEraserPlus">+</button>
+    </span>
     <span class="tb-sep"></span>
     <button class="swatch" style="background:#ffffff" data-c="#ffffff" title="Branco"></button>
     <button class="swatch" style="background:#111111;border-color:rgba(255,255,255,.5)" data-c="#111111" title="Preto"></button>
@@ -270,17 +313,29 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button class="swatch" style="background:#3b82f6" data-c="#3b82f6" title="Azul"></button>
     <button class="swatch" style="background:#eab308" data-c="#eab308" title="Amarelo"></button>
     <button id="annClearBtn">🧹 Limpar</button>
-    <button id="openBoardBtn">🗒️ Quadro em branco</button>
-    <span class="hint">← → navegam</span>
+    <button id="openBoardBtn">🧠 Mapa mental</button>
+    <span class="hint">← → navegam · Ctrl+Z desfaz o desenho</span>
   </footer>
 </div>
 
 <div id="boardView" style="display:none">
   <div id="boardToolbar">
+    <select id="boardMapSelect" title="Mapas mentais salvos"></select>
+    <button id="boardNewMapBtn" title="Criar novo mapa">＋ Novo</button>
+    <button id="boardRenameMapBtn" title="Renomear mapa atual">✎</button>
+    <button id="boardDeleteMapBtn" title="Excluir mapa atual">🗑</button>
+    <span class="tb-sep"></span>
     <button class="tool-btn active" data-tool="pen" title="Caneta">✏️</button>
     <button class="tool-btn" data-tool="marker" title="Marcador">🖍️</button>
     <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar">➖</button>
     <button class="tool-btn" data-tool="eraser" title="Borracha">🧽</button>
+    <span class="eraser-size-ctrl" title="Tamanho da borracha (Ctrl + roda do mouse sobre o mapa)">
+      <button type="button" id="boardEraserMinus">−</button>
+      <span class="eraser-size-val" id="boardEraserVal">30</span>
+      <button type="button" id="boardEraserPlus">+</button>
+    </span>
+    <button class="tool-btn" data-tool="pan" title="Mover a tela (clique e arraste)">🖐️</button>
+    <button class="tool-btn" data-tool="connect" title="Conectar caixas / textos (mapa mental)">🔗</button>
     <span class="tb-sep"></span>
     <button class="swatch" style="background:#ffffff" data-c="#ffffff" title="Branco"></button>
     <button class="swatch" style="background:#111111;border-color:rgba(255,255,255,.5)" data-c="#111111" title="Preto"></button>
@@ -292,14 +347,32 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <span class="tb-sep"></span>
     <button id="addTextBtn">🔤 Texto</button>
     <button id="addBoxBtn">▭ Caixa</button>
-    <button id="boardClearBtn">🗑️ Limpar tudo</button>
-    <span class="hint">Arraste pra mover · duplo clique pra editar texto</span>
+    <span class="zoom-ctrl" title="Zoom">
+      <button type="button" id="zoomOutBtn">−</button>
+      <span class="zoom-val" id="zoomVal">100%</span>
+      <button type="button" id="zoomInBtn">+</button>
+      <button type="button" id="zoomResetBtn" title="Restaurar zoom">⤢</button>
+    </span>
+    <button id="boardClearBtn">🗑️ Limpar mapa</button>
+    <button id="exportPdfBtn" title="Abre a impressão do navegador — escolha 'Salvar como PDF' pra gerar o arquivo e compartilhar com os alunos">📄 Exportar PDF</button>
+    <span class="hint">Arraste move · clique seleciona · duplo clique edita texto · 🔗 conecta · Ctrl+Z desfaz · Ctrl+C/V duplica</span>
     <button id="closeBoardBtn" style="margin-left:auto">← Voltar pra aula</button>
+  </div>
+  <div id="elPropsBar">
+    <span class="eplabel">Aplicar cor em:</span>
+    <button class="eptarget-btn active" data-target="text" type="button">Texto</button>
+    <button class="eptarget-btn" data-target="border" type="button">Borda</button>
+    <button class="eptarget-btn" data-target="fill" type="button">Fundo</button>
+    <button id="deselectElBtn" type="button" style="margin-left:auto">Desmarcar</button>
   </div>
   <div id="boardStageWrap">
     <div id="boardCanvasWrap">
-      <canvas id="boardCanvas" width="1280" height="720"></canvas>
-      <div id="boardElsLayer"></div>
+      <div id="boardWorld">
+        <div id="boardDots"></div>
+        <canvas id="boardCanvas" width="1280" height="720"></canvas>
+        <svg id="boardConnsSvg" viewBox="0 0 1280 720"></svg>
+        <div id="boardElsLayer"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -311,7 +384,7 @@ const K_IDX = LIVE_ID+'_idx', K_ALIVE = LIVE_ID+'_alive', WIN_NAME = LIVE_ID+'_a
 /* ── Ferramenta de desenho compartilhada (anotação no slide + quadro em branco) ── */
 function strokeLine(ctx,d){
   ctx.save();
-  if(d.tool==='eraser'){ ctx.globalCompositeOperation='destination-out'; ctx.lineWidth=30; }
+  if(d.tool==='eraser'){ ctx.globalCompositeOperation='destination-out'; ctx.lineWidth=d.size||30; }
   else{
     ctx.globalCompositeOperation='source-over';
     ctx.strokeStyle=d.c;
@@ -577,6 +650,7 @@ function runAudience(){
   const audBoardCanvas=document.getElementById('audBoardCanvas');
   const audBoardCtx=audBoardCanvas.getContext('2d');
   const audBoardElsLayer=document.getElementById('audBoardElsLayer');
+  const audBoardConnsSvg=document.getElementById('audBoardConnsSvg');
   function fitBoard(){
     const wrap=document.getElementById('audBoardStageWrap');
     const scale=Math.min((window.innerWidth-64)/1280,(window.innerHeight-64)/720,1.3);
@@ -584,17 +658,30 @@ function runAudience(){
   }
   fitBoard(); window.addEventListener('resize',fitBoard);
 
-  function renderAudBoardEls(elsData){
+  function renderAudBoardEls(elsData, connsData){
     audBoardElsLayer.innerHTML='';
+    const byId={};
     elsData.forEach(el=>{
       const d=document.createElement('div');
       d.className='board-el '+el.type;
       d.style.left=(el.x*1280)+'px'; d.style.top=(el.y*720)+'px';
-      if(el.type==='box'){ d.style.width=(el.w*1280)+'px'; d.style.height=(el.h*720)+'px'; }
+      if(el.type==='box'){
+        d.style.width=(el.w*1280)+'px'; d.style.height=(el.h*720)+'px';
+        d.style.borderColor=el.borderColor||'#111';
+        d.style.background=el.fillColor||'rgba(255,255,255,.7)';
+      }
       d.style.color=el.color||'#111';
       d.textContent=el.text||'';
       audBoardElsLayer.appendChild(d);
+      byId[el.id]={x:el.x,y:el.y,w:el.w||0,h:el.h||0,type:el.type};
     });
+    audBoardConnsSvg.innerHTML=(connsData||[]).map(cn=>{
+      const a=byId[cn.a], b=byId[cn.b];
+      if(!a||!b) return '';
+      const ax=(a.x+(a.type==='box'?a.w/2:.05))*1280, ay=(a.y+(a.type==='box'?a.h/2:.02))*720;
+      const bx=(b.x+(b.type==='box'?b.w/2:.05))*1280, by=(b.y+(b.type==='box'?b.h/2:.02))*720;
+      return `<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}"/>`;
+    }).join('');
   }
 
   let lastMsgR=null;
@@ -605,11 +692,19 @@ function runAudience(){
     else if(d.type==='ann:off') annCanvas.style.display='none';
     else if(d.type==='ann:clear') annCtx.clearRect(0,0,1280,720);
     else if(d.type==='ann:line') strokeLine(annCtx,d);
+    else if(d.type==='ann:restore') restoreCanvasFromDataURL(annCtx,d.dataURL);
     else if(d.type==='board:on'){ audBoardView.style.display='flex'; }
     else if(d.type==='board:off'){ audBoardView.style.display='none'; }
-    else if(d.type==='board:clear'){ audBoardCtx.clearRect(0,0,1280,720); audBoardElsLayer.innerHTML=''; }
+    else if(d.type==='board:clear'){ audBoardCtx.clearRect(0,0,1280,720); audBoardElsLayer.innerHTML=''; audBoardConnsSvg.innerHTML=''; }
     else if(d.type==='board:line') strokeLine(audBoardCtx,d);
-    else if(d.type==='board:sync') renderAudBoardEls(d.elements||[]);
+    else if(d.type==='board:restore') restoreCanvasFromDataURL(audBoardCtx,d.dataURL);
+    else if(d.type==='board:sync') renderAudBoardEls(d.elements||[], d.conns||[]);
+  }
+  function restoreCanvasFromDataURL(ctx,dataURL){
+    if(!dataURL) return;
+    const img=new Image();
+    img.onload=()=>{ ctx.clearRect(0,0,1280,720); ctx.drawImage(img,0,0,1280,720); };
+    img.src=dataURL;
   }
   window.addEventListener('message',e=>{
     const d=e.data;
@@ -701,50 +796,129 @@ function runPresenter(){
   });
   document.addEventListener('keydown',e=>{
     if(document.activeElement && (document.activeElement.id==='jumpInput'||document.activeElement.isContentEditable)) return;
-    if(annOn||boardOpen) return; // não navega enquanto desenha ou com o quadro aberto
+    if(e.ctrlKey && (e.key==='z'||e.key==='Z')){
+      e.preventDefault();
+      if(boardOpen) undoCanvas(boardCanvas, boardUndoBox, 'board:restore', v=>{ const cur=boards[activeBoardIdx]; if(cur) cur.drawing=v; saveBoardsToStorage(); });
+      else { const c=nowBox.querySelector('#pAnnCanvas'); if(c) undoCanvas(c, annUndoBox, 'ann:restore'); }
+      return;
+    }
+    if(e.ctrlKey && (e.key==='c'||e.key==='C')){
+      if(boardOpen && selectedEl){ e.preventDefault(); boardClipboard=Object.assign({},selectedEl); delete boardClipboard.dom; }
+      return;
+    }
+    if(e.ctrlKey && (e.key==='v'||e.key==='V')){
+      if(boardOpen && boardClipboard){
+        e.preventDefault();
+        const data=Object.assign({},boardClipboard,{id:boardIdSeq++, x:Math.min(.9,boardClipboard.x+.04), y:Math.min(.9,boardClipboard.y+.04)});
+        const dom=makeBoardEl(data);
+        boardEls.push(data);
+        boardElsLayer.appendChild(dom);
+        selectElement(data);
+        boardSync();
+      }
+      return;
+    }
+    if(annOn||boardOpen) return; // não navega enquanto desenha ou com o mapa aberto
     if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); go(idx+1); }
     if(e.key==='ArrowLeft') go(idx-1);
   });
 
-  /* ── Estado compartilhado de ferramenta (anotação no slide + quadro em branco) ── */
-  let curTool='pen', curColor='#f97316';
+  /* ── Estado compartilhado de ferramenta (anotação no slide + mapa mental) ── */
+  let curTool='pen', curColor='#f97316', eraserSize=30;
   function selectTool(t){
     curTool=t;
     document.querySelectorAll('.tool-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('data-tool')===t));
+    boardCanvasWrap.classList.toggle('pan-mode', t==='pan');
   }
   function selectColor(c){
+    if(selectedEl){ applyColorToSelected(c); return; }
     curColor=c;
     document.querySelectorAll('.swatch').forEach(b=>b.classList.toggle('sel',b.getAttribute('data-c')===c));
   }
   document.querySelectorAll('.tool-btn').forEach(btn=>btn.addEventListener('click',()=>selectTool(btn.getAttribute('data-tool'))));
   document.querySelectorAll('.swatch').forEach(btn=>btn.addEventListener('click',()=>selectColor(btn.getAttribute('data-c'))));
 
-  function attachDrawing(canvas, broadcastFn, msgType){
+  function updateEraserVal(){
+    const a=document.getElementById('annEraserVal'); if(a) a.textContent=Math.round(eraserSize);
+    const b=document.getElementById('boardEraserVal'); if(b) b.textContent=Math.round(eraserSize);
+  }
+  function bumpEraser(delta){ eraserSize=Math.max(8,Math.min(160,eraserSize+delta)); updateEraserVal(); }
+  document.getElementById('annEraserMinus').addEventListener('click',()=>bumpEraser(-6));
+  document.getElementById('annEraserPlus').addEventListener('click',()=>bumpEraser(6));
+  document.getElementById('boardEraserMinus').addEventListener('click',()=>bumpEraser(-6));
+  document.getElementById('boardEraserPlus').addEventListener('click',()=>bumpEraser(6));
+  updateEraserVal();
+
+  function attachDrawing(canvas, broadcastFn, undoBox, onStrokeEnd){
     const ctx=canvas.getContext('2d');
     let drawing=false, lastX=0, lastY=0, holdY=0;
+    const oldCursor=canvas.parentElement.querySelector('.eraser-cursor');
+    if(oldCursor) oldCursor.remove();
+    const cursor=document.createElement('div');
+    cursor.className='eraser-cursor';
+    canvas.parentElement.appendChild(cursor);
     function posFrom(e){
-      const r=canvas.getBoundingClientRect();
-      const cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-      const cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
-      return {x:cx/r.width, y:cy/r.height};
+      if(e.touches){
+        const r=canvas.getBoundingClientRect();
+        const t=e.touches[0];
+        return {x:(t.clientX-r.left)/r.width, y:(t.clientY-r.top)/r.height, cx:(t.clientX-r.left)*(canvas.width/r.width), cy:(t.clientY-r.top)*(canvas.height/r.height)};
+      }
+      return {x:e.offsetX/canvas.width, y:e.offsetY/canvas.height, cx:e.offsetX, cy:e.offsetY};
     }
-    function start(e){ drawing=true; const p=posFrom(e); lastX=p.x; lastY=p.y; holdY=p.y; }
+    function updateCursor(p){
+      if(curTool!=='eraser'){ cursor.style.display='none'; return; }
+      cursor.style.display='block';
+      cursor.style.width=eraserSize+'px'; cursor.style.height=eraserSize+'px';
+      cursor.style.transform=`translate(${p.cx-eraserSize/2}px, ${p.cy-eraserSize/2}px)`;
+    }
+    function start(e){
+      if(curTool==='pan'||curTool==='connect') return;
+      drawing=true; const p=posFrom(e); lastX=p.x; lastY=p.y; holdY=p.y;
+      if(undoBox){ undoBox.stack.push(canvas.toDataURL()); if(undoBox.stack.length>40) undoBox.stack.shift(); }
+    }
     function move(e){
-      if(!drawing) return; e.preventDefault();
       const p=posFrom(e);
+      updateCursor(p);
+      if(!drawing) return; e.preventDefault();
       if(curTool==='underline') p.y=holdY;
-      const msg={type:msgType,x0:lastX,y0:lastY,x1:p.x,y1:p.y,c:curColor,tool:curTool};
+      const msg={x0:lastX,y0:lastY,x1:p.x,y1:p.y,c:curColor,tool:curTool,size:curTool==='eraser'?eraserSize:undefined};
       strokeLine(ctx,msg);
       broadcastFn(msg);
       lastX=p.x; lastY=p.y;
     }
-    function end(){ drawing=false; }
-    canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
-    canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end);
+    function end(){ if(drawing && onStrokeEnd) onStrokeEnd(); drawing=false; }
+    function leave(){ cursor.style.display='none'; }
+    canvas.addEventListener('mousedown',start);
+    canvas.addEventListener('mousemove',move);
+    canvas.addEventListener('mouseleave',leave);
+    window.addEventListener('mouseup',end);
+    canvas.addEventListener('touchstart',start,{passive:false});
+    canvas.addEventListener('touchmove',move,{passive:false});
+    canvas.addEventListener('touchend',end);
+    canvas.addEventListener('wheel',e=>{
+      if(!e.ctrlKey) return;
+      e.preventDefault();
+      bumpEraser(e.deltaY<0?6:-6);
+    },{passive:false});
+  }
+
+  function undoCanvas(canvas, undoBox, restoreType, onDone){
+    if(!undoBox.stack.length) return;
+    const dataURL=undoBox.stack.pop();
+    const img=new Image();
+    img.onload=()=>{
+      const ctx=canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    };
+    img.src=dataURL;
+    broadcastAnn({type:restoreType, dataURL});
+    if(onDone) onDone(dataURL);
   }
 
   /* ── Anotação por cima do slide ── */
   let annOn=false;
+  let annUndoBox={stack:[]};
   const annBtn=document.getElementById('annToggleBtn');
   function updateAnnBtn(){ annBtn.classList.toggle('active',annOn); }
   function setupAnnCanvas(){
@@ -755,7 +929,8 @@ function runPresenter(){
     c.width=nowBox.clientWidth; c.height=nowBox.clientHeight;
     nowBox.appendChild(c);
     c.style.display=annOn?'block':'none';
-    attachDrawing(c, m=>broadcastAnn(Object.assign({},m,{type:'ann:line'})), 'ann:line');
+    annUndoBox={stack:[]};
+    attachDrawing(c, m=>broadcastAnn(Object.assign({},m,{type:'ann:line'})), annUndoBox);
   }
   annBtn.addEventListener('click',()=>{
     annOn=!annOn; updateAnnBtn();
@@ -769,31 +944,100 @@ function runPresenter(){
     broadcastAnn({type:'ann:clear'});
   });
 
-  /* ── Quadro em branco (texto + caixas pra mapa mental) ── */
+  /* ── Mapa mental (texto + caixas + conexões + desenho livre, com zoom/pan e vários mapas salvos) ── */
   const boardView=document.getElementById('boardView');
   const boardCanvas=document.getElementById('boardCanvas');
+  const boardCanvasWrap=document.getElementById('boardCanvasWrap');
+  const boardWorld=document.getElementById('boardWorld');
   const boardElsLayer=document.getElementById('boardElsLayer');
-  let boardEls=[], boardIdSeq=1, boardOpen=false;
+  const boardConnsSvg=document.getElementById('boardConnsSvg');
+  const elPropsBar=document.getElementById('elPropsBar');
+  let boardEls=[], boardConns=[], boardIdSeq=1, boardOpen=false;
+  let boardUndoBox={stack:[]};
+  let selectedEl=null, curEditTarget='text', boardClipboard=null, connectFrom=null;
+  let boardZoom=1, boardPanX=0, boardPanY=0;
+  let boards=[], activeBoardIdx=0;
 
   function broadcastBoard(msg){ broadcastAnn(msg); }
 
-  function boardSync(){ broadcastBoard({type:'board:sync', elements:boardEls.map(({dom,...rest})=>rest)}); }
+  function loadBoardsFromStorage(){
+    try{
+      const raw=localStorage.getItem(LIVE_ID+'_boards');
+      if(raw) boards=JSON.parse(raw);
+    }catch(e){ boards=[]; }
+    if(!boards || !boards.length) boards=[{id:1,name:'Mapa 1',els:[],conns:[],drawing:null}];
+    activeBoardIdx=0;
+  }
+  function saveBoardsToStorage(){
+    const cur=boards[activeBoardIdx];
+    if(cur){ cur.els=boardEls.map(({dom,...rest})=>rest); cur.conns=boardConns; }
+    try{ localStorage.setItem(LIVE_ID+'_boards', JSON.stringify(boards)); }catch(e){}
+  }
+  function renderBoardMapSelect(){
+    const sel=document.getElementById('boardMapSelect');
+    sel.innerHTML=boards.map((b,i)=>`<option value="${i}">${b.name}</option>`).join('');
+    sel.value=activeBoardIdx;
+  }
+  function elCenter(data){
+    if(data.type==='box') return {x:(data.x+data.w/2)*1280, y:(data.y+data.h/2)*720};
+    return {x:(data.x+.05)*1280, y:(data.y+.02)*720};
+  }
+  function renderConns(){
+    boardConnsSvg.innerHTML=boardConns.map(cn=>{
+      const a=boardEls.find(x=>x.id===cn.a), b=boardEls.find(x=>x.id===cn.b);
+      if(!a||!b) return '';
+      const pa=elCenter(a), pb=elCenter(b);
+      return `<line x1="${pa.x}" y1="${pa.y}" x2="${pb.x}" y2="${pb.y}"/>`;
+    }).join('');
+  }
+  function clearSelection(){
+    if(selectedEl && selectedEl.dom) selectedEl.dom.classList.remove('selected');
+    selectedEl=null;
+    elPropsBar.style.display='none';
+  }
+  function selectElement(data){
+    clearSelection();
+    selectedEl=data;
+    data.dom.classList.add('selected');
+    elPropsBar.style.display='flex';
+    document.querySelectorAll('.eptarget-btn').forEach(b=>{
+      const t=b.getAttribute('data-target');
+      b.style.display=((t==='fill'||t==='border') && data.type!=='box') ? 'none' : '';
+    });
+  }
+  document.querySelectorAll('.eptarget-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    curEditTarget=btn.getAttribute('data-target');
+    document.querySelectorAll('.eptarget-btn').forEach(b=>b.classList.toggle('active',b===btn));
+  }));
+  document.getElementById('deselectElBtn').addEventListener('click',clearSelection);
+  function applyColorToSelected(c){
+    if(!selectedEl) return;
+    if(curEditTarget==='text'){ selectedEl.color=c; selectedEl.dom.style.color=c; }
+    else if(curEditTarget==='border'){ selectedEl.borderColor=c; selectedEl.dom.style.borderColor=c; }
+    else if(curEditTarget==='fill'){ selectedEl.fillColor=c; selectedEl.dom.style.background=c; }
+    boardSync();
+  }
 
   function makeBoardEl(data){
     const d=document.createElement('div');
     d.className='board-el '+data.type;
     d.style.left=(data.x*1280)+'px'; d.style.top=(data.y*720)+'px';
-    if(data.type==='box'){ d.style.width=(data.w*1280)+'px'; d.style.height=(data.h*720)+'px'; }
+    if(data.type==='box'){
+      d.style.width=(data.w*1280)+'px'; d.style.height=(data.h*720)+'px';
+      d.style.borderColor=data.borderColor||'#111111';
+      d.style.background=data.fillColor||'rgba(255,255,255,.7)';
+    }
     d.style.color=data.color;
     d.contentEditable='true';
     d.textContent=data.text;
     d.spellcheck=false;
 
-    let dragging=false, dx=0, dy=0;
+    let dragging=false, dx=0, dy=0, downX=0, downY=0, moved=false;
     d.addEventListener('mousedown',e=>{
       if(document.activeElement===d) return; // já editando texto — não arrasta
-      if(e.target.classList.contains('rsz')||e.target.classList.contains('del')) return;
-      dragging=true;
+      if(e.target.classList.contains('rsz')||e.target.classList.contains('del')||e.target.classList.contains('conn-handle')) return;
+      if(curTool==='connect') return;
+      dragging=true; moved=false; downX=e.clientX; downY=e.clientY;
       const wrapR=boardElsLayer.getBoundingClientRect();
       dx=e.clientX-(wrapR.left+data.x*wrapR.width);
       dy=e.clientY-(wrapR.top+data.y*wrapR.height);
@@ -801,19 +1045,45 @@ function runPresenter(){
     });
     window.addEventListener('mousemove',e=>{
       if(!dragging) return;
+      if(Math.abs(e.clientX-downX)>3||Math.abs(e.clientY-downY)>3) moved=true;
       const wrapR=boardElsLayer.getBoundingClientRect();
       data.x=Math.max(0,Math.min(1,(e.clientX-dx-wrapR.left)/wrapR.width));
       data.y=Math.max(0,Math.min(1,(e.clientY-dy-wrapR.top)/wrapR.height));
       d.style.left=(data.x*1280)+'px'; d.style.top=(data.y*720)+'px';
+      renderConns();
     });
-    window.addEventListener('mouseup',()=>{ if(dragging){ dragging=false; boardSync(); } });
+    window.addEventListener('mouseup',()=>{
+      if(!dragging) return;
+      dragging=false;
+      if(moved){ boardSync(); renderConns(); }
+      else if(curTool!=='connect'){ selectElement(data); }
+    });
+
+    d.addEventListener('click',e=>{
+      if(curTool!=='connect') return;
+      e.stopPropagation();
+      if(!connectFrom){ connectFrom=data.id; d.classList.add('connect-src'); }
+      else if(connectFrom!==data.id){
+        boardConns.push({a:connectFrom,b:data.id});
+        document.querySelectorAll('.board-el.connect-src').forEach(x=>x.classList.remove('connect-src'));
+        connectFrom=null;
+        renderConns(); boardSync();
+      } else { d.classList.remove('connect-src'); connectFrom=null; }
+    });
 
     d.addEventListener('dblclick',()=>{ d.focus(); });
     d.addEventListener('blur',()=>{ data.text=d.textContent; boardSync(); });
     d.addEventListener('keydown',e=>{ if(e.key==='Enter'&&data.type==='text'){ e.preventDefault(); d.blur(); } });
 
     const del=document.createElement('div'); del.className='del'; del.textContent='×';
-    del.addEventListener('click',e=>{ e.stopPropagation(); boardEls=boardEls.filter(x=>x.id!==data.id); d.remove(); boardSync(); });
+    del.addEventListener('click',e=>{
+      e.stopPropagation();
+      boardEls=boardEls.filter(x=>x.id!==data.id);
+      boardConns=boardConns.filter(cn=>cn.a!==data.id&&cn.b!==data.id);
+      d.remove();
+      if(selectedEl===data) clearSelection();
+      renderConns(); boardSync();
+    });
     d.appendChild(del);
 
     if(data.type==='box'){
@@ -826,17 +1096,26 @@ function runPresenter(){
         data.w=Math.max(.05,(e.clientX-wrapR.left)/wrapR.width-data.x);
         data.h=Math.max(.05,(e.clientY-wrapR.top)/wrapR.height-data.y);
         d.style.width=(data.w*1280)+'px'; d.style.height=(data.h*720)+'px';
+        renderConns();
       });
-      window.addEventListener('mouseup',()=>{ if(resizing){ resizing=false; boardSync(); } });
+      window.addEventListener('mouseup',()=>{ if(resizing){ resizing=false; boardSync(); renderConns(); } });
       d.appendChild(rsz);
     }
+    const connHandle=document.createElement('div'); connHandle.className='conn-handle';
+    connHandle.addEventListener('mousedown',e=>{
+      e.stopPropagation(); e.preventDefault();
+      connectFrom=data.id; d.classList.add('connect-src'); selectTool('connect');
+    });
+    connHandle.addEventListener('click',e=>e.stopPropagation());
+    d.appendChild(connHandle);
+
     data.dom=d;
     return d;
   }
 
   function addBoardEl(type){
     const n=boardEls.length;
-    const data={id:boardIdSeq++, type, x:.35+((n%4)*.06), y:.3+((n%4)*.08), w:.22, h:.14, text:type==='box'?'Caixa':'Texto', color:curColor==='#ffffff'?'#111111':curColor};
+    const data={id:boardIdSeq++, type, x:.35+((n%4)*.06), y:.3+((n%4)*.08), w:.22, h:.14, text:type==='box'?'Caixa':'Texto', color:curColor==='#ffffff'?'#111111':curColor, borderColor:'#111111', fillColor:'rgba(255,255,255,.7)'};
     const dom=makeBoardEl(data);
     boardEls.push(data);
     boardElsLayer.appendChild(dom);
@@ -846,23 +1125,131 @@ function runPresenter(){
   document.getElementById('addTextBtn').addEventListener('click',()=>addBoardEl('text'));
   document.getElementById('addBoxBtn').addEventListener('click',()=>addBoardEl('box'));
 
+  function boardSync(){ broadcastBoard({type:'board:sync', elements:boardEls.map(({dom,...rest})=>rest), conns:boardConns}); saveBoardsToStorage(); }
+
+  function loadBoard(i, skipSave){
+    if(!skipSave) saveBoardsToStorage();
+    activeBoardIdx=i;
+    const b=boards[i];
+    boardIdSeq=b.els.reduce((m,e)=>Math.max(m,e.id+1),1);
+    boardConns=b.conns||[];
+    boardElsLayer.innerHTML='';
+    boardEls=b.els.map(data=>{
+      const dd=Object.assign({},data);
+      const dom=makeBoardEl(dd);
+      boardElsLayer.appendChild(dom);
+      return dd;
+    });
+    const ctx=boardCanvas.getContext('2d');
+    ctx.clearRect(0,0,1280,720);
+    if(b.drawing){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0,1280,720); img.src=b.drawing; }
+    boardUndoBox.stack=[];
+    clearSelection();
+    renderBoardMapSelect();
+    renderConns();
+    boardSync();
+  }
+  document.getElementById('boardMapSelect').addEventListener('change',e=>loadBoard(parseInt(e.target.value,10)));
+  document.getElementById('boardNewMapBtn').addEventListener('click',()=>{
+    saveBoardsToStorage();
+    boards.push({id:Date.now(), name:'Mapa '+(boards.length+1), els:[], conns:[], drawing:null});
+    loadBoard(boards.length-1);
+  });
+  document.getElementById('boardRenameMapBtn').addEventListener('click',()=>{
+    const name=prompt('Nome do mapa:', boards[activeBoardIdx].name);
+    if(name){ boards[activeBoardIdx].name=name; renderBoardMapSelect(); saveBoardsToStorage(); }
+  });
+  document.getElementById('boardDeleteMapBtn').addEventListener('click',()=>{
+    if(boards.length<=1){ alert('Precisa ter pelo menos um mapa.'); return; }
+    if(!confirm('Excluir o mapa "'+boards[activeBoardIdx].name+'"? Essa ação não pode ser desfeita.')) return;
+    boards.splice(activeBoardIdx,1);
+    loadBoard(0);
+  });
+
   document.getElementById('boardClearBtn').addEventListener('click',()=>{
-    boardEls=[]; boardElsLayer.innerHTML='';
+    if(!confirm('Limpar todo o conteúdo deste mapa?')) return;
+    boardEls=[]; boardConns=[]; boardElsLayer.innerHTML=''; boardConnsSvg.innerHTML='';
     boardCanvas.getContext('2d').clearRect(0,0,1280,720);
+    boardUndoBox.stack=[];
+    clearSelection();
     boardSync(); broadcastBoard({type:'board:clear'});
   });
 
   let boardDrawAttached=false;
   document.getElementById('openBoardBtn').addEventListener('click',()=>{
     boardOpen=true; boardView.style.display='flex';
-    if(!boardDrawAttached){ attachDrawing(boardCanvas, m=>broadcastBoard(Object.assign({},m,{type:'board:line'})), 'board:line'); boardDrawAttached=true; }
+    if(!boardDrawAttached){
+      attachDrawing(boardCanvas, m=>broadcastBoard(Object.assign({},m,{type:'board:line'})), boardUndoBox, ()=>{
+        const cur=boards[activeBoardIdx]; if(cur) cur.drawing=boardCanvas.toDataURL(); saveBoardsToStorage();
+      });
+      boardDrawAttached=true;
+    }
+    renderBoardMapSelect();
     broadcastBoard({type:'board:on'});
     boardSync();
   });
   document.getElementById('closeBoardBtn').addEventListener('click',()=>{
     boardOpen=false; boardView.style.display='none';
+    clearSelection();
+    const cur=boards[activeBoardIdx]; if(cur) cur.drawing=boardCanvas.toDataURL();
+    saveBoardsToStorage();
     broadcastBoard({type:'board:off'});
   });
+
+  /* zoom e pan do mapa mental */
+  function applyBoardTransform(){
+    boardWorld.style.transform=`translate(${boardPanX}px, ${boardPanY}px) scale(${boardZoom})`;
+    document.getElementById('zoomVal').textContent=Math.round(boardZoom*100)+'%';
+  }
+  function setZoom(z, cx, cy){
+    z=Math.max(.3,Math.min(2.5,z));
+    if(cx!==undefined){
+      boardPanX=cx-(cx-boardPanX)*(z/boardZoom);
+      boardPanY=cy-(cy-boardPanY)*(z/boardZoom);
+    }
+    boardZoom=z;
+    applyBoardTransform();
+  }
+  document.getElementById('zoomInBtn').addEventListener('click',()=>setZoom(boardZoom+.1));
+  document.getElementById('zoomOutBtn').addEventListener('click',()=>setZoom(boardZoom-.1));
+  document.getElementById('zoomResetBtn').addEventListener('click',()=>{ boardZoom=1; boardPanX=0; boardPanY=0; applyBoardTransform(); });
+  boardCanvasWrap.addEventListener('wheel',e=>{
+    if(e.ctrlKey) return; // ctrl+roda = tamanho da borracha
+    e.preventDefault();
+    const r=boardCanvasWrap.getBoundingClientRect();
+    setZoom(boardZoom+(e.deltaY<0?.08:-.08), e.clientX-r.left, e.clientY-r.top);
+  },{passive:false});
+  let panning=false, panStartX=0, panStartY=0, panOrigX=0, panOrigY=0;
+  boardCanvasWrap.addEventListener('mousedown',e=>{
+    if(curTool!=='pan') return;
+    panning=true; panStartX=e.clientX; panStartY=e.clientY; panOrigX=boardPanX; panOrigY=boardPanY;
+    boardCanvasWrap.classList.add('panning');
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!panning) return;
+    boardPanX=panOrigX+(e.clientX-panStartX); boardPanY=panOrigY+(e.clientY-panStartY);
+    applyBoardTransform();
+  });
+  window.addEventListener('mouseup',()=>{ if(panning){ panning=false; boardCanvasWrap.classList.remove('panning'); } });
+  boardCanvasWrap.addEventListener('click',e=>{
+    if(e.target===boardCanvas||e.target===boardCanvasWrap||e.target.id==='boardDots'){
+      clearSelection();
+      if(connectFrom){ document.querySelectorAll('.board-el.connect-src').forEach(x=>x.classList.remove('connect-src')); connectFrom=null; }
+    }
+  });
+
+  /* exportar mapa como PDF (via impressão do navegador — "Salvar como PDF") */
+  document.getElementById('exportPdfBtn').addEventListener('click',()=>{
+    const pz=boardZoom, px=boardPanX, py=boardPanY;
+    boardZoom=1; boardPanX=0; boardPanY=0; applyBoardTransform();
+    setTimeout(()=>{
+      window.print();
+      boardZoom=pz; boardPanX=px; boardPanY=py; applyBoardTransform();
+    },80);
+  });
+
+  loadBoardsFromStorage();
+  loadBoard(0, true);
 
   const dot=document.getElementById('connDot'), label=document.getElementById('connLabel');
   setInterval(()=>{
