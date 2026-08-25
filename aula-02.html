@@ -6,7 +6,7 @@
 <title>Live Semanal · Aula 02</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#fafaf8; --text:#111111;
@@ -18,45 +18,57 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;background:#e6e5e2;font-family:'Inter',system-ui,sans-serif;overflow:hidden;}
 
-/* ══════════ SLIDE CARD ══════════ */
 .slide{width:1280px;height:720px;background:var(--bg);border-radius:20px;overflow:hidden;color:var(--text);position:relative;flex-shrink:0;}
-.slide::after{content:'ARRIVE IN DIGITAL · LIVE SEMANAL';position:absolute;bottom:20px;right:26px;font-size:.58rem;font-weight:700;letter-spacing:.16em;color:rgba(17,17,17,.18);pointer-events:none;}
+.slide::after{content:'ARRIVE IN DIGITAL · LIVE SEMANAL';position:absolute;bottom:20px;right:26px;font-size:.58rem;font-weight:700;letter-spacing:.16em;color:rgba(17,17,17,.18);pointer-events:none;z-index:2;}
 .pad{position:absolute;inset:0;padding:6.5% 7.5%;display:flex;flex-direction:column;}
 .gradtext{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
 .eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
 .rule{width:44px;height:3px;background:var(--grad);border-radius:2px;}
 
-.s-wait{background:#000 url('assets/hero-bg.jpg') center/cover no-repeat;}
+/* ── WAIT ── */
+.s-wait{background:#0a0a0a;}
 .s-wait::after{color:rgba(255,255,255,.18);}
-.s-wait .pad{justify-content:flex-end;}
-.wait-photo{position:absolute;right:-2%;bottom:0;height:104%;object-fit:contain;object-position:bottom right;pointer-events:none;}
-.wait-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(0,0,0,.92) 30%,rgba(0,0,0,.55) 54%,rgba(0,0,0,.08) 78%);}
-.wait-eye{position:relative;display:flex;align-items:center;gap:10px;font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:16px;}
-.wait-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);animation:waitpulse 1.4s ease-in-out infinite;}
+.s-wait .pad{padding:0;}
+.wait-photo-col{position:absolute;right:6%;bottom:0;width:40%;height:100%;overflow:hidden;}
+.wait-photo-col img{position:absolute;right:-10%;bottom:0;height:98%;width:auto;object-fit:contain;}
+.wait-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(10,10,10,.9) 34%,rgba(10,10,10,.55) 54%,rgba(10,10,10,.05) 74%);}
+.wait-content{position:relative;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 7.5%;max-width:62%;}
+.wait-pill{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:8px 16px;border-radius:100px;margin-bottom:auto;margin-top:8%;}
+.wait-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:waitpulse 1.4s ease-in-out infinite;}
 @keyframes waitpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.75);}}
-.wait-title{position:relative;font-family:'Inter',sans-serif;font-size:3.6rem;font-weight:800;letter-spacing:-.04em;line-height:1.12;color:#fff;max-width:70%;}
-.wait-sub{position:relative;margin-top:18px;font-size:1.05rem;color:rgba(255,255,255,.55);max-width:56%;line-height:1.6;}
+.wait-title{font-size:3.4rem;font-weight:900;letter-spacing:-.045em;line-height:1.1;color:#fff;margin-bottom:auto;padding-bottom:10%;}
+
+/* ── HERO (foto grande de um lado, texto do outro — usado pra Lucas Felt/prêmio e Quem somos nós) ── */
+.s-hero{background:#0a0a0a;}
+.s-hero::after{color:rgba(255,255,255,.15);}
+.s-hero .pad{flex-direction:row;padding:0;}
+.hero-photo-col{position:relative;flex:0 0 44%;height:100%;overflow:hidden;background:#000;}
+.hero-photo-col img{width:100%;height:100%;}
+.hero-text-col{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding:0 5% 0 6%;}
+.hero-text-col .eyebrow{color:var(--orange);margin-bottom:16px;}
+.hero-heading{font-size:2.5rem;font-weight:800;letter-spacing:-.035em;line-height:1.18;color:#fff;}
+.hero-body{margin-top:20px;font-size:1.02rem;line-height:1.68;color:rgba(255,255,255,.62);}
+.hero-body strong{color:#fff;}
+.hero-body p+p{margin-top:12px;}
 
 .s-cover{background:radial-gradient(ellipse at 96% 96%,rgba(124,58,237,.055) 0%,transparent 45%),radial-gradient(ellipse at 4% 4%,rgba(249,115,22,.04) 0%,transparent 38%),var(--bg);}
 .s-cover .pad{justify-content:flex-end;}
 .s-cover .eyebrow{margin-bottom:auto;}
 .s-cover .rule{margin-bottom:20px;}
 .s-cover h1{font-size:3.6rem;font-weight:800;letter-spacing:-.045em;line-height:1.1;}
-.s-cover.has-bg{background:#0a0a0a;}
-.s-cover.has-bg h1{color:#fff;max-width:62%;}
-.s-cover.has-bg .eyebrow{color:rgba(255,255,255,.55);}
-.s-cover.has-bg::after{color:rgba(255,255,255,.15);}
-.cover-bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:78% 22%;}
-.cover-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(8,8,8,.97) 32%,rgba(8,8,8,.62) 58%,rgba(8,8,8,.1) 92%);}
 
-/* ── PHOTO (foto real cheia, com legenda) ── */
-.s-photo{background:#0a0a0a;}
-.s-photo .pad{justify-content:center;align-items:center;text-align:center;}
-.s-photo .eyebrow{color:rgba(255,255,255,.5);margin-bottom:20px;}
-.s-photo::after{color:rgba(255,255,255,.15);}
-.s-photo img{max-height:74%;max-width:62%;object-fit:contain;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.55);}
-.s-photo .photo-caption{margin-top:22px;color:#fff;font-size:1.15rem;font-weight:800;letter-spacing:-.01em;}
-.s-photo .photo-sub{margin-top:8px;color:rgba(255,255,255,.55);font-size:.92rem;}
+/* ── PROFILE: foto completa + análise ── */
+.s-profile{background:#0d0d0d;}
+.s-profile .pad{flex-direction:row;align-items:center;gap:50px;}
+.s-profile .eyebrow{color:rgba(255,255,255,.4);}
+.s-profile::after{color:rgba(255,255,255,.15);}
+.tc-photo{flex:0 0 42%;height:82%;display:flex;align-items:center;justify-content:center;}
+.tc-photo img{max-width:100%;max-height:100%;object-fit:contain;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.5);}
+.tc-text{flex:1;min-width:0;}
+.tc-heading{margin-top:14px;font-size:1.9rem;font-weight:800;letter-spacing:-.03em;line-height:1.2;color:#fff;}
+.tc-body{margin-top:18px;font-size:1.02rem;line-height:1.65;color:rgba(255,255,255,.65);}
+.tc-body strong{color:#fff;}
+.tc-body p+p{margin-top:12px;}
 
 .s-section{background:#111111;}
 .s-section .pad{justify-content:center;}
@@ -77,8 +89,8 @@ html,body{height:100%;background:#e6e5e2;font-family:'Inter',system-ui,sans-seri
 
 .s-key .pad{justify-content:center;}
 .key-eye{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;}
-.key-q{font-size:2.9rem;font-weight:800;letter-spacing:-.04em;line-height:1.15;max-width:92%;}
-.key-sub{margin-top:26px;font-size:1.05rem;color:var(--muted);max-width:78%;line-height:1.65;font-weight:400;}
+.key-q{font-size:2.7rem;font-weight:800;letter-spacing:-.04em;line-height:1.18;max-width:92%;}
+.key-sub{margin-top:26px;font-size:1.05rem;color:var(--muted);max-width:80%;line-height:1.65;font-weight:400;}
 
 .s-compare .pad{justify-content:center;}
 .s-compare h2{font-size:1.9rem;font-weight:800;letter-spacing:-.035em;margin-bottom:24px;max-width:94%;line-height:1.25;}
@@ -108,45 +120,12 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 .next-label{margin-top:42px;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;}
 .next-label::before{content:'→';color:var(--orange);font-size:.9rem;letter-spacing:0;}
 
-.s-stat{background:radial-gradient(ellipse at 96% 10%,rgba(124,58,237,.06) 0%,transparent 45%),var(--bg);}
-.s-stat .pad{justify-content:center;align-items:flex-start;}
-.stat-eye{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;}
-.stat-number{font-size:6.2rem;font-weight:900;letter-spacing:-.04em;line-height:1;}
-.stat-label{margin-top:10px;font-size:1.3rem;font-weight:700;letter-spacing:-.02em;}
-.stat-sub{margin-top:20px;font-size:1rem;color:var(--muted);max-width:74%;line-height:1.6;}
-
-/* ── EXAMPLE (sugestão de post — nunca é print de anúncio real) ── */
-.s-example{background:radial-gradient(ellipse at 4% 96%,rgba(249,115,22,.05) 0%,transparent 45%),var(--bg);}
-.s-example .pad{justify-content:center;}
-.ex-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
-.ex-tag{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:var(--grad);color:#fff;padding:4px 12px;border-radius:100px;}
-.ex-eyebrow .eyebrow{margin:0;}
-.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 36px;max-width:88%;}
-.ex-hook{font-size:1.5rem;font-weight:800;letter-spacing:-.025em;line-height:1.3;}
-.ex-body{margin-top:16px;font-size:1.02rem;color:var(--text);line-height:1.65;font-weight:400;}
-.ex-cta{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:.85rem;font-weight:700;color:var(--orange);}
-.ex-cta::before{content:'→';}
-.ex-note{margin-top:20px;font-size:.86rem;color:var(--muted);font-style:italic;}
-
-/* ── PROFILE (print do Instagram) ── */
-/* ── PROFILE e AWARD: mesmo layout — foto completa (contain) de um lado, análise do outro ── */
-.s-profile, .s-award{background:#0d0d0d;}
-.s-profile .pad, .s-award .pad{flex-direction:row;align-items:center;gap:50px;}
-.s-profile .eyebrow, .s-award .eyebrow{color:rgba(255,255,255,.4);}
-.s-profile::after, .s-award::after{color:rgba(255,255,255,.15);}
-.tc-photo{flex:0 0 44%;height:82%;display:flex;align-items:center;justify-content:center;}
-.tc-photo img{max-width:100%;max-height:100%;object-fit:contain;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.5);}
-.tc-text{flex:1;min-width:0;}
-.tc-heading{margin-top:14px;font-size:1.9rem;font-weight:800;letter-spacing:-.03em;line-height:1.2;color:#fff;}
-.tc-body{margin-top:18px;font-size:1.02rem;line-height:1.65;color:rgba(255,255,255,.65);}
-.tc-body strong{color:#fff;}
-.tc-body p+p{margin-top:12px;}
-
 /* ══════════ PALCO (público) ══════════ */
 #stage-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
 #stage{position:relative;}
 #stage .slide{position:absolute;top:0;left:0;box-shadow:0 32px 96px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.1);opacity:0;transform:scale(.98);transition:opacity .32s ease,transform .32s ease;pointer-events:none;}
 #stage .slide.active{opacity:1;transform:scale(1);pointer-events:auto;}
+#audAnnCanvas{position:absolute;top:0;left:0;width:1280px;height:720px;z-index:10;pointer-events:none;display:none;}
 #fsHint{position:fixed;bottom:14px;right:18px;font-size:.68rem;color:rgba(0,0,0,.28);letter-spacing:.03em;z-index:5;}
 
 /* ══════════ LAUNCHER ══════════ */
@@ -165,20 +144,21 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 
 /* ══════════ PRESENTER ══════════ */
 #presenter{position:fixed;inset:0;background:#161616;color:#fff;display:flex;flex-direction:column;font-family:'Inter',sans-serif;}
-#presenter header{display:flex;align-items:center;gap:20px;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+#presenter header{display:flex;align-items:center;gap:14px;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;flex-wrap:wrap;}
 #presenter .p-title{font-weight:800;font-size:.95rem;letter-spacing:-.01em;}
 #presenter .p-status{display:flex;align-items:center;gap:8px;font-size:.78rem;color:rgba(255,255,255,.6);}
 .dot{width:8px;height:8px;border-radius:50%;background:#e11d48;flex-shrink:0;}
 .dot.on{background:#22c55e;}
 #presenter button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;border-radius:8px;padding:7px 14px;font-size:.78rem;font-weight:600;font-family:inherit;}
 #presenter button:hover{background:rgba(255,255,255,.12);}
+#presenter button.active{background:var(--orange);border-color:var(--orange);}
 #presenter .p-timer{font-variant-numeric:tabular-nums;font-size:.85rem;color:rgba(255,255,255,.55);cursor:pointer;margin-left:auto;}
 #presenter .p-counter{font-variant-numeric:tabular-nums;font-size:.85rem;font-weight:700;background:rgba(255,255,255,.06);padding:5px 12px;border-radius:100px;}
 #presenter .p-block{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(249,115,22,.15);color:#f97316;padding:5px 12px;border-radius:100px;}
 #presenter main{flex:1;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:auto 1fr;gap:16px;padding:18px 22px;overflow:hidden;}
 .pv-col{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0;overflow:hidden;}
 .pv-label{font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);}
-.pv-box{border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.4);background:#000;flex-shrink:0;max-width:100%;}
+.pv-box{border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.4);background:#000;flex-shrink:0;max-width:100%;position:relative;}
 .pv-box .slide{position:static;transform-origin:top left;}
 #nowWrap{grid-column:1;grid-row:1;}
 #nextWrap{grid-column:2;grid-row:1;}
@@ -186,10 +166,13 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #notesList{list-style:none;display:flex;flex-direction:column;gap:10px;overflow-y:auto;height:100%;padding-right:6px;}
 #notesList li{font-size:1rem;line-height:1.5;color:rgba(255,255,255,.88);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;}
 #notesList li b{color:#fff;}
-#presenter footer{display:flex;align-items:center;gap:14px;padding:14px 22px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+#presenter footer{display:flex;align-items:center;gap:10px;padding:14px 22px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;flex-wrap:wrap;}
 #presenter footer .hint{margin-left:auto;font-size:.74rem;color:rgba(255,255,255,.35);}
 #jumpBox{display:flex;align-items:center;gap:6px;}
 #jumpInput{width:48px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;text-align:center;padding:6px 4px;font-family:inherit;font-size:.78rem;}
+#pAnnCanvas{position:absolute;top:0;left:0;width:100%;height:100%;cursor:crosshair;display:none;}
+.ann-swatch{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.3);cursor:pointer;padding:0;}
+.ann-swatch.sel{border-color:#fff;}
 </style>
 </head>
 <body>
@@ -200,29 +183,30 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
   <div class="opts">
     <div class="lbtn primary" onclick="location.href='?view=presenter'">
       <div class="lt">🎤 Modo apresentador</div>
-      <div class="ld">Pra você. Mostra o slide atual, o próximo, e o que falar em cada um — dá pra conduzir a aula inteira só por essa tela.</div>
+      <div class="ld">Pra você. Mostra o slide atual, o próximo, o que falar, e tem a ferramenta de anotação.</div>
     </div>
     <div class="lbtn" onclick="location.href='?view=audience'">
       <div class="lt">🖥️ Modo público</div>
       <div class="ld">Pra compartilhar no Google Meet. Mostra só o slide atual, sem controles.</div>
     </div>
   </div>
-  <div class="warn">⚠️ No Meet, use <b>"Apresentar agora → Uma guia do Chrome"</b> — NÃO "Uma janela". Compartilhar janela trava/não atualiza quando ela sai de foco. Guia do Chrome continua atualizando mesmo em segundo plano. Detalhes em <code>como-usar-apresentacao.md</code>.</div>
+  <div class="warn">⚠️ No Meet, use <b>"Apresentar agora → Uma guia do Chrome"</b> — NÃO "Uma janela".</div>
 </div>
 
 <div id="stage-wrap" style="display:none">
   <div id="stage"></div>
+  <canvas id="audAnnCanvas" width="1280" height="720"></canvas>
 </div>
 <div id="fsHint" style="display:none">F — tela cheia</div>
 
 <div id="presenter" style="display:none">
   <header>
     <div class="p-title">Live Semanal · Aula 02</div>
-    <div class="p-block" id="pBlock">Bloco 1</div>
+    <div class="p-block" id="pBlock">1</div>
     <div class="p-status"><span class="dot" id="connDot"></span><span id="connLabel">Público desconectado</span></div>
     <button id="openAudienceBtn">Abrir tela do público ↗</button>
     <div class="p-timer" id="timer" title="Clique pra zerar">00:00</div>
-    <div class="p-counter" id="pCounter">1 / 22</div>
+    <div class="p-counter" id="pCounter">1 / 1</div>
   </header>
   <main>
     <div class="pv-col" id="nowWrap">
@@ -245,130 +229,180 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
       <input id="jumpInput" type="number" min="1" placeholder="#">
       <button id="jumpBtn">Ir</button>
     </div>
-    <span class="hint">← → ou espaço navegam · clique no número pra pular</span>
+    <button id="annToggleBtn">✏️ Quadro</button>
+    <button class="ann-swatch sel" style="background:#fff" data-c="#ffffff" title="Branco"></button>
+    <button class="ann-swatch" style="background:#f97316" data-c="#f97316" title="Laranja"></button>
+    <button class="ann-swatch" style="background:#22c55e" data-c="#22c55e" title="Verde"></button>
+    <button id="annClearBtn">🧹 Limpar</button>
+    <span class="hint">← → navegam · Quadro desenha por cima do slide atual</span>
   </footer>
 </div>
 
 <script>
-/* Namespace único pra essa aula — evita colisão de localStorage se aula-01 e aula-02 ficarem abertas no mesmo navegador */
 const LIVE_ID = 'aula02_lucasfelt';
 const K_IDX = LIVE_ID+'_idx', K_ALIVE = LIVE_ID+'_alive', WIN_NAME = LIVE_ID+'_audience_win';
 
 /* ═══════════════════════ DADOS DOS SLIDES ═══════════════════════ */
 const SLIDES = [
-{type:'wait', block:'', eyebrow:'AULA AO VIVO E GRATUITA', img:'assets/hero-experts.png',
- title:'Já, já a gente começa.',
- sub:'Deixa o áudio ligado — a análise da estratégia do Lucas Felt começa em instantes.',
- notes:['Slide de espera — deixar aberto enquanto as pessoas entram, antes de começar a falar.','Mesmo visual da LP da Live Semanal — foto do Erik e Miguel, fundo real — pra manter consistência de marca.']},
+{type:'wait', block:'', eyebrow:'', img:'assets/hero-experts.png',
+ pill:'Começaremos em breve', title:'A Análise Estratégica<br>do Lucas Felt',
+ notes:['Slide de espera — deixar aberto enquanto as pessoas entram.','Tema grande e centrado, aviso de horário discreto no topo.']},
 
-{type:'cover', block:'1 — Entrada', eyebrow:'ANÁLISE AO VIVO',
- title:'Um corretor roda duas frentes de marketing ao mesmo tempo. <span class="gradtext">E é por isso que ele vende tanto.</span>',
- notes:['"Um dos corretores mais respeitados do Brasil roda duas frentes de marketing ao mesmo tempo. E é exatamente por isso que ele vende tanto."','Não dizer o nome ainda — segurar a frase antes de revelar no próximo slide.']},
-
-{type:'profile', block:'1 — Entrada', eyebrow:'ISSO É O LUCAS FELT',
- img:'assets/print-perfil-lucas-felt.png', imgAlt:'Print do perfil @feltnegociosimobiliarios', avatarFallback:'LF',
- heading:'465 mil seguidores. 3.007 posts. Isso não é sorte.',
- body:'<p>Repara na bio: <strong>"Corretor das Estrelas"</strong> — não "corretor de imóveis". Isso é um personagem, uma identidade maior que a transação.</p><p><strong>Empresário. Mentor.</strong> Ele não se apresenta como alguém que vende imóvel pra viver — se apresenta como alguém que construiu um negócio e ensina outros. Isso reduz a desconfiança de "esse cara só quer minha comissão", antes de qualquer anúncio existir.</p>',
- notes:['"Isso é o Lucas Felt."','Boas-vindas curtas aqui: "Eu sou o Miguel, sócio-fundador da Arrive In Digital — vivi essa mesma lógica estruturando marketing de uma imobiliária de +R$200 milhões de VGV/ano." (2 frases, não é o foco.)','Print real — já embutido, não precisa mais de placeholder.']},
-
-{type:'award', block:'1 — Entrada', eyebrow:'RECONHECIMENTO EXTERNO, NÃO AUTODECLARADO',
- img:'assets/premio-xeque-mate-lucas-felt.jpg', imgAlt:'Lucas Felt recebendo o prêmio Xeque-Mate', avatarFallback:'🏆',
+{type:'hero', block:'1 — Quem é o Lucas Felt', eyebrow:'AUTORIDADE VERIFICADA',
+ img:'assets/premio-xeque-mate-lucas-felt.jpg', fit:'cover',
  heading:'Corretor do Ano — 2024 e 2025',
- body:'<p>O <strong>Prêmio Xeque-Mate</strong> elege os melhores do mercado imobiliário do Brasil. Lucas Felt venceu a categoria Corretor do Ano duas vezes seguidas.</p><p>Repara na diferença pro que vimos até aqui: a bio é <strong>autodeclarada</strong> — ele escreve o que quer sobre si mesmo. O prêmio não. É o mercado, de fora, reconhecendo ele como referência.</p>',
- notes:['A diferença desse dado pros anteriores: reconhecimento vindo de fora, não da própria bio.','Isso é o que uma estratégia sustentada de Branding + Performance constrói ao longo de anos — não só venda, reputação.']},
+ body:'<p>Lucas Felt é corretor de imóveis em Alphaville, com carteira de clientes de alto padrão. Foi eleito <strong>Corretor do Ano duas vezes seguidas</strong>, pelo Prêmio Xeque-Mate — um dos mais respeitados do setor imobiliário no Brasil.</p><p>Não é só alguém que vende bem. É alguém que o próprio mercado, de fora, elegeu como referência.</p>',
+ notes:['Abrir direto com quem ele é — sem o gancho de "duas frentes de marketing", isso vem bem mais à frente.','"Antes de eu te mostrar qualquer estratégia, eu preciso que você entenda quem é essa pessoa."']},
 
-{type:'key', block:'1 — Entrada', eyebrow:'O QUE VOCÊ VAI SABER NO FINAL',
- q:'Os dois pilares da estratégia dele — e como adaptar pro seu mercado.',
- sub:'Quais são, como ele usa cada um pra construir autoridade e gerar negócio, e como você aplica isso na sua escala.',
- notes:['Essa é a promessa exata da mensagem de CTA do grupo — repetir com essas palavras.']},
+{type:'profile', block:'1 — Quem é o Lucas Felt', eyebrow:'A PRESENÇA DIGITAL',
+ img:'assets/print-perfil-lucas-felt.png', imgAlt:'Print do perfil @feltnegociosimobiliarios',
+ heading:'465 mil seguidores. 3.007 posts.',
+ body:'<p>Essa referência também aparece no tamanho da presença digital dele. Isso é uma operação de anos — não um lançamento de sorte.</p><p>É exatamente essa operação que a gente vai abrir agora, peça por peça.</p>',
+ notes:['"465 mil seguidores, 3.007 posts. Isso é operação de anos."']},
 
-{type:'key', block:'2 — O padrão', eyebrow:'UM FATO SOBRE O MERCADO',
- q:'A maioria dos corretores só roda uma frente: Performance.',
- sub:'Anúncio de imóvel, preço, "chama no direct", pra quem nunca ouviu falar deles. Resultado: lead frio, custo alto, e quem fecha de verdade continua sendo indicação.',
- notes:['Afirmação direta, sem contar história — é fato sobre o padrão do mercado.']},
+{type:'hero', block:'1 — Quem somos nós', eyebrow:'QUEM TE ENSINA HOJE',
+ img:'assets/hero-experts.png', imgBg:'assets/hero-bg.jpg', fit:'contain',
+ heading:'Arrive In Digital',
+ body:'<p>Eu sou o <strong>Miguel</strong>, sócio-fundador da Arrive In Digital. A gente trabalha todo dia com posicionamento, conteúdo e anúncio pra corretor e imobiliária, em todo o Brasil.</p><p>Eu vivi essa mesma lógica na prática, estruturando conteúdo e anúncio de uma imobiliária de mais de <strong>R$200 milhões de VGV</strong> por ano.</p>',
+ notes:['Curto — 2 frases, não é o foco da aula.','Foto e fundo reais da LP da Live Semanal — consistência de marca.']},
 
-{type:'statement', block:'2 — O padrão', label:'A CRENÇA POR TRÁS DISSO', stmt:'"Eu tenho que escolher: ou apareço, ou vendo."',
- items:[{n:'①',text:'Não dá pra investir nas duas coisas ao mesmo tempo'},{n:'②',text:'Uma parece concorrer com a outra'}],
- note:'O Lucas Felt prova, com o tamanho da própria operação, que essa crença está errada.',
- notes:['"Você não precisa escolher entre aparecer e vender. Precisa parar de tratar as duas coisas como concorrentes."']},
-
-{type:'section', block:'3 — Análise', eyebrow:'ANÁLISE REAL — PERFIL, PRÊMIO E ANÚNCIO VERIFICADO', title:'Os dois pilares da estratégia',
- sub:'Branding e Performance — definidos pelo objetivo, não pelo tipo de conteúdo.',
- notes:['Deixar claro: agora é fato, não exemplo hipotético.']},
-
-{type:'compare', block:'3 — Análise', title:'A diferença não está no conteúdo. Está no objetivo do anúncio.',
- cols:[
-   {title:'BRANDING',items:['Anuncia conteúdo pra trazer visita e seguidor','Sem CTA de venda, sem pedir contato','Objetivo: ser conhecido']},
-   {title:'PERFORMANCE',items:['Traz quem já demonstrou interesse pra base','Oferta, preço, CTA direto','Objetivo: vender'],strong:true}],
- note:'O mesmo conteúdo pode servir pros dois — o que muda é o que você pede depois de mostrar ele.',
- notes:['Ponto mais importante da aula: não existe "conteúdo de Branding" x "conteúdo de Performance" como categorias fixas.']},
-
-{type:'key', block:'3 — Análise', eyebrow:'A BASE DOS DOIS PILARES',
- q:'Nenhum dos dois existe sem conteúdo.',
- sub:'Você não anuncia Branding sem ter algo pra mostrar, e não roda Performance sem ter algo pra oferecer. Conteúdo não é um terceiro pilar — é o que alimenta os dois.',
- notes:['Breve — não virar taxonomia de tipos de conteúdo.']},
-
-{type:'list', block:'3 — Análise', title:'Mais duas camadas que sustentam a mesma leitura', sub:'Além da bio e do prêmio, já mostrados no início',
+{type:'list', block:'1 — Dinâmica', title:'O que você vai ver hoje', sub:'O caminho completo, sem pular etapa',
  items:[
-   {n:'1',main:'Sócio @colegiolapa',dtl:'Parceria fora do imobiliário — reforça "empresário" e pode ser ponte pra público de alto padrão (pais de aluno)'},
-   {n:'2',main:'3.007 posts, anos de rotina',dtl:'Mesmo em 6 anos de conta, isso é quase 10 posts por semana sem parar — não é escolha do dia, é operação'}],
- notes:['Retomar rapidamente o perfil e o prêmio que já foram mostrados — aqui é só aprofundar com esses dois ângulos novos.']},
+   {n:'1',main:'Análise a fundo do perfil',dtl:'Como ele estrutura a presença dele'},
+   {n:'2',main:'Os tipos de conteúdo que sustentam isso',dtl:'O que alimenta a estratégia'},
+   {n:'3',main:'Os dois pilares: Branding e Performance',dtl:'O que é cada um, pra que serve, como é feito'},
+   {n:'4',main:'O princípio que conecta tudo',dtl:'Por que isso resultou em Corretor do Ano, duas vezes'},
+   {n:'5',main:'Como adaptar pro seu mercado',dtl:'Plano de ação, no seu orçamento'}],
+ notes:['"Não é teoria solta. É a decodificação completa de uma estratégia que já provou que funciona."']},
 
-{type:'key', block:'3 — Análise', eyebrow:'COMO O BRANDING APARECE NA PRÁTICA',
- q:'Conteúdo anunciado só pra ganhar seguidor — sem pedir venda.',
- sub:'Ex: mostrar o padrão de imóvel que ele trabalha. Ex: mostrar venda pra cliente de peso, construindo autoridade. Em nenhum dos dois o objetivo é fechar aquele imóvel de novo.',
- notes:['O retorno que ele mede aqui não é contato — é seguidor e alcance.']},
+{type:'section', block:'2 — Análise do perfil', eyebrow:'ANÁLISE REAL, ITEM POR ITEM', title:'Cada detalhe é uma decisão',
+ sub:'Não é acaso — vamos abrir o perfil com calma.',
+ notes:[]},
 
-{type:'key', block:'3 — Análise', eyebrow:'COMO A PERFORMANCE APARECE NA PRÁTICA',
- q:'Anúncio real, encontrado na Biblioteca de Anúncios do Meta.',
- sub:'Alphaville, casas a partir de R$2.990.000, entrada a partir de 10%, CTA direto pro WhatsApp. Preço, condição, localização, ação — sem ambiguidade.',
- notes:['Narrar o anúncio real, sem mostrar print.','10% de R$2,99mi é quase R$300 mil de entrada — já filtra pra quem tem capital acumulado. Não é aleatório, é segmentação.']},
+{type:'key', block:'2 — Análise do perfil', eyebrow:'O NOME DE EXIBIÇÃO',
+ q:'"Lucas Felt | Imóveis em Alphaville"',
+ sub:'Não é só o nome dele — é o nicho e a região dentro do próprio nome do perfil. Quem busca "imóveis em Alphaville" tem mais chance de encontrar essa conta.',
+ notes:['Isso não é estético, é busca — SEO de perfil.']},
 
-{type:'insight', block:'3 — Análise', text:'A venda começa antes da oferta — e não para de acontecer depois que a oferta aparece.',
- next:'um método, não só um caso',
- notes:['Junta os 4 fatos: perfil (Branding), anúncio real (Performance), prêmio (reconhecimento externo) e volume de posts (constância). Nenhum existe sozinho.']},
+{type:'key', block:'2 — Análise do perfil', eyebrow:'O SELO DE VERIFICADO',
+ q:'O Meta confirma: esse é o perfil autêntico.',
+ sub:'Remove uma camada inteira de desconfiança antes de qualquer palavra ser lida.',
+ notes:[]},
 
-{type:'key', block:'3 — Análise', eyebrow:'UM MÉTODO, NÃO SÓ UM CASO',
- q:'Bio, prêmio, volume de posts, Biblioteca de Anúncios.',
- sub:'Esse método se repete em qualquer corretor de sucesso que você quiser entender de verdade — 5 minutos de análise real valem mais que copiar por fora.',
- notes:['Fecha o bloco de análise abrindo a possibilidade de replicar esse tipo de análise em outros players — plantar semente pra próximas lives.']},
+{type:'key', block:'2 — Análise do perfil', eyebrow:'A BIO — "CORRETOR DAS ESTRELAS"',
+ q:'Não é "corretor de imóveis". É um apelido — um personagem.',
+ sub:'Ninguém comenta "vi um corretor no Instagram". Comentam "vi o Corretor das Estrelas". Memorabilidade de verdade.',
+ notes:[]},
 
-{type:'list', block:'4 — Aplicação', title:'Como adaptar pro seu mercado', sub:'Aplicação estratégica — não é mais análise do Lucas Felt',
+{type:'key', block:'2 — Análise do perfil', eyebrow:'TRÊS PAPÉIS, NÃO UM',
+ q:'"Corretor de Imóveis | Empresário | Mentor"',
+ sub:'Ele não se apresenta só como quem vende — se apresenta como quem construiu um negócio e quem ensina. Isso reduz a desconfiança de "só quer minha comissão".',
+ notes:['+ o link na bio é uma página própria, não um Linktree genérico — mais um sinal de operação estruturada.']},
+
+{type:'key', block:'2 — Análise do perfil', eyebrow:'3.007 POSTS',
+ q:'Mesmo em 6 anos, isso é quase 10 publicações por semana.',
+ sub:'Sem parar. Não é conteúdo feito quando dá vontade — é rotina de operação.',
+ notes:['Fazer a conta em voz alta ao vivo — reforça que é análise, não afirmação vaga.']},
+
+{type:'section', block:'3 — Tipos de conteúdo', eyebrow:'O QUE SUSTENTA ESSE PERFIL', title:'Quatro categorias de conteúdo',
+ sub:'Leitura baseada no posicionamento dele — não afirmação de ter visto cada post.',
+ notes:['Deixar claro ao vivo: isso é inferência qualificada a partir do perfil, não fato observado post a post.']},
+
+{type:'list', block:'3 — Tipos de conteúdo', title:'As quatro categorias', sub:'Só a primeira tenta vender alguma coisa',
  items:[
-   {n:'1',main:'Identifique o que já pode virar Branding',dtl:'Seu melhor imóvel, uma venda importante, sua trajetória — anuncie sem pedir contato'},
-   {n:'2',main:'Rode as duas frentes desde o primeiro dia',dtl:'Não espere a audiência "crescer o suficiente" pra começar a vender'},
-   {n:'3',main:'Deixe o Branding retroalimentar a Performance',dtl:'Mais reconhecimento, custo por contato menor, conversão maior'}],
- notes:['Aplicação deliberadamente simples — Miguel vai refinar essa parte depois.']},
+   {n:'1',main:'Conteúdo de imóvel',dtl:'Tour, fotos, vídeo do que está na carteira — a base mais óbvia'},
+   {n:'2',main:'Conteúdo de autoridade',dtl:'Opinião de mercado, análise de região — sustenta o rótulo "Mentor"'},
+   {n:'3',main:'Conteúdo de prova social',dtl:'Fechamento, cliente satisfeito — sustenta "atende gente de peso"'},
+   {n:'4',main:'Conteúdo de bastidor',dtl:'Rotina da operação — humaniza, sem tentar vender nada específico'}],
+ notes:['Os tipos 2, 3 e 4 existem pra fazer alguém conhecer, confiar e admirar — antes de qualquer oferta.']},
 
-{type:'list', block:'5 — Oferta', title:'Mentoria Imob In Digital', sub:'Call de 20–30 min essa semana — vagas limitadas',
+{type:'insight', block:'3 — Tipos de conteúdo', text:'Esse conteúdo alimenta dois pilares de anúncio completamente diferentes.',
+ next:'os dois pilares',
+ notes:['Ponte pro próximo bloco — o conteúdo é matéria-prima, os pilares são o que fazem ele virar resultado.']},
+
+{type:'key', block:'4 — Os dois pilares', eyebrow:'O QUE FALTA PRA FECHAR NEGÓCIO',
+ q:'Perfil bonito e conteúdo de autoridade sozinhos não fecham negócio de milhões.',
+ sub:'Em algum momento, tem que ter anúncio — dinheiro colocado pra acelerar resultado.',
+ notes:[]},
+
+{type:'key', block:'4 — Os dois pilares', eyebrow:'O CENTRO DE TUDO',
+ q:'Ele não roda um tipo de anúncio. Roda dois, com função completamente diferente.',
+ sub:'Alimentados exatamente pelos tipos de conteúdo que a gente acabou de mapear. Os nomes: Branding e Performance.',
+ notes:['Agora sim, com contexto construído, apresentar os dois nomes.']},
+
+{type:'section', block:'5 — Pilar 1: Branding', eyebrow:'PILAR 1', title:'Branding',
+ sub:'Pega um conteúdo e coloca dinheiro nele com um objetivo: fazer alguém conhecer.',
+ notes:[]},
+
+{type:'key', block:'5 — Pilar 1: Branding', eyebrow:'O QUE É',
+ q:'Visita no perfil, seguidor novo. Nada além disso.',
+ sub:'Sem preço, sem "chama no direct", sem imóvel específico à venda. O retorno medido aqui não é contato — é alcance e seguidor.',
+ notes:[]},
+
+{type:'key', block:'5 — Pilar 1: Branding', eyebrow:'POR QUE ISSO IMPORTA TANTO',
+ q:'Comprar imóvel de alto padrão é uma das decisões de maior risco percebido da vida.',
+ sub:'Quanto maior o risco, mais a pessoa precisa de sinais de confiança antes de avançar. E confiança se acumula com exposição repetida.',
+ notes:['Cada exposição deposita familiaridade — repetido centenas de vezes ao longo de anos, vira confiança.']},
+
+{type:'key', block:'5 — Pilar 1: Branding', eyebrow:'A PROVA, NO PRÓPRIO REELS',
+ q:'Vários criativos rodando ao mesmo tempo — nem todos tentando fechar negócio.',
+ sub:'Uma parte inteira dos anúncios só serve pra trazer gente pro perfil. Ele paga pra ser conhecido, exatamente como paga pra vender depois.',
+ notes:['Vem direto da transcrição do Reels original — não inventar detalhe visual.']},
+
+{type:'section', block:'6 — Pilar 2: Performance', eyebrow:'PILAR 2', title:'Performance',
+ sub:'Pega a base que o Branding formou e traz ela pra dentro pra vender de verdade.',
+ notes:[]},
+
+{type:'key', block:'6 — Pilar 2: Performance', eyebrow:'O ANÚNCIO REAL',
+ q:'Alphaville, casas a partir de R$2.990.000, entrada a partir de 10%.',
+ sub:'Encontrado na Biblioteca de Anúncios do Meta — pública, de graça. CTA direto: "enviar mensagem pelo WhatsApp". Vídeo de 42 segundos.',
+ notes:['Narrar, sem mostrar print — preço, condição, localização, CTA, sem ambiguidade.']},
+
+{type:'key', block:'6 — Pilar 2: Performance', eyebrow:'A SEGMENTAÇÃO ESCONDIDA NO PREÇO',
+ q:'10% de R$2,99 milhões é quase R$300 mil só de entrada.',
+ sub:'Não é aleatório — filtra pra quem já tem capital acumulado, mas ainda usa financiamento. A condição, na segunda linha, já qualifica quem vê.',
+ notes:[]},
+
+{type:'insight', block:'6 — Pilar 2: Performance', text:'Esse anúncio não aparece pra um desconhecido. Aparece pra quem o Branding já apresentou.',
+ next:'a base dos dois pilares',
+ notes:['A oferta de R$3 milhões não chega do zero — chega depois de uma relação que já começou.']},
+
+{type:'key', block:'7 — A base', eyebrow:'ANTES DE JUNTAR TUDO',
+ q:'Nenhum dos dois pilares existe sem conteúdo.',
+ sub:'Branding precisa de conteúdo de autoridade ou prova social. Performance precisa de conteúdo de imóvel, com informação real. Conteúdo não é um terceiro pilar — é o que alimenta os dois.',
+ notes:[]},
+
+{type:'insight', block:'8 — O princípio', text:'A venda começa antes da oferta — e ela não para de acontecer depois que a oferta aparece.',
+ next:'como adaptar pro seu mercado',
+ notes:['Junta tudo: perfil, 4 tipos de conteúdo, 2 pilares, prêmio como resultado. Nenhuma peça existe sozinha.']},
+
+{type:'list', block:'9 — Como adaptar', title:'Como adaptar pro seu mercado', sub:'Você não precisa do orçamento dele — muda a escala, não o princípio',
  items:[
-   {n:'✓',main:'Já atua como corretor(a) ou gestor(a) imobiliário'},
-   {n:'✓',main:'Já vende, mesmo que pouco'},
-   {n:'✓',main:'Quer aplicar de verdade, não só consumir conteúdo'},
-   {n:'✓',main:'Consegue considerar R$1.497, parcelado'}],
- notes:['"Monto sua operação de Branding + Performance com acompanhamento em call. [instrução de agendamento]."']},
-
-{type:'stat', block:'5 — Oferta', eyebrow:'SE AINDA NÃO É O MOMENTO', number:'05/09', label:'Workshop Imob In Digital — R$27',
- sub:'Um dia inteiro, 100% online, 9h30 às 17h30.',
- notes:['Mini-pitch separado, sem call — só o link.']},
-
-{type:'insight', block:'6 — Saída', text:'Valeu por ficar até aqui.', next:'próxima live, terça/quinta 12h — outro caso',
- notes:['Gancho pra próxima live — tema ainda não definido, ajustar antes de usar ao vivo.']}
+   {n:'1',main:'Mapeie o que você já tem',dtl:'Autoridade, prova social, bastidor — a maioria só produz conteúdo de imóvel'},
+   {n:'2',main:'Separe Branding de Performance',dtl:'Reconhecimento sem CTA de venda, ou conversão com oferta clara — nunca misture'},
+   {n:'3',main:'Rode as duas frentes desde o dia 1',dtl:'Branding com conteúdo orgânico, Performance com o orçamento pago que você tem'},
+   {n:'4',main:'"Quem vai ver isso já me conhece?"',dtl:'Pergunte antes de qualquer anúncio de conversão'}],
+ notes:['Plano de ação real — sem citar Mentoria/Workshop, isso fica fora dos slides.']}
 ];
 
 /* ═══════════════════════ RENDER ═══════════════════════ */
 function padHTML(s){
   switch(s.type){
     case 'wait':
-      return `<img class="wait-photo" src="${s.img}" alt="">
-        <div class="wait-scrim"></div>
-        <div class="wait-eye"><span class="wait-dot"></span>${s.eyebrow}</div>
-        <div class="wait-title">${s.title}</div>
-        <div class="wait-sub">${s.sub}</div>`;
+      return `<div class="wait-photo-col"><img src="${s.img}" alt=""></div><div class="wait-scrim"></div>
+        <div class="wait-content">
+          <div class="wait-pill"><span class="wait-dot"></span>${s.pill}</div>
+          <div class="wait-title">${s.title}</div>
+        </div>`;
+    case 'hero':
+      return `<div class="hero-photo-col"${s.imgBg?` style="background:#000 url('${s.imgBg}') center/cover no-repeat"`:''}><img src="${s.img}" alt="" style="object-fit:${s.fit||'cover'}"></div>
+        <div class="hero-text-col">
+          <span class="eyebrow">${s.eyebrow}</span>
+          <div class="hero-heading">${s.heading}</div>
+          <div class="hero-body">${s.body}</div>
+        </div>`;
     case 'cover':
-      return `${s.bgimg?`<img class="cover-bgimg" src="${s.bgimg}" alt=""><div class="cover-scrim"></div>`:''}<span class="eyebrow">${s.eyebrow}</span><div><div class="rule"></div><h1>${s.title}</h1></div>`;
-    case 'photo':
-      return `<span class="eyebrow">${s.eyebrow}</span><img src="${s.img}" alt="${s.caption||''}">${s.caption?`<div class="photo-caption">${s.caption}</div>`:''}${s.sub?`<div class="photo-sub">${s.sub}</div>`:''}`;
+      return `<span class="eyebrow">${s.eyebrow}</span><div><div class="rule"></div><h1>${s.title}</h1></div>`;
     case 'key':
       return `<span class="key-eye">${s.eyebrow}</span><div class="key-q">${s.q}</div><div class="key-sub">${s.sub}</div>`;
     case 'statement':
@@ -386,19 +420,8 @@ function padHTML(s){
         <ol class="clean">${s.items.map(i=>`<li><span class="n">${i.n}</span><span class="li-main">${i.main}${i.dtl?`<span class="dtl">${i.dtl}</span>`:''}</span></li>`).join('')}</ol>`;
     case 'insight':
       return `<div class="insight-text">${s.text}</div><div class="next-label">${s.next}</div>`;
-    case 'stat':
-      return `<span class="stat-eye">${s.eyebrow}</span><div class="stat-number gradtext">${s.number}</div><div class="stat-label">${s.label}</div><div class="stat-sub">${s.sub}</div>`;
-    case 'example':
-      return `<div class="ex-eyebrow"><span class="ex-tag">${s.tag}</span><span class="eyebrow">${s.eyebrow}</span></div>
-        <div class="ex-card">
-          <div class="ex-hook">${s.hook}</div>
-          <div class="ex-body">${s.body}</div>
-          ${s.cta?`<div class="ex-cta">${s.cta}</div>`:''}
-        </div>
-        ${s.exnote?`<div class="ex-note">${s.exnote}</div>`:''}`;
     case 'profile':
-    case 'award':
-      return `<div class="tc-photo"><img src="${s.img}" alt="${s.imgAlt||''}" onerror="this.parentElement.innerHTML='<div class=\\'pf-avatar-fallback gradtext\\'>${s.avatarFallback||'?'}</div>';"></div>
+      return `<div class="tc-photo"><img src="${s.img}" alt="${s.imgAlt||''}"></div>
         <div class="tc-text">
           <span class="eyebrow">${s.eyebrow}</span>
           <div class="tc-heading">${s.heading}</div>
@@ -409,7 +432,7 @@ function padHTML(s){
 }
 function buildSlideEl(s){
   const el=document.createElement('div');
-  el.className='slide s-'+s.type+(s.bgimg?' has-bg':'');
+  el.className='slide s-'+s.type;
   const pad=document.createElement('div');
   pad.className='pad';
   pad.innerHTML=padHTML(s);
@@ -439,6 +462,9 @@ function runAudience(){
   const els=SLIDES.map(buildSlideEl);
   els.forEach(e=>stage.appendChild(e));
 
+  const annCanvas=document.getElementById('audAnnCanvas');
+  const annCtx=annCanvas.getContext('2d');
+
   function fit(){
     const scale=Math.min((window.innerWidth-64)/1280,(window.innerHeight-64)/720,1.3);
     stage.style.width='1280px';stage.style.height='720px';
@@ -454,6 +480,8 @@ function runAudience(){
     if(i<0||i>=SLIDES.length) return;
     idx=i;
     els.forEach((e,n)=>e.classList.toggle('active',n===idx));
+    annCtx.clearRect(0,0,1280,720);
+    annCanvas.style.display='none';
   }
   setSlide(idx);
 
@@ -461,16 +489,17 @@ function runAudience(){
     if(e.key===K_IDX){ const n=parseInt(e.newValue,10); if(!isNaN(n)) setSlide(n); }
   });
   window.addEventListener('message',e=>{
-    if(e.data && e.data.type==='goto') setSlide(e.data.i);
+    const d=e.data; if(!d) return;
+    if(d.type==='goto') setSlide(d.i);
+    else if(d.type==='ann:on') annCanvas.style.display='block';
+    else if(d.type==='ann:off') annCanvas.style.display='none';
+    else if(d.type==='ann:clear') annCtx.clearRect(0,0,1280,720);
+    else if(d.type==='ann:line'){
+      annCtx.strokeStyle=d.c; annCtx.lineWidth=4; annCtx.lineCap='round';
+      annCtx.beginPath(); annCtx.moveTo(d.x0*1280,d.y0*720); annCtx.lineTo(d.x1*1280,d.y1*720); annCtx.stroke();
+    }
   });
   setInterval(()=>localStorage.setItem(K_ALIVE,Date.now()),1000);
-
-  /* Nudge de repintura — mitigação extra caso o navegador ainda assim reduza a
-     prioridade da aba em segundo plano. O fix principal é usar "Guia do Chrome"
-     no compartilhamento do Meet, não "Janela" (ver launcher/como-usar). */
-  let nudge=0;
-  function raf(){ nudge=(nudge+1)%2; document.body.style.setProperty('--nudge', nudge); requestAnimationFrame(raf); }
-  requestAnimationFrame(raf);
 
   document.addEventListener('keydown',e=>{
     if(e.key==='f'||e.key==='F'){
@@ -505,6 +534,7 @@ function runPresenter(){
     const cur=SLIDES[idx];
     nowBox.appendChild(buildSlideEl(cur));
     scaleBox(nowBox, nowBox.parentElement.clientWidth);
+    setupAnnCanvas();
     const nxt=SLIDES[idx+1];
     if(nxt){ nextBox.appendChild(buildSlideEl(nxt)); scaleBox(nextBox, nextBox.parentElement.clientWidth); }
     pCounter.textContent=(idx+1)+' / '+SLIDES.length;
@@ -514,6 +544,9 @@ function runPresenter(){
       : '<li style="opacity:.4">— sem observações pra este slide —</li>';
     localStorage.setItem(K_IDX, idx);
     broadcastToAudience();
+    broadcastAnn({type:'ann:clear'});
+    if(annOn) broadcastAnn({type:'ann:off'});
+    annOn=false; updateAnnBtn();
   }
 
   let audienceWin=null;
@@ -523,6 +556,9 @@ function runPresenter(){
   }
   function broadcastToAudience(){
     try{ if(audienceWin && !audienceWin.closed) audienceWin.postMessage({type:'goto', i:idx}, '*'); }catch(e){}
+  }
+  function broadcastAnn(msg){
+    try{ if(audienceWin && !audienceWin.closed) audienceWin.postMessage(msg, '*'); }catch(e){}
   }
   document.getElementById('openAudienceBtn').addEventListener('click',openAudience);
 
@@ -534,9 +570,61 @@ function runPresenter(){
     if(!isNaN(v)) go(v-1);
   });
   document.addEventListener('keydown',e=>{
-    if(document.activeElement && document.activeElement.id==='jumpInput') return;
+    if(document.activeElement && (document.activeElement.id==='jumpInput')) return;
+    if(annOn) return; // não navega enquanto desenha
     if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); go(idx+1); }
     if(e.key==='ArrowLeft') go(idx-1);
+  });
+
+  /* ── Quadro de anotação ── */
+  let annOn=false, annColor='#ffffff', drawing=false, lastX=0, lastY=0;
+  const annBtn=document.getElementById('annToggleBtn');
+  function updateAnnBtn(){ annBtn.classList.toggle('active',annOn); }
+  function setupAnnCanvas(){
+    let c=nowBox.querySelector('#pAnnCanvas');
+    if(c) c.remove();
+    c=document.createElement('canvas');
+    c.id='pAnnCanvas';
+    c.width=nowBox.clientWidth; c.height=nowBox.clientHeight;
+    nowBox.appendChild(c);
+    c.style.display=annOn?'block':'none';
+    const ctx=c.getContext('2d');
+    function posFrom(e){
+      const r=c.getBoundingClientRect();
+      const cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+      const cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
+      return {x:cx/r.width, y:cy/r.height};
+    }
+    function start(e){ if(!annOn) return; drawing=true; const p=posFrom(e); lastX=p.x; lastY=p.y; }
+    function move(e){
+      if(!annOn||!drawing) return; e.preventDefault();
+      const p=posFrom(e);
+      ctx.strokeStyle=annColor; ctx.lineWidth=3; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(lastX*c.width,lastY*c.height); ctx.lineTo(p.x*c.width,p.y*c.height); ctx.stroke();
+      broadcastAnn({type:'ann:line',x0:lastX,y0:lastY,x1:p.x,y1:p.y,c:annColor});
+      lastX=p.x; lastY=p.y;
+    }
+    function end(){ drawing=false; }
+    c.addEventListener('mousedown',start); c.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
+    c.addEventListener('touchstart',start); c.addEventListener('touchmove',move); c.addEventListener('touchend',end);
+  }
+  annBtn.addEventListener('click',()=>{
+    annOn=!annOn; updateAnnBtn();
+    const c=nowBox.querySelector('#pAnnCanvas');
+    if(c) c.style.display=annOn?'block':'none';
+    broadcastAnn({type:annOn?'ann:on':'ann:off'});
+  });
+  document.getElementById('annClearBtn').addEventListener('click',()=>{
+    const c=nowBox.querySelector('#pAnnCanvas');
+    if(c) c.getContext('2d').clearRect(0,0,c.width,c.height);
+    broadcastAnn({type:'ann:clear'});
+  });
+  document.querySelectorAll('.ann-swatch').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      annColor=btn.getAttribute('data-c');
+      document.querySelectorAll('.ann-swatch').forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
+    });
   });
 
   const dot=document.getElementById('connDot'), label=document.getElementById('connLabel');
@@ -557,7 +645,7 @@ function runPresenter(){
     timerEl.textContent=m+':'+ss;
   },1000);
 
-  window.addEventListener('resize',()=>{ scaleBox(nowBox, nowBox.parentElement.clientWidth); scaleBox(nextBox, nextBox.parentElement.clientWidth); });
+  window.addEventListener('resize',()=>{ scaleBox(nowBox, nowBox.parentElement.clientWidth); scaleBox(nextBox, nextBox.parentElement.clientWidth); setupAnnCanvas(); });
 
   render();
 }
