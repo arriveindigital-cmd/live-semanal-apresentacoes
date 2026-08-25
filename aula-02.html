@@ -179,7 +179,9 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 .eraser-size-ctrl button{border:none;background:transparent;width:20px;height:20px;padding:0;font-size:.9rem;line-height:1;}
 .eraser-size-ctrl button:hover{background:rgba(255,255,255,.12);}
 .eraser-size-val{font-size:.7rem;color:rgba(255,255,255,.6);min-width:34px;text-align:center;font-variant-numeric:tabular-nums;}
-.eraser-cursor{position:absolute;top:0;left:0;border:2px solid rgba(255,255,255,.85);border-radius:50%;background:rgba(255,255,255,.15);pointer-events:none;display:none;z-index:20;transform:translate(0,0);box-shadow:0 0 0 1px rgba(0,0,0,.4);}
+.eraser-cursor{position:absolute;top:0;left:0;pointer-events:none;display:none;z-index:20;transform:translate(0,0);}
+.eraser-cursor.is-eraser{border:2px solid rgba(255,255,255,.85);border-radius:50%;background:rgba(255,255,255,.15);box-shadow:0 0 0 1px rgba(0,0,0,.4);}
+.eraser-cursor.is-tool{font-size:22px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.7));}
 #elPropsBar{display:none;align-items:center;gap:10px;padding:8px 18px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(59,130,246,.08);flex-wrap:wrap;}
 #elPropsBar .eplabel{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.05em;}
 .eptarget-btn{font-size:.72rem;padding:6px 10px;}
@@ -295,10 +297,10 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
       <button id="jumpBtn">Ir</button>
     </div>
     <button id="annToggleBtn">✏️ Anotar no slide</button>
-    <button class="tool-btn active" data-tool="pen" title="Caneta">✏️</button>
-    <button class="tool-btn" data-tool="marker" title="Marcador">🖍️</button>
-    <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar">➖</button>
-    <button class="tool-btn" data-tool="eraser" title="Borracha">🧽</button>
+    <button class="tool-btn active" data-tool="pen" title="Caneta (P)">✏️</button>
+    <button class="tool-btn" data-tool="marker" title="Marcador (M)">🖍️</button>
+    <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar (U)">➖</button>
+    <button class="tool-btn" data-tool="eraser" title="Borracha (E)">🧽</button>
     <span class="eraser-size-ctrl" title="Tamanho da borracha (Ctrl + roda do mouse sobre o slide)">
       <button type="button" id="annEraserMinus">−</button>
       <span class="eraser-size-val" id="annEraserVal">30</span>
@@ -314,7 +316,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button class="swatch" style="background:#eab308" data-c="#eab308" title="Amarelo"></button>
     <button id="annClearBtn">🧹 Limpar</button>
     <button id="openBoardBtn">🧠 Mapa mental</button>
-    <span class="hint">← → navegam · Ctrl+Z desfaz o desenho</span>
+    <span class="hint">← → navegam · P/M/U/E ferramentas · Ctrl+Z desfaz</span>
   </footer>
 </div>
 
@@ -325,17 +327,17 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button id="boardRenameMapBtn" title="Renomear mapa atual">✎</button>
     <button id="boardDeleteMapBtn" title="Excluir mapa atual">🗑</button>
     <span class="tb-sep"></span>
-    <button class="tool-btn active" data-tool="pen" title="Caneta">✏️</button>
-    <button class="tool-btn" data-tool="marker" title="Marcador">🖍️</button>
-    <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar">➖</button>
-    <button class="tool-btn" data-tool="eraser" title="Borracha">🧽</button>
+    <button class="tool-btn active" data-tool="pen" title="Caneta (P)">✏️</button>
+    <button class="tool-btn" data-tool="marker" title="Marcador (M)">🖍️</button>
+    <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar (U)">➖</button>
+    <button class="tool-btn" data-tool="eraser" title="Borracha (E)">🧽</button>
     <span class="eraser-size-ctrl" title="Tamanho da borracha (Ctrl + roda do mouse sobre o mapa)">
       <button type="button" id="boardEraserMinus">−</button>
       <span class="eraser-size-val" id="boardEraserVal">30</span>
       <button type="button" id="boardEraserPlus">+</button>
     </span>
-    <button class="tool-btn" data-tool="pan" title="Mover a tela (clique e arraste)">🖐️</button>
-    <button class="tool-btn" data-tool="connect" title="Conectar caixas / textos (mapa mental)">🔗</button>
+    <button class="tool-btn" data-tool="pan" title="Mover a tela — clique e arraste (H)">🖐️</button>
+    <button class="tool-btn" data-tool="connect" title="Conectar caixas / textos (C)">🔗</button>
     <span class="tb-sep"></span>
     <button class="swatch" style="background:#ffffff" data-c="#ffffff" title="Branco"></button>
     <button class="swatch" style="background:#111111;border-color:rgba(255,255,255,.5)" data-c="#111111" title="Preto"></button>
@@ -355,7 +357,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     </span>
     <button id="boardClearBtn">🗑️ Limpar mapa</button>
     <button id="exportPdfBtn" title="Abre a impressão do navegador — escolha 'Salvar como PDF' pra gerar o arquivo e compartilhar com os alunos">📄 Exportar PDF</button>
-    <span class="hint">Arraste move · clique seleciona · duplo clique edita texto · 🔗 conecta · Ctrl+Z desfaz · Ctrl+C/V duplica</span>
+    <span class="hint">P/M/U/E/H/C ferramentas · clique seleciona · duplo clique edita · Ctrl+Z desfaz · Ctrl+C/V duplica</span>
     <button id="closeBoardBtn" style="margin-left:auto">← Voltar pra aula</button>
   </div>
   <div id="elPropsBar">
@@ -394,7 +396,8 @@ function strokeLine(ctx,d){
     ctx.shadowColor='rgba(0,0,0,.55)'; ctx.shadowBlur=3;
   }
   ctx.lineCap='round'; ctx.lineJoin='round';
-  ctx.beginPath(); ctx.moveTo(d.x0*1280,d.y0*720); ctx.lineTo(d.x1*1280,d.y1*720); ctx.stroke();
+  const cw=ctx.canvas.width, ch=ctx.canvas.height;
+  ctx.beginPath(); ctx.moveTo(d.x0*cw,d.y0*ch); ctx.lineTo(d.x1*cw,d.y1*ch); ctx.stroke();
   ctx.restore();
 }
 
@@ -818,6 +821,11 @@ function runPresenter(){
       }
       return;
     }
+    if(!e.ctrlKey && !e.metaKey && !e.altKey){
+      const TOOL_KEYS={p:'pen', m:'marker', u:'underline', e:'eraser', h:'pan', c:'connect'};
+      const t=TOOL_KEYS[e.key.toLowerCase()];
+      if(t){ e.preventDefault(); selectTool(t); return; }
+    }
     if(annOn||boardOpen) return; // não navega enquanto desenha ou com o mapa aberto
     if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); go(idx+1); }
     if(e.key==='ArrowLeft') go(idx-1);
@@ -865,11 +873,27 @@ function runPresenter(){
       }
       return {x:e.offsetX/canvas.width, y:e.offsetY/canvas.height, cx:e.offsetX, cy:e.offsetY};
     }
+    const TOOL_ICONS={pen:'✏️',marker:'🖍️',underline:'➖',connect:'🔗',pan:'🖐️'};
     function updateCursor(p){
-      if(curTool!=='eraser'){ cursor.style.display='none'; return; }
-      cursor.style.display='block';
-      cursor.style.width=eraserSize+'px'; cursor.style.height=eraserSize+'px';
-      cursor.style.transform=`translate(${p.cx-eraserSize/2}px, ${p.cy-eraserSize/2}px)`;
+      if(curTool==='eraser'){
+        cursor.className='eraser-cursor is-eraser';
+        cursor.textContent='';
+        cursor.style.width=eraserSize+'px'; cursor.style.height=eraserSize+'px';
+        cursor.style.display='block';
+        cursor.style.transform=`translate(${p.cx-eraserSize/2}px, ${p.cy-eraserSize/2}px)`;
+        canvas.style.cursor='none';
+      } else if(curTool==='pan'){
+        cursor.style.display='none';
+        canvas.style.cursor='';
+      } else {
+        const icon=TOOL_ICONS[curTool]||'';
+        cursor.className='eraser-cursor is-tool';
+        cursor.textContent=icon;
+        cursor.style.width='auto'; cursor.style.height='auto';
+        cursor.style.display=icon?'block':'none';
+        cursor.style.transform=`translate(${p.cx+6}px, ${p.cy+6}px)`;
+        canvas.style.cursor='none';
+      }
     }
     function start(e){
       if(curTool==='pan'||curTool==='connect') return;
@@ -887,7 +911,7 @@ function runPresenter(){
       lastX=p.x; lastY=p.y;
     }
     function end(){ if(drawing && onStrokeEnd) onStrokeEnd(); drawing=false; }
-    function leave(){ cursor.style.display='none'; }
+    function leave(){ cursor.style.display='none'; canvas.style.cursor=''; }
     canvas.addEventListener('mousedown',start);
     canvas.addEventListener('mousemove',move);
     canvas.addEventListener('mouseleave',leave);
