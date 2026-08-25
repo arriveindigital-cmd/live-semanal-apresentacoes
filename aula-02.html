@@ -44,6 +44,21 @@ html,body{height:100%;background:#e6e5e2;font-family:'Inter',system-ui,sans-seri
 .s-cover .eyebrow{margin-bottom:auto;}
 .s-cover .rule{margin-bottom:20px;}
 .s-cover h1{font-size:3.6rem;font-weight:800;letter-spacing:-.045em;line-height:1.1;}
+.s-cover.has-bg{background:#0a0a0a;}
+.s-cover.has-bg h1{color:#fff;max-width:62%;}
+.s-cover.has-bg .eyebrow{color:rgba(255,255,255,.55);}
+.s-cover.has-bg::after{color:rgba(255,255,255,.15);}
+.cover-bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:78% 22%;}
+.cover-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(8,8,8,.97) 32%,rgba(8,8,8,.62) 58%,rgba(8,8,8,.1) 92%);}
+
+/* ── PHOTO (foto real cheia, com legenda) ── */
+.s-photo{background:#0a0a0a;}
+.s-photo .pad{justify-content:center;align-items:center;text-align:center;}
+.s-photo .eyebrow{color:rgba(255,255,255,.5);margin-bottom:20px;}
+.s-photo::after{color:rgba(255,255,255,.15);}
+.s-photo img{max-height:74%;max-width:62%;object-fit:contain;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.55);}
+.s-photo .photo-caption{margin-top:22px;color:#fff;font-size:1.15rem;font-weight:800;letter-spacing:-.01em;}
+.s-photo .photo-sub{margin-top:8px;color:rgba(255,255,255,.55);font-size:.92rem;}
 
 .s-section{background:#111111;}
 .s-section .pad{justify-content:center;}
@@ -101,6 +116,19 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 .stat-number{font-size:6.2rem;font-weight:900;letter-spacing:-.04em;line-height:1;}
 .stat-label{margin-top:10px;font-size:1.3rem;font-weight:700;letter-spacing:-.02em;}
 .stat-sub{margin-top:20px;font-size:1rem;color:var(--muted);max-width:74%;line-height:1.6;}
+
+/* ── EXAMPLE (sugestão de post — nunca é print de anúncio real) ── */
+.s-example{background:radial-gradient(ellipse at 4% 96%,rgba(249,115,22,.05) 0%,transparent 45%),var(--bg);}
+.s-example .pad{justify-content:center;}
+.ex-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.ex-tag{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:var(--grad);color:#fff;padding:4px 12px;border-radius:100px;}
+.ex-eyebrow .eyebrow{margin:0;}
+.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 36px;max-width:88%;}
+.ex-hook{font-size:1.5rem;font-weight:800;letter-spacing:-.025em;line-height:1.3;}
+.ex-body{margin-top:16px;font-size:1.02rem;color:var(--text);line-height:1.65;font-weight:400;}
+.ex-cta{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:.85rem;font-weight:700;color:var(--orange);}
+.ex-cta::before{content:'→';}
+.ex-note{margin-top:20px;font-size:.86rem;color:var(--muted);font-style:italic;}
 
 /* ── PROFILE (print do Instagram) ── */
 .s-profile .pad{flex-direction:row;align-items:center;gap:60px;justify-content:center;}
@@ -235,117 +263,111 @@ const K_IDX = LIVE_ID+'_idx', K_ALIVE = LIVE_ID+'_alive', WIN_NAME = LIVE_ID+'_a
 const SLIDES = [
 {type:'wait', block:'', eyebrow:'LIVE SEMANAL · ARRIVE IN DIGITAL', title:'Começamos em breve', hub:'AULA<br>AO VIVO',
  nodes:[
-   {i:1,x:450,y:25,t:'A crença que trava o corretor'},
-   {i:2,x:573.7,y:76.3,t:'Aparecer e vender não são inimigos'},
-   {i:3,x:625,y:200,t:'Frente 1: Branding'},
-   {i:4,x:573.7,y:323.7,t:'Frente 2: Performance'},
-   {i:5,x:450,y:375,t:'Por que rodam juntas'},
-   {i:6,x:326.3,y:323.7,t:'O que muda no seu orçamento'},
-   {i:7,x:275,y:200,t:'A operação por trás do resultado'},
-   {i:8,x:326.3,y:76.3,t:'Como aplicar essa semana'}],
- notes:['Slide de espera — deixar aberto enquanto as pessoas entram.','Mostra o conteúdo que vai ser ensinado, não a mecânica da aula.']},
+   {i:1,x:450,y:25,t:'O padrão que trava a maioria'},
+   {i:2,x:573.7,y:76.3,t:'Os dois pilares: Branding e Performance'},
+   {i:3,x:625,y:200,t:'O que o perfil e o prêmio provam'},
+   {i:4,x:573.7,y:323.7,t:'Como cada pilar aparece na prática'},
+   {i:5,x:450,y:375,t:'Por que isso o tornou referência'},
+   {i:6,x:326.3,y:323.7,t:'Um método, não só um caso'},
+   {i:7,x:275,y:200,t:'Como adaptar pro seu mercado'},
+   {i:8,x:326.3,y:76.3,t:'Corretor do Ano — 2024 e 2025'}],
+ notes:['Slide de espera — deixar aberto enquanto as pessoas entram.','Mostra o conteúdo real da aula, não a mecânica dela.']},
 
-{type:'cover', block:'Bloco 1 — Entrada', eyebrow:'ANÁLISE AO VIVO',
- title:'Um corretor roda duas frentes de marketing ao mesmo tempo. <span class="gradtext">E é por isso que ele vende tanto.</span>',
- notes:['Falar direto, sem rodeio: "Um dos corretores mais respeitados do Brasil roda duas frentes de marketing ao mesmo tempo. E é exatamente por isso que ele vende tanto."','Não dizer o nome ainda — segurar 1 frase antes de revelar no próximo slide.']},
+{type:'cover', block:'1 — Entrada', eyebrow:'ANÁLISE AO VIVO',
+ bgimg:'assets/premio-xeque-mate-lucas-felt.jpg',
+ title:'Um corretor roda duas frentes de marketing ao mesmo tempo. <span class="gradtext">E foi eleito Corretor do Ano, duas vezes seguidas.</span>',
+ notes:['"Um dos corretores mais respeitados do Brasil roda duas frentes de marketing ao mesmo tempo. E é exatamente por isso que ele vende tanto — e foi eleito Corretor do Ano em 2024 e 2025, pelo prêmio Xeque-Mate."','Não entrar em detalhe do prêmio ainda — só citar, o aprofundamento vem no bloco de análise.']},
 
-{type:'profile', block:'Bloco 1 — Entrada', eyebrow:'ISSO É O LUCAS FELT',
+{type:'profile', block:'1 — Entrada', eyebrow:'ISSO É O LUCAS FELT',
  img:'assets/print-perfil-lucas-felt.png', avatarFallback:'LF',
  handle:'feltnegociosimobiliarios', name:'Lucas Felt | Imóveis em Alphaville',
- stats:[{n:'3.006',l:'posts'},{n:'465 mil',l:'seguidores'},{n:'2.080',l:'seguindo'}],
+ stats:[{n:'3.007',l:'posts'},{n:'465 mil',l:'seguidores'},{n:'2.080',l:'seguindo'}],
  bio:['⭐ Corretor das Estrelas','📍 Alphaville','💼 Corretor de Imóveis | Empresário | Mentor','🎓 Sócio @colegiolapa'],
- notes:['"Isso é o Lucas Felt."','Deixar o número respirar — 465 mil seguidores, carteira de alto padrão em Alphaville.','"Repara no tamanho disso. Isso não é sorte. É estrutura."','Print precisa estar salvo em assets/print-perfil-lucas-felt.png antes da live — ver pendência no roteiro.']},
+ notes:['"Isso é o Lucas Felt."','Boas-vindas curtas: "Eu sou o Miguel, sócio-fundador da Arrive In Digital — vivi essa mesma lógica estruturando marketing de uma imobiliária de +R$200 milhões de VGV/ano." (2 frases, não é o foco.)']},
 
-{type:'key', block:'Bloco 1 — Entrada', eyebrow:'QUEM TE ENSINA HOJE',
- q:'Eu vivi essa mesma lógica na prática.',
- sub:'Sócio-fundador da Arrive In Digital. Estruturei conteúdo e anúncio de uma imobiliária de +R$200 milhões de VGV por ano.',
- notes:['"Eu sou o Miguel, sócio-fundador da Arrive In Digital — a gente trabalha com posicionamento, conteúdo e anúncio pra corretor e imobiliária em todo o Brasil."','Curto — 2 frases, não mais. Não é o foco da aula.']},
+{type:'key', block:'1 — Entrada', eyebrow:'O QUE VOCÊ VAI SABER NO FINAL',
+ q:'Os dois pilares da estratégia dele — e como adaptar pro seu mercado.',
+ sub:'Quais são, como ele usa cada um pra construir autoridade e gerar negócio, e como você aplica isso na sua escala.',
+ notes:['Essa é a promessa exata da mensagem de CTA do grupo — repetir com essas palavras.']},
 
-{type:'insight', block:'Bloco 1 — Entrada', text:'No final, você sai sabendo aplicar essa lógica no seu orçamento — não no dele.',
- next:'mas antes, uma crença precisa cair',
- notes:['Fecha o Bloco 1 com o loop aberto pro final da aula.']},
+{type:'key', block:'2 — O padrão', eyebrow:'UM FATO SOBRE O MERCADO',
+ q:'A maioria dos corretores só roda uma frente: Performance.',
+ sub:'Anúncio de imóvel, preço, "chama no direct", pra quem nunca ouviu falar deles. Resultado: lead frio, custo alto, e quem fecha de verdade continua sendo indicação.',
+ notes:['Afirmação direta, sem contar história — é fato sobre o padrão do mercado.']},
 
-{type:'section', block:'Bloco 2 — Reposicionamento', eyebrow:'ANTES DE ENSINAR', title:'Uma crença que trava quase todo corretor',
- sub:'E o tamanho da operação do Lucas Felt prova que ela está errada.',
- notes:['Transição: "Antes de eu te mostrar como funciona, eu preciso derrubar uma ideia que quase todo corretor carrega sem perceber."']},
+{type:'statement', block:'2 — O padrão', label:'A CRENÇA POR TRÁS DISSO', stmt:'"Eu tenho que escolher: ou apareço, ou vendo."',
+ items:[{n:'①',text:'Não dá pra investir nas duas coisas ao mesmo tempo'},{n:'②',text:'Uma parece concorrer com a outra'}],
+ note:'O Lucas Felt prova, com o tamanho da própria operação, que essa crença está errada.',
+ notes:['"Você não precisa escolher entre aparecer e vender. Precisa parar de tratar as duas coisas como concorrentes."']},
 
-{type:'statement', block:'Bloco 2 — Reposicionamento', label:'A CRENÇA ERRADA', stmt:'"Eu tenho que escolher: ou apareço, ou vendo."',
- items:[{n:'①',text:'Não dá pra investir nas duas coisas ao mesmo tempo'},{n:'②',text:'Meu orçamento não permite'},{n:'③',text:'Um vira concorrente do outro'}],
- notes:['Essa crença parece razoável — por isso ela prende tanta gente.','"É o motivo pelo qual a maioria fica presa: ou vira perfil bonito que não vende, ou vitrine que ninguém confia."']},
+{type:'section', block:'3 — Análise', eyebrow:'ANÁLISE REAL — PERFIL, PRÊMIO E ANÚNCIO VERIFICADO', title:'Os dois pilares da estratégia',
+ sub:'Branding e Performance — definidos pelo objetivo, não pelo tipo de conteúdo.',
+ notes:['Deixar claro: agora é fato, não exemplo hipotético.']},
 
-{type:'key', block:'Bloco 2 — Reposicionamento', eyebrow:'A VERDADE',
- q:'Você não precisa escolher entre aparecer e vender.',
- sub:'Você precisa parar de tratar as duas coisas como concorrentes.',
- notes:['Frase-chave da aula inteira — falar devagar, deixar sedimentar.','"O Lucas Felt não tem 465 mil seguidores porque decidiu ser só marca, ou só vendedor."']},
-
-{type:'section', block:'Bloco 3 — Ensino', eyebrow:'A ESTRATÉGIA', title:'Duas frentes',
- sub:'Branding e Performance, rodando ao mesmo tempo.',
- notes:['Ponte: "aqui está a lógica por trás do tamanho que você viu."']},
-
-{type:'key', block:'Bloco 3 — Ensino', eyebrow:'FRENTE 1', q:'Branding',
- sub:'Presença constante. Reconhecimento. Sem oferta, sem preço, sem pedido de contato.',
- notes:['Objetivo não é vender agora — é virar familiar.','"Quando alguém pensar em comprar um imóvel na sua região, seu nome já tá na cabeça dela — antes dela estar pronta."']},
-
-{type:'list', block:'Bloco 3 — Ensino', title:'O que vira Branding na prática', sub:'Pro corretor comum, sem o orçamento de uma operação grande',
- items:[
-   {n:'1',main:'Bastidor da rotina',dtl:'Mostra o profissional, não só o imóvel'},
-   {n:'2',main:'Opinião sobre o mercado',dtl:'Constrói autoridade'},
-   {n:'3',main:'Presença de marca constante',dtl:'Repetição — não é 1 post, é frequência'}],
- notes:['Isso é o que substitui o orçamento que o Lucas tem — conteúdo orgânico fazendo o trabalho de Branding sem custo de anúncio.']},
-
-{type:'key', block:'Bloco 3 — Ensino', eyebrow:'FRENTE 2', q:'Performance',
- sub:'Oferta direta — imóvel específico, preço, condição, pedido de contato imediato.',
- notes:['Objetivo aqui é converter quem já está em posição de decidir.']},
-
-{type:'compare', block:'Bloco 3 — Ensino', title:'O que acontece rodando só uma frente',
+{type:'compare', block:'3 — Análise', title:'A diferença não está no conteúdo. Está no objetivo do anúncio.',
  cols:[
-   {title:'SÓ PERFORMANCE',items:['Lead frio, sem confiança prévia','Custo alto, conversão baixa','Cansa rápido']},
-   {title:'SÓ BRANDING',items:['Fica conhecido, não converte agora','Sem venda, sem caixa','Investimento sem retorno direto'],strong:true}],
- note:'Sozinha, cada frente esbarra num limite.',
- notes:['As duas colunas mostram o mesmo erro por ângulos opostos — reforça que a resposta certa é rodar as duas.']},
+   {title:'BRANDING',items:['Anuncia conteúdo pra trazer visita e seguidor','Sem CTA de venda, sem pedir contato','Objetivo: ser conhecido']},
+   {title:'PERFORMANCE',items:['Traz quem já demonstrou interesse pra base','Oferta, preço, CTA direto','Objetivo: vender'],strong:true}],
+ note:'O mesmo conteúdo pode servir pros dois — o que muda é o que você pede depois de mostrar ele.',
+ notes:['Ponto mais importante da aula: não existe "conteúdo de Branding" x "conteúdo de Performance" como categorias fixas.']},
 
-{type:'statement', block:'Bloco 3 — Ensino', label:'POR QUE JUNTAS', stmt:'O Branding baixa o custo e sobe a conversão da Performance. A Performance sustenta o caixa que financia o Branding.',
- items:[{n:'①',text:'Uma alimenta a outra'},{n:'②',text:'Ao mesmo tempo — não uma depois da outra'}],
- notes:['Ponto central: não existe "esquenta e depois libera a Performance" — as duas rodam juntas, sempre.']},
+{type:'key', block:'3 — Análise', eyebrow:'A BASE DOS DOIS PILARES',
+ q:'Nenhum dos dois existe sem conteúdo.',
+ sub:'Você não anuncia Branding sem ter algo pra mostrar, e não roda Performance sem ter algo pra oferecer. Conteúdo não é um terceiro pilar — é o que alimenta os dois.',
+ notes:['Breve — não virar taxonomia de tipos de conteúdo.']},
 
-{type:'insight', block:'Bloco 3 — Ensino', text:'A venda começa antes da oferta — e não para de acontecer depois que a oferta aparece.',
- next:'o que isso muda pra você',
- notes:['Vitória da aula — a pessoa sai daqui entendendo isso por inteiro. Fechar o Bloco 3 com essa frase, sem pressa.']},
-
-{type:'key', block:'Bloco 4 — Gap', eyebrow:'VOCÊ JÁ SABE', q:'Branding e Performance precisam rodar juntas.',
- sub:'Isso já resolve uma coisa: você não precisa mais escolher.',
- notes:['Fechar o loop pequeno primeiro, antes de abrir o maior.']},
-
-{type:'insight', block:'Bloco 4 — Gap', text:'Mas saber que precisam rodar juntas é diferente de saber quanto, quando e como — pro seu imóvel, seu público, seu orçamento.',
- next:'a operação por trás disso',
- notes:['Sem preço ainda — só a ponte. "Isso não é uma sacada que se aplica uma vez, é uma operação que precisa rodar."']},
-
-{type:'list', block:'Bloco 5 — Chamada', title:'Mentoria Imob In Digital', sub:'5 frentes, com acompanhamento em call',
+{type:'list', block:'3 — Análise', title:'O que o perfil já prova, antes de qualquer anúncio', sub:'"Corretor das Estrelas" · Empresário · Mentor · sócio de escola',
  items:[
-   {n:'1',main:'Planejamento',dtl:'Seu negócio e seu público'},
-   {n:'2',main:'Posicionamento digital',dtl:'A declaração que orienta tudo'},
-   {n:'3',main:'Estrutura',dtl:'Site, sistema, gestão de lead'},
-   {n:'4',main:'Conteúdo',dtl:'Sua frente de Branding, sistematizada'},
-   {n:'5',main:'Tráfego',dtl:'Sua frente de Performance, no seu orçamento real'}],
- notes:['"Não vou te empurrar um link. Libero um número limitado de conversas essa semana."']},
+   {n:'1',main:'Identidade maior que a transação',dtl:'Ninguém segue "um corretor" por curiosidade — seguem uma marca pessoal'},
+   {n:'2',main:'"Empresário" e "Mentor" na bio',dtl:'Reduz a desconfiança de "só quer minha comissão" e constrói autoridade'},
+   {n:'3',main:'3.007 posts',dtl:'Reconhecimento não se compra num post só — é presença sustentada por anos'}],
+ notes:['"A bio dele não é enfeite. É Branding — construído antes de qualquer anúncio."']},
 
-{type:'list', block:'Bloco 5 — Chamada', title:'Pra quem faz sentido agendar uma conversa', sub:'Não é pra qualquer corretor, em qualquer momento',
+{type:'photo', block:'3 — Análise', eyebrow:'RECONHECIMENTO EXTERNO, NÃO AUTODECLARADO',
+ img:'assets/premio-xeque-mate-lucas-felt.jpg',
+ caption:'Corretor do Ano — 2024 e 2025',
+ sub:'Prêmio Xeque-Mate',
+ notes:['A diferença desse dado pros anteriores: a bio é autodeclarada. O prêmio não — é o mercado reconhecendo ele como referência, dois anos seguidos.']},
+
+{type:'key', block:'3 — Análise', eyebrow:'COMO O BRANDING APARECE NA PRÁTICA',
+ q:'Conteúdo anunciado só pra ganhar seguidor — sem pedir venda.',
+ sub:'Ex: mostrar o padrão de imóvel que ele trabalha. Ex: mostrar venda pra cliente de peso, construindo autoridade. Em nenhum dos dois o objetivo é fechar aquele imóvel de novo.',
+ notes:['O retorno que ele mede aqui não é contato — é seguidor e alcance.']},
+
+{type:'key', block:'3 — Análise', eyebrow:'COMO A PERFORMANCE APARECE NA PRÁTICA',
+ q:'Anúncio real, encontrado na Biblioteca de Anúncios do Meta.',
+ sub:'Alphaville, casas a partir de R$2.990.000, entrada a partir de 10%, CTA direto pro WhatsApp. Preço, condição, localização, ação — sem ambiguidade.',
+ notes:['Narrar o anúncio real, sem mostrar print.','10% de R$2,99mi é quase R$300 mil de entrada — já filtra pra quem tem capital acumulado. Não é aleatório, é segmentação.']},
+
+{type:'insight', block:'3 — Análise', text:'A venda começa antes da oferta — e não para de acontecer depois que a oferta aparece.',
+ next:'um método, não só um caso',
+ notes:['Junta os 4 fatos: perfil (Branding), anúncio real (Performance), prêmio (reconhecimento externo) e volume de posts (constância). Nenhum existe sozinho.']},
+
+{type:'key', block:'3 — Análise', eyebrow:'UM MÉTODO, NÃO SÓ UM CASO',
+ q:'Bio, prêmio, volume de posts, Biblioteca de Anúncios.',
+ sub:'Esse método se repete em qualquer corretor de sucesso que você quiser entender de verdade — 5 minutos de análise real valem mais que copiar por fora.',
+ notes:['Fecha o bloco de análise abrindo a possibilidade de replicar esse tipo de análise em outros players — plantar semente pra próximas lives.']},
+
+{type:'list', block:'4 — Aplicação', title:'Como adaptar pro seu mercado', sub:'Aplicação estratégica — não é mais análise do Lucas Felt',
+ items:[
+   {n:'1',main:'Identifique o que já pode virar Branding',dtl:'Seu melhor imóvel, uma venda importante, sua trajetória — anuncie sem pedir contato'},
+   {n:'2',main:'Rode as duas frentes desde o primeiro dia',dtl:'Não espere a audiência "crescer o suficiente" pra começar a vender'},
+   {n:'3',main:'Deixe o Branding retroalimentar a Performance',dtl:'Mais reconhecimento, custo por contato menor, conversão maior'}],
+ notes:['Aplicação deliberadamente simples — Miguel vai refinar essa parte depois.']},
+
+{type:'list', block:'5 — Oferta', title:'Mentoria Imob In Digital', sub:'Call de 20–30 min essa semana — vagas limitadas',
  items:[
    {n:'✓',main:'Já atua como corretor(a) ou gestor(a) imobiliário'},
    {n:'✓',main:'Já vende, mesmo que pouco'},
    {n:'✓',main:'Quer aplicar de verdade, não só consumir conteúdo'},
    {n:'✓',main:'Consegue considerar R$1.497, parcelado'}],
- notes:['Reforçar: não é pitch de venda, é diagnóstico real.']},
+ notes:['"Monto sua operação de Branding + Performance com acompanhamento em call. [instrução de agendamento]."']},
 
-{type:'stat', block:'Bloco 5 — Chamada', eyebrow:'PRÓXIMO PASSO', number:'20–30 min', label:'Uma conversa com o time',
- sub:'Vagas limitadas essa semana. [inserir instrução de agendamento]',
- notes:['CTA principal — dar a instrução prática de como agendar (pendência a confirmar).']},
-
-{type:'stat', block:'Bloco 5 — Chamada', eyebrow:'SE AINDA NÃO É O MOMENTO', number:'05/09', label:'Workshop Imob In Digital — R$27',
- sub:'Um dia inteiro, 100% online, 9h30 às 17h30 — construindo posicionamento, conteúdo e anúncio na prática.',
+{type:'stat', block:'5 — Oferta', eyebrow:'SE AINDA NÃO É O MOMENTO', number:'05/09', label:'Workshop Imob In Digital — R$27',
+ sub:'Um dia inteiro, 100% online, 9h30 às 17h30.',
  notes:['Mini-pitch separado, sem call — só o link.']},
 
-{type:'insight', block:'Bloco 6 — Saída', text:'Valeu por ficar até aqui.', next:'próxima live, terça/quinta 12h — outro caso',
+{type:'insight', block:'6 — Saída', text:'Valeu por ficar até aqui.', next:'próxima live, terça/quinta 12h — outro caso',
  notes:['Gancho pra próxima live — tema ainda não definido, ajustar antes de usar ao vivo.']}
 ];
 
@@ -363,7 +385,9 @@ function padHTML(s){
           ${s.nodes.map(n=>`<div class="wd-node" style="left:${n.x}px;top:${n.y}px"><span class="wd-n">${n.i}</span><span class="wd-t">${n.t}</span></div>`).join('')}
         </div>`;
     case 'cover':
-      return `<span class="eyebrow">${s.eyebrow}</span><div><div class="rule"></div><h1>${s.title}</h1></div>`;
+      return `${s.bgimg?`<img class="cover-bgimg" src="${s.bgimg}" alt=""><div class="cover-scrim"></div>`:''}<span class="eyebrow">${s.eyebrow}</span><div><div class="rule"></div><h1>${s.title}</h1></div>`;
+    case 'photo':
+      return `<span class="eyebrow">${s.eyebrow}</span><img src="${s.img}" alt="${s.caption||''}">${s.caption?`<div class="photo-caption">${s.caption}</div>`:''}${s.sub?`<div class="photo-sub">${s.sub}</div>`:''}`;
     case 'key':
       return `<span class="key-eye">${s.eyebrow}</span><div class="key-q">${s.q}</div><div class="key-sub">${s.sub}</div>`;
     case 'statement':
@@ -383,6 +407,14 @@ function padHTML(s){
       return `<div class="insight-text">${s.text}</div><div class="next-label">${s.next}</div>`;
     case 'stat':
       return `<span class="stat-eye">${s.eyebrow}</span><div class="stat-number gradtext">${s.number}</div><div class="stat-label">${s.label}</div><div class="stat-sub">${s.sub}</div>`;
+    case 'example':
+      return `<div class="ex-eyebrow"><span class="ex-tag">${s.tag}</span><span class="eyebrow">${s.eyebrow}</span></div>
+        <div class="ex-card">
+          <div class="ex-hook">${s.hook}</div>
+          <div class="ex-body">${s.body}</div>
+          ${s.cta?`<div class="ex-cta">${s.cta}</div>`:''}
+        </div>
+        ${s.exnote?`<div class="ex-note">${s.exnote}</div>`:''}`;
     case 'profile':
       return `<span class="eyebrow pf-eyebrow">${s.eyebrow}</span>
         <div class="pf-avatar"><div class="pf-avatar-inner">
@@ -400,7 +432,7 @@ function padHTML(s){
 }
 function buildSlideEl(s){
   const el=document.createElement('div');
-  el.className='slide s-'+s.type;
+  el.className='slide s-'+s.type+(s.bgimg?' has-bg':'');
   const pad=document.createElement('div');
   pad.className='pad';
   pad.innerHTML=padHTML(s);
