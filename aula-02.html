@@ -26,18 +26,16 @@ html,body{height:100%;background:#e6e5e2;font-family:'Inter',system-ui,sans-seri
 .eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
 .rule{width:44px;height:3px;background:var(--grad);border-radius:2px;}
 
-.s-wait{background:radial-gradient(ellipse at 96% 96%,rgba(124,58,237,.06) 0%,transparent 45%),radial-gradient(ellipse at 4% 4%,rgba(249,115,22,.05) 0%,transparent 38%),var(--bg);}
-.s-wait .pad{justify-content:center;align-items:center;text-align:center;padding-top:4%;}
-.wait-eye{display:flex;align-items:center;gap:10px;font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-.wait-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:waitpulse 1.4s ease-in-out infinite;}
+.s-wait{background:#000 url('assets/hero-bg.jpg') center/cover no-repeat;}
+.s-wait::after{color:rgba(255,255,255,.18);}
+.s-wait .pad{justify-content:flex-end;}
+.wait-photo{position:absolute;right:-2%;bottom:0;height:104%;object-fit:contain;object-position:bottom right;pointer-events:none;}
+.wait-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(0,0,0,.92) 30%,rgba(0,0,0,.55) 54%,rgba(0,0,0,.08) 78%);}
+.wait-eye{position:relative;display:flex;align-items:center;gap:10px;font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:16px;}
+.wait-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);animation:waitpulse 1.4s ease-in-out infinite;}
 @keyframes waitpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.75);}}
-.wait-title{font-family:'Caveat',cursive;font-size:4.4rem;font-weight:700;letter-spacing:-.01em;line-height:1;color:var(--text);}
-.wait-diagram{position:relative;width:900px;height:400px;margin-top:6px;}
-.wd-lines line{stroke:rgba(17,17,17,.14);stroke-width:1.6;}
-.wd-hub{position:absolute;left:450px;top:200px;transform:translate(-50%,-50%);width:112px;height:112px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-align:center;line-height:1.35;box-shadow:0 14px 34px rgba(124,58,237,.28);}
-.wd-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:7px;width:150px;}
-.wd-n{width:28px;height:28px;border-radius:50%;background:linear-gradient(var(--bg),var(--bg)) padding-box,var(--grad) border-box;border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-size:.76rem;font-weight:800;color:var(--text);}
-.wd-t{font-size:.74rem;font-weight:600;color:var(--text);line-height:1.25;}
+.wait-title{position:relative;font-family:'Inter',sans-serif;font-size:3.6rem;font-weight:800;letter-spacing:-.04em;line-height:1.12;color:#fff;max-width:70%;}
+.wait-sub{position:relative;margin-top:18px;font-size:1.05rem;color:rgba(255,255,255,.55);max-width:56%;line-height:1.6;}
 
 .s-cover{background:radial-gradient(ellipse at 96% 96%,rgba(124,58,237,.055) 0%,transparent 45%),radial-gradient(ellipse at 4% 4%,rgba(249,115,22,.04) 0%,transparent 38%),var(--bg);}
 .s-cover .pad{justify-content:flex-end;}
@@ -131,21 +129,18 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 .ex-note{margin-top:20px;font-size:.86rem;color:var(--muted);font-style:italic;}
 
 /* ── PROFILE (print do Instagram) ── */
-.s-profile .pad{flex-direction:row;align-items:center;gap:60px;justify-content:center;}
-.pf-eyebrow{position:absolute;top:6.5%;left:7.5%;}
-.pf-avatar{width:280px;height:280px;border-radius:50%;padding:6px;background:var(--grad);flex-shrink:0;}
-.pf-avatar-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;background:#1a1a1a;display:flex;align-items:center;justify-content:center;}
-.pf-avatar-inner img{width:100%;height:100%;object-fit:cover;display:block;}
-.pf-avatar-fallback{color:#fff;font-size:3.5rem;font-weight:800;font-family:'Inter',sans-serif;}
-.pf-info{max-width:520px;}
-.pf-handle{display:flex;align-items:center;gap:8px;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;}
-.pf-badge{width:22px;height:22px;flex-shrink:0;}
-.pf-name{margin-top:6px;font-size:1.05rem;color:var(--muted);font-weight:500;}
-.pf-stats{display:flex;gap:28px;margin-top:22px;padding:18px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.pf-stat-n{font-size:1.4rem;font-weight:800;letter-spacing:-.02em;}
-.pf-stat-l{font-size:.78rem;color:var(--muted);margin-top:2px;}
-.pf-bio{margin-top:20px;display:flex;flex-direction:column;gap:6px;}
-.pf-bio div{font-size:.98rem;font-weight:500;line-height:1.5;}
+/* ── PROFILE e AWARD: mesmo layout — foto completa (contain) de um lado, análise do outro ── */
+.s-profile, .s-award{background:#0d0d0d;}
+.s-profile .pad, .s-award .pad{flex-direction:row;align-items:center;gap:50px;}
+.s-profile .eyebrow, .s-award .eyebrow{color:rgba(255,255,255,.4);}
+.s-profile::after, .s-award::after{color:rgba(255,255,255,.15);}
+.tc-photo{flex:0 0 44%;height:82%;display:flex;align-items:center;justify-content:center;}
+.tc-photo img{max-width:100%;max-height:100%;object-fit:contain;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.5);}
+.tc-text{flex:1;min-width:0;}
+.tc-heading{margin-top:14px;font-size:1.9rem;font-weight:800;letter-spacing:-.03em;line-height:1.2;color:#fff;}
+.tc-body{margin-top:18px;font-size:1.02rem;line-height:1.65;color:rgba(255,255,255,.65);}
+.tc-body strong{color:#fff;}
+.tc-body p+p{margin-top:12px;}
 
 /* ══════════ PALCO (público) ══════════ */
 #stage-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
@@ -261,29 +256,26 @@ const K_IDX = LIVE_ID+'_idx', K_ALIVE = LIVE_ID+'_alive', WIN_NAME = LIVE_ID+'_a
 
 /* ═══════════════════════ DADOS DOS SLIDES ═══════════════════════ */
 const SLIDES = [
-{type:'wait', block:'', eyebrow:'LIVE SEMANAL · ARRIVE IN DIGITAL', title:'Começamos em breve', hub:'AULA<br>AO VIVO',
- nodes:[
-   {i:1,x:450,y:25,t:'O padrão que trava a maioria'},
-   {i:2,x:573.7,y:76.3,t:'Os dois pilares: Branding e Performance'},
-   {i:3,x:625,y:200,t:'O que o perfil e o prêmio provam'},
-   {i:4,x:573.7,y:323.7,t:'Como cada pilar aparece na prática'},
-   {i:5,x:450,y:375,t:'Por que isso o tornou referência'},
-   {i:6,x:326.3,y:323.7,t:'Um método, não só um caso'},
-   {i:7,x:275,y:200,t:'Como adaptar pro seu mercado'},
-   {i:8,x:326.3,y:76.3,t:'Corretor do Ano — 2024 e 2025'}],
- notes:['Slide de espera — deixar aberto enquanto as pessoas entram.','Mostra o conteúdo real da aula, não a mecânica dela.']},
+{type:'wait', block:'', eyebrow:'AULA AO VIVO E GRATUITA', img:'assets/hero-experts.png',
+ title:'Já, já a gente começa.',
+ sub:'Deixa o áudio ligado — a análise da estratégia do Lucas Felt começa em instantes.',
+ notes:['Slide de espera — deixar aberto enquanto as pessoas entram, antes de começar a falar.','Mesmo visual da LP da Live Semanal — foto do Erik e Miguel, fundo real — pra manter consistência de marca.']},
 
 {type:'cover', block:'1 — Entrada', eyebrow:'ANÁLISE AO VIVO',
- bgimg:'assets/premio-xeque-mate-lucas-felt.jpg',
- title:'Um corretor roda duas frentes de marketing ao mesmo tempo. <span class="gradtext">E foi eleito Corretor do Ano, duas vezes seguidas.</span>',
- notes:['"Um dos corretores mais respeitados do Brasil roda duas frentes de marketing ao mesmo tempo. E é exatamente por isso que ele vende tanto — e foi eleito Corretor do Ano em 2024 e 2025, pelo prêmio Xeque-Mate."','Não entrar em detalhe do prêmio ainda — só citar, o aprofundamento vem no bloco de análise.']},
+ title:'Um corretor roda duas frentes de marketing ao mesmo tempo. <span class="gradtext">E é por isso que ele vende tanto.</span>',
+ notes:['"Um dos corretores mais respeitados do Brasil roda duas frentes de marketing ao mesmo tempo. E é exatamente por isso que ele vende tanto."','Não dizer o nome ainda — segurar a frase antes de revelar no próximo slide.']},
 
 {type:'profile', block:'1 — Entrada', eyebrow:'ISSO É O LUCAS FELT',
- img:'assets/print-perfil-lucas-felt.png', avatarFallback:'LF',
- handle:'feltnegociosimobiliarios', name:'Lucas Felt | Imóveis em Alphaville',
- stats:[{n:'3.007',l:'posts'},{n:'465 mil',l:'seguidores'},{n:'2.080',l:'seguindo'}],
- bio:['⭐ Corretor das Estrelas','📍 Alphaville','💼 Corretor de Imóveis | Empresário | Mentor','🎓 Sócio @colegiolapa'],
- notes:['"Isso é o Lucas Felt."','Boas-vindas curtas: "Eu sou o Miguel, sócio-fundador da Arrive In Digital — vivi essa mesma lógica estruturando marketing de uma imobiliária de +R$200 milhões de VGV/ano." (2 frases, não é o foco.)']},
+ img:'assets/print-perfil-lucas-felt.png', imgAlt:'Print do perfil @feltnegociosimobiliarios', avatarFallback:'LF',
+ heading:'465 mil seguidores. 3.007 posts. Isso não é sorte.',
+ body:'<p>Repara na bio: <strong>"Corretor das Estrelas"</strong> — não "corretor de imóveis". Isso é um personagem, uma identidade maior que a transação.</p><p><strong>Empresário. Mentor.</strong> Ele não se apresenta como alguém que vende imóvel pra viver — se apresenta como alguém que construiu um negócio e ensina outros. Isso reduz a desconfiança de "esse cara só quer minha comissão", antes de qualquer anúncio existir.</p>',
+ notes:['"Isso é o Lucas Felt."','Boas-vindas curtas aqui: "Eu sou o Miguel, sócio-fundador da Arrive In Digital — vivi essa mesma lógica estruturando marketing de uma imobiliária de +R$200 milhões de VGV/ano." (2 frases, não é o foco.)','Print real — já embutido, não precisa mais de placeholder.']},
+
+{type:'award', block:'1 — Entrada', eyebrow:'RECONHECIMENTO EXTERNO, NÃO AUTODECLARADO',
+ img:'assets/premio-xeque-mate-lucas-felt.jpg', imgAlt:'Lucas Felt recebendo o prêmio Xeque-Mate', avatarFallback:'🏆',
+ heading:'Corretor do Ano — 2024 e 2025',
+ body:'<p>O <strong>Prêmio Xeque-Mate</strong> elege os melhores do mercado imobiliário do Brasil. Lucas Felt venceu a categoria Corretor do Ano duas vezes seguidas.</p><p>Repara na diferença pro que vimos até aqui: a bio é <strong>autodeclarada</strong> — ele escreve o que quer sobre si mesmo. O prêmio não. É o mercado, de fora, reconhecendo ele como referência.</p>',
+ notes:['A diferença desse dado pros anteriores: reconhecimento vindo de fora, não da própria bio.','Isso é o que uma estratégia sustentada de Branding + Performance constrói ao longo de anos — não só venda, reputação.']},
 
 {type:'key', block:'1 — Entrada', eyebrow:'O QUE VOCÊ VAI SABER NO FINAL',
  q:'Os dois pilares da estratégia dele — e como adaptar pro seu mercado.',
@@ -316,18 +308,11 @@ const SLIDES = [
  sub:'Você não anuncia Branding sem ter algo pra mostrar, e não roda Performance sem ter algo pra oferecer. Conteúdo não é um terceiro pilar — é o que alimenta os dois.',
  notes:['Breve — não virar taxonomia de tipos de conteúdo.']},
 
-{type:'list', block:'3 — Análise', title:'O que o perfil já prova, antes de qualquer anúncio', sub:'"Corretor das Estrelas" · Empresário · Mentor · sócio de escola',
+{type:'list', block:'3 — Análise', title:'Mais duas camadas que sustentam a mesma leitura', sub:'Além da bio e do prêmio, já mostrados no início',
  items:[
-   {n:'1',main:'Identidade maior que a transação',dtl:'Ninguém segue "um corretor" por curiosidade — seguem uma marca pessoal'},
-   {n:'2',main:'"Empresário" e "Mentor" na bio',dtl:'Reduz a desconfiança de "só quer minha comissão" e constrói autoridade'},
-   {n:'3',main:'3.007 posts',dtl:'Reconhecimento não se compra num post só — é presença sustentada por anos'}],
- notes:['"A bio dele não é enfeite. É Branding — construído antes de qualquer anúncio."']},
-
-{type:'photo', block:'3 — Análise', eyebrow:'RECONHECIMENTO EXTERNO, NÃO AUTODECLARADO',
- img:'assets/premio-xeque-mate-lucas-felt.jpg',
- caption:'Corretor do Ano — 2024 e 2025',
- sub:'Prêmio Xeque-Mate',
- notes:['A diferença desse dado pros anteriores: a bio é autodeclarada. O prêmio não — é o mercado reconhecendo ele como referência, dois anos seguidos.']},
+   {n:'1',main:'Sócio @colegiolapa',dtl:'Parceria fora do imobiliário — reforça "empresário" e pode ser ponte pra público de alto padrão (pais de aluno)'},
+   {n:'2',main:'3.007 posts, anos de rotina',dtl:'Mesmo em 6 anos de conta, isso é quase 10 posts por semana sem parar — não é escolha do dia, é operação'}],
+ notes:['Retomar rapidamente o perfil e o prêmio que já foram mostrados — aqui é só aprofundar com esses dois ângulos novos.']},
 
 {type:'key', block:'3 — Análise', eyebrow:'COMO O BRANDING APARECE NA PRÁTICA',
  q:'Conteúdo anunciado só pra ganhar seguidor — sem pedir venda.',
@@ -375,15 +360,11 @@ const SLIDES = [
 function padHTML(s){
   switch(s.type){
     case 'wait':
-      return `<div class="wait-eye"><span class="wait-dot"></span>${s.eyebrow}</div>
+      return `<img class="wait-photo" src="${s.img}" alt="">
+        <div class="wait-scrim"></div>
+        <div class="wait-eye"><span class="wait-dot"></span>${s.eyebrow}</div>
         <div class="wait-title">${s.title}</div>
-        <div class="wait-diagram">
-          <svg class="wd-lines" viewBox="0 0 900 400" width="900" height="400">
-            ${s.nodes.map(n=>`<line x1="450" y1="200" x2="${n.x}" y2="${n.y}"/>`).join('')}
-          </svg>
-          <div class="wd-hub">${s.hub}</div>
-          ${s.nodes.map(n=>`<div class="wd-node" style="left:${n.x}px;top:${n.y}px"><span class="wd-n">${n.i}</span><span class="wd-t">${n.t}</span></div>`).join('')}
-        </div>`;
+        <div class="wait-sub">${s.sub}</div>`;
     case 'cover':
       return `${s.bgimg?`<img class="cover-bgimg" src="${s.bgimg}" alt=""><div class="cover-scrim"></div>`:''}<span class="eyebrow">${s.eyebrow}</span><div><div class="rule"></div><h1>${s.title}</h1></div>`;
     case 'photo':
@@ -416,16 +397,12 @@ function padHTML(s){
         </div>
         ${s.exnote?`<div class="ex-note">${s.exnote}</div>`:''}`;
     case 'profile':
-      return `<span class="eyebrow pf-eyebrow">${s.eyebrow}</span>
-        <div class="pf-avatar"><div class="pf-avatar-inner">
-          <img src="${s.img}" alt="Print do perfil" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-          <div class="pf-avatar-fallback gradtext" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">${s.avatarFallback}</div>
-        </div></div>
-        <div class="pf-info">
-          <div class="pf-handle">@${s.handle} <svg class="pf-badge" viewBox="0 0 24 24" fill="#3897f0"><path d="M12 2l2.4 1.3 2.7-.4 1.4 2.4 2.4 1.4-.4 2.7L22 12l-1.5 2.4.4 2.7-2.4 1.4-1.4 2.4-2.7-.4L12 22l-2.4-1.5-2.7.4-1.4-2.4-2.4-1.4.4-2.7L2 12l1.5-2.4-.4-2.7 2.4-1.4L6.9 2.9l2.7.4L12 2z"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="pf-name">${s.name}</div>
-          <div class="pf-stats">${s.stats.map(st=>`<div><div class="pf-stat-n">${st.n}</div><div class="pf-stat-l">${st.l}</div></div>`).join('')}</div>
-          <div class="pf-bio">${s.bio.map(b=>`<div>${b}</div>`).join('')}</div>
+    case 'award':
+      return `<div class="tc-photo"><img src="${s.img}" alt="${s.imgAlt||''}" onerror="this.parentElement.innerHTML='<div class=\\'pf-avatar-fallback gradtext\\'>${s.avatarFallback||'?'}</div>';"></div>
+        <div class="tc-text">
+          <span class="eyebrow">${s.eyebrow}</span>
+          <div class="tc-heading">${s.heading}</div>
+          <div class="tc-body">${s.body}</div>
         </div>`;
     default: return '';
   }
