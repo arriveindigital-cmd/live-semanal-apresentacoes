@@ -306,7 +306,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 
 <script>
 const LIVE_ID = 'aula02_lucasfelt';
-const K_IDX = LIVE_ID+'_idx', K_ALIVE = LIVE_ID+'_alive', WIN_NAME = LIVE_ID+'_audience_win';
+const K_IDX = LIVE_ID+'_idx', K_ALIVE = LIVE_ID+'_alive', WIN_NAME = LIVE_ID+'_audience_win', K_MSG = LIVE_ID+'_msg';
 
 /* ── Ferramenta de desenho compartilhada (anotação no slide + quadro em branco) ── */
 function strokeLine(ctx,d){
@@ -573,9 +573,6 @@ function runAudience(){
   }
   setSlide(idx);
 
-  window.addEventListener('storage',e=>{
-    if(e.key===K_IDX){ const n=parseInt(e.newValue,10); if(!isNaN(n)) setSlide(n); }
-  });
   const audBoardView=document.getElementById('audBoardView');
   const audBoardCanvas=document.getElementById('audBoardCanvas');
   const audBoardCtx=audBoardCanvas.getContext('2d');
@@ -600,8 +597,9 @@ function runAudience(){
     });
   }
 
-  window.addEventListener('message',e=>{
-    const d=e.data; if(!d) return;
+  let lastMsgR=null;
+  function handleMsg(d){
+    if(!d) return;
     if(d.type==='goto') setSlide(d.i);
     else if(d.type==='ann:on') annCanvas.style.display='block';
     else if(d.type==='ann:off') annCanvas.style.display='none';
@@ -612,6 +610,22 @@ function runAudience(){
     else if(d.type==='board:clear'){ audBoardCtx.clearRect(0,0,1280,720); audBoardElsLayer.innerHTML=''; }
     else if(d.type==='board:line') strokeLine(audBoardCtx,d);
     else if(d.type==='board:sync') renderAudBoardEls(d.elements||[]);
+  }
+  window.addEventListener('message',e=>{
+    const d=e.data;
+    if(d && d._r) lastMsgR=d._r;
+    handleMsg(d);
+  });
+  window.addEventListener('storage',e=>{
+    if(e.key===K_IDX){ const n=parseInt(e.newValue,10); if(!isNaN(n)) setSlide(n); }
+    else if(e.key===K_MSG && e.newValue){
+      try{
+        const d=JSON.parse(e.newValue);
+        if(d._r===lastMsgR) return; // já processado via postMessage
+        lastMsgR=d._r;
+        handleMsg(d);
+      }catch(err){}
+    }
   });
   setInterval(()=>localStorage.setItem(K_ALIVE,Date.now()),1000);
 
@@ -672,7 +686,9 @@ function runPresenter(){
     try{ if(audienceWin && !audienceWin.closed) audienceWin.postMessage({type:'goto', i:idx}, '*'); }catch(e){}
   }
   function broadcastAnn(msg){
-    try{ if(audienceWin && !audienceWin.closed) audienceWin.postMessage(msg, '*'); }catch(e){}
+    const full=Object.assign({},msg,{_r:Math.random().toString(36).slice(2)});
+    try{ if(audienceWin && !audienceWin.closed) audienceWin.postMessage(full, '*'); }catch(e){}
+    try{ localStorage.setItem(K_MSG, JSON.stringify(full)); }catch(e){}
   }
   document.getElementById('openAudienceBtn').addEventListener('click',openAudience);
 
