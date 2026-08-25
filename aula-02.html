@@ -261,7 +261,7 @@ const SLIDES = [
  notes:['"465 mil seguidores, 3.007 posts. Isso é operação de anos."']},
 
 {type:'hero', block:'1 — Quem somos nós', eyebrow:'QUEM TE ENSINA HOJE',
- img:'assets/hero-experts.png', imgBg:'assets/hero-bg.jpg', fit:'cover', pos:'15% top',
+ img:'assets/hero-experts.png', imgBg:'assets/hero-bg.jpg', fit:'cover', pos:'0% top', zoom:1.22,
  heading:'Arrive In Digital',
  body:'<p>Eu sou o <strong>Miguel</strong>, sócio-fundador da Arrive In Digital. A gente trabalha todo dia com posicionamento, conteúdo e anúncio pra corretor e imobiliária, em todo o Brasil.</p><p>Eu vivi essa mesma lógica na prática, estruturando conteúdo e anúncio de uma imobiliária de mais de <strong>R$200 milhões de VGV</strong> por ano.</p>',
  notes:['Curto — 2 frases, não é o foco da aula.','Foto e fundo reais da LP da Live Semanal — consistência de marca.']},
@@ -395,7 +395,7 @@ function padHTML(s){
           <div class="wait-title">${s.title}</div>
         </div>`;
     case 'hero':
-      return `<div class="hero-photo-col"${s.imgBg?` style="background:#000 url('${s.imgBg}') center/cover no-repeat"`:''}><img src="${s.img}" alt="" style="object-fit:${s.fit||'cover'};object-position:${s.pos||'center top'}"></div>
+      return `<div class="hero-photo-col"${s.imgBg?` style="background:#000 url('${s.imgBg}') center/cover no-repeat"`:''}><img src="${s.img}" alt="" style="object-fit:${s.fit||'cover'};object-position:${s.pos||'center top'};transform:scale(${s.zoom||1})"></div>
         <div class="hero-text-col">
           <span class="eyebrow">${s.eyebrow}</span>
           <div class="hero-heading">${s.heading}</div>
