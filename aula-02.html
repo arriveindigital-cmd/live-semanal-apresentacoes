@@ -171,8 +171,28 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #jumpBox{display:flex;align-items:center;gap:6px;}
 #jumpInput{width:48px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;text-align:center;padding:6px 4px;font-family:inherit;font-size:.78rem;}
 #pAnnCanvas{position:absolute;top:0;left:0;width:100%;height:100%;cursor:crosshair;display:none;}
-.ann-swatch{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.3);cursor:pointer;padding:0;}
-.ann-swatch.sel{border-color:#fff;}
+.tool-btn.active{background:var(--orange);border-color:var(--orange);}
+.swatch{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.3);cursor:pointer;padding:0;flex-shrink:0;}
+.swatch.sel{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.3);}
+.tb-sep{width:1px;height:22px;background:rgba(255,255,255,.15);margin:0 2px;flex-shrink:0;}
+
+/* ══════════ QUADRO EM BRANCO (mapa mental) ══════════ */
+#boardView{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:50;}
+#boardToolbar{display:flex;align-items:center;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap;flex-shrink:0;}
+#boardStageWrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0d0d0d;}
+#boardCanvasWrap{position:relative;width:1280px;height:720px;background:#fafaf8;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);flex-shrink:0;}
+#boardCanvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;}
+#boardElsLayer{position:absolute;inset:0;}
+.board-el{position:absolute;cursor:move;user-select:none;}
+.board-el.text{padding:4px 8px;font-size:26px;font-weight:800;color:#111;min-width:30px;outline:none;font-family:'Inter',sans-serif;}
+.board-el.box{border:3px solid #111;border-radius:12px;background:rgba(255,255,255,.7);padding:10px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:19px;font-weight:700;color:#111;font-family:'Inter',sans-serif;outline:none;}
+.board-el .del{position:absolute;top:-11px;right:-11px;width:22px;height:22px;border-radius:50%;background:#ef4444;color:#fff;display:none;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:2px solid #fafaf8;line-height:1;}
+.board-el:hover .del{display:flex;}
+.board-el .rsz{position:absolute;bottom:-6px;right:-6px;width:16px;height:16px;background:#111;border-radius:3px;cursor:nwse-resize;display:none;}
+.board-el.box:hover .rsz{display:block;}
+#audBoardView{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#0d0d0d;}
+#audBoardStageWrap{position:relative;width:1280px;height:720px;background:#fafaf8;flex-shrink:0;}
+#audBoardStageWrap .board-el{cursor:default;}
 </style>
 </head>
 <body>
@@ -196,6 +216,12 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 <div id="stage-wrap" style="display:none">
   <div id="stage">
     <canvas id="audAnnCanvas" width="1280" height="720"></canvas>
+  </div>
+</div>
+<div id="audBoardView">
+  <div id="audBoardStageWrap">
+    <canvas id="audBoardCanvas" width="1280" height="720"></canvas>
+    <div id="audBoardElsLayer" style="position:absolute;inset:0;"></div>
   </div>
 </div>
 <div id="fsHint" style="display:none">F — tela cheia</div>
@@ -230,18 +256,72 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
       <input id="jumpInput" type="number" min="1" placeholder="#">
       <button id="jumpBtn">Ir</button>
     </div>
-    <button id="annToggleBtn">✏️ Quadro</button>
-    <button class="ann-swatch sel" style="background:#fff" data-c="#ffffff" title="Branco"></button>
-    <button class="ann-swatch" style="background:#f97316" data-c="#f97316" title="Laranja"></button>
-    <button class="ann-swatch" style="background:#22c55e" data-c="#22c55e" title="Verde"></button>
+    <button id="annToggleBtn">✏️ Anotar no slide</button>
+    <button class="tool-btn active" data-tool="pen" title="Caneta">✏️</button>
+    <button class="tool-btn" data-tool="marker" title="Marcador">🖍️</button>
+    <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar">➖</button>
+    <button class="tool-btn" data-tool="eraser" title="Borracha">🧽</button>
+    <span class="tb-sep"></span>
+    <button class="swatch sel" style="background:#ffffff" data-c="#ffffff" title="Branco"></button>
+    <button class="swatch" style="background:#111111;border-color:rgba(255,255,255,.5)" data-c="#111111" title="Preto"></button>
+    <button class="swatch" style="background:#f97316" data-c="#f97316" title="Laranja"></button>
+    <button class="swatch" style="background:#ef4444" data-c="#ef4444" title="Vermelho"></button>
+    <button class="swatch" style="background:#22c55e" data-c="#22c55e" title="Verde"></button>
+    <button class="swatch" style="background:#3b82f6" data-c="#3b82f6" title="Azul"></button>
+    <button class="swatch" style="background:#eab308" data-c="#eab308" title="Amarelo"></button>
     <button id="annClearBtn">🧹 Limpar</button>
-    <span class="hint">← → navegam · Quadro desenha por cima do slide atual</span>
+    <button id="openBoardBtn">🗒️ Quadro em branco</button>
+    <span class="hint">← → navegam</span>
   </footer>
+</div>
+
+<div id="boardView" style="display:none">
+  <div id="boardToolbar">
+    <button class="tool-btn active" data-tool="pen" title="Caneta">✏️</button>
+    <button class="tool-btn" data-tool="marker" title="Marcador">🖍️</button>
+    <button class="tool-btn" data-tool="underline" title="Linha reta / sublinhar">➖</button>
+    <button class="tool-btn" data-tool="eraser" title="Borracha">🧽</button>
+    <span class="tb-sep"></span>
+    <button class="swatch sel" style="background:#ffffff" data-c="#ffffff" title="Branco"></button>
+    <button class="swatch" style="background:#111111;border-color:rgba(255,255,255,.5)" data-c="#111111" title="Preto"></button>
+    <button class="swatch" style="background:#f97316" data-c="#f97316" title="Laranja"></button>
+    <button class="swatch" style="background:#ef4444" data-c="#ef4444" title="Vermelho"></button>
+    <button class="swatch" style="background:#22c55e" data-c="#22c55e" title="Verde"></button>
+    <button class="swatch" style="background:#3b82f6" data-c="#3b82f6" title="Azul"></button>
+    <button class="swatch" style="background:#eab308" data-c="#eab308" title="Amarelo"></button>
+    <span class="tb-sep"></span>
+    <button id="addTextBtn">🔤 Texto</button>
+    <button id="addBoxBtn">▭ Caixa</button>
+    <button id="boardClearBtn">🗑️ Limpar tudo</button>
+    <span class="hint">Arraste pra mover · duplo clique pra editar texto</span>
+    <button id="closeBoardBtn" style="margin-left:auto">← Voltar pra aula</button>
+  </div>
+  <div id="boardStageWrap">
+    <div id="boardCanvasWrap">
+      <canvas id="boardCanvas" width="1280" height="720"></canvas>
+      <div id="boardElsLayer"></div>
+    </div>
+  </div>
 </div>
 
 <script>
 const LIVE_ID = 'aula02_lucasfelt';
 const K_IDX = LIVE_ID+'_idx', K_ALIVE = LIVE_ID+'_alive', WIN_NAME = LIVE_ID+'_audience_win';
+
+/* ── Ferramenta de desenho compartilhada (anotação no slide + quadro em branco) ── */
+function strokeLine(ctx,d){
+  ctx.save();
+  if(d.tool==='eraser'){ ctx.globalCompositeOperation='destination-out'; ctx.lineWidth=30; }
+  else{
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=d.c;
+    if(d.tool==='marker'){ ctx.globalAlpha=.35; ctx.lineWidth=16; }
+    else{ ctx.globalAlpha=1; ctx.lineWidth=3; }
+  }
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath(); ctx.moveTo(d.x0*1280,d.y0*720); ctx.lineTo(d.x1*1280,d.y1*720); ctx.stroke();
+  ctx.restore();
+}
 
 /* ═══════════════════════ DADOS DOS SLIDES ═══════════════════════ */
 const SLIDES = [
@@ -494,16 +574,42 @@ function runAudience(){
   window.addEventListener('storage',e=>{
     if(e.key===K_IDX){ const n=parseInt(e.newValue,10); if(!isNaN(n)) setSlide(n); }
   });
+  const audBoardView=document.getElementById('audBoardView');
+  const audBoardCanvas=document.getElementById('audBoardCanvas');
+  const audBoardCtx=audBoardCanvas.getContext('2d');
+  const audBoardElsLayer=document.getElementById('audBoardElsLayer');
+  function fitBoard(){
+    const wrap=document.getElementById('audBoardStageWrap');
+    const scale=Math.min((window.innerWidth-64)/1280,(window.innerHeight-64)/720,1.3);
+    wrap.style.transform=`scale(${scale})`;
+  }
+  fitBoard(); window.addEventListener('resize',fitBoard);
+
+  function renderAudBoardEls(elsData){
+    audBoardElsLayer.innerHTML='';
+    elsData.forEach(el=>{
+      const d=document.createElement('div');
+      d.className='board-el '+el.type;
+      d.style.left=(el.x*1280)+'px'; d.style.top=(el.y*720)+'px';
+      if(el.type==='box'){ d.style.width=(el.w*1280)+'px'; d.style.height=(el.h*720)+'px'; }
+      d.style.color=el.color||'#111';
+      d.textContent=el.text||'';
+      audBoardElsLayer.appendChild(d);
+    });
+  }
+
   window.addEventListener('message',e=>{
     const d=e.data; if(!d) return;
     if(d.type==='goto') setSlide(d.i);
     else if(d.type==='ann:on') annCanvas.style.display='block';
     else if(d.type==='ann:off') annCanvas.style.display='none';
     else if(d.type==='ann:clear') annCtx.clearRect(0,0,1280,720);
-    else if(d.type==='ann:line'){
-      annCtx.strokeStyle=d.c; annCtx.lineWidth=4; annCtx.lineCap='round';
-      annCtx.beginPath(); annCtx.moveTo(d.x0*1280,d.y0*720); annCtx.lineTo(d.x1*1280,d.y1*720); annCtx.stroke();
-    }
+    else if(d.type==='ann:line') strokeLine(annCtx,d);
+    else if(d.type==='board:on'){ audBoardView.style.display='flex'; }
+    else if(d.type==='board:off'){ audBoardView.style.display='none'; }
+    else if(d.type==='board:clear'){ audBoardCtx.clearRect(0,0,1280,720); audBoardElsLayer.innerHTML=''; }
+    else if(d.type==='board:line') strokeLine(audBoardCtx,d);
+    else if(d.type==='board:sync') renderAudBoardEls(d.elements||[]);
   });
   setInterval(()=>localStorage.setItem(K_ALIVE,Date.now()),1000);
 
@@ -576,14 +682,51 @@ function runPresenter(){
     if(!isNaN(v)) go(v-1);
   });
   document.addEventListener('keydown',e=>{
-    if(document.activeElement && (document.activeElement.id==='jumpInput')) return;
-    if(annOn) return; // não navega enquanto desenha
+    if(document.activeElement && (document.activeElement.id==='jumpInput'||document.activeElement.isContentEditable)) return;
+    if(annOn||boardOpen) return; // não navega enquanto desenha ou com o quadro aberto
     if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); go(idx+1); }
     if(e.key==='ArrowLeft') go(idx-1);
   });
 
-  /* ── Quadro de anotação ── */
-  let annOn=false, annColor='#ffffff', drawing=false, lastX=0, lastY=0;
+  /* ── Estado compartilhado de ferramenta (anotação no slide + quadro em branco) ── */
+  let curTool='pen', curColor='#ffffff';
+  function selectTool(t){
+    curTool=t;
+    document.querySelectorAll('.tool-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('data-tool')===t));
+  }
+  function selectColor(c){
+    curColor=c;
+    document.querySelectorAll('.swatch').forEach(b=>b.classList.toggle('sel',b.getAttribute('data-c')===c));
+  }
+  document.querySelectorAll('.tool-btn').forEach(btn=>btn.addEventListener('click',()=>selectTool(btn.getAttribute('data-tool'))));
+  document.querySelectorAll('.swatch').forEach(btn=>btn.addEventListener('click',()=>selectColor(btn.getAttribute('data-c'))));
+
+  function attachDrawing(canvas, broadcastFn, msgType){
+    const ctx=canvas.getContext('2d');
+    let drawing=false, lastX=0, lastY=0, holdY=0;
+    function posFrom(e){
+      const r=canvas.getBoundingClientRect();
+      const cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+      const cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
+      return {x:cx/r.width, y:cy/r.height};
+    }
+    function start(e){ drawing=true; const p=posFrom(e); lastX=p.x; lastY=p.y; holdY=p.y; }
+    function move(e){
+      if(!drawing) return; e.preventDefault();
+      const p=posFrom(e);
+      if(curTool==='underline') p.y=holdY;
+      const msg={type:msgType,x0:lastX,y0:lastY,x1:p.x,y1:p.y,c:curColor,tool:curTool};
+      strokeLine(ctx,msg);
+      broadcastFn(msg);
+      lastX=p.x; lastY=p.y;
+    }
+    function end(){ drawing=false; }
+    canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
+    canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end);
+  }
+
+  /* ── Anotação por cima do slide ── */
+  let annOn=false;
   const annBtn=document.getElementById('annToggleBtn');
   function updateAnnBtn(){ annBtn.classList.toggle('active',annOn); }
   function setupAnnCanvas(){
@@ -594,25 +737,7 @@ function runPresenter(){
     c.width=nowBox.clientWidth; c.height=nowBox.clientHeight;
     nowBox.appendChild(c);
     c.style.display=annOn?'block':'none';
-    const ctx=c.getContext('2d');
-    function posFrom(e){
-      const r=c.getBoundingClientRect();
-      const cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-      const cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
-      return {x:cx/r.width, y:cy/r.height};
-    }
-    function start(e){ if(!annOn) return; drawing=true; const p=posFrom(e); lastX=p.x; lastY=p.y; }
-    function move(e){
-      if(!annOn||!drawing) return; e.preventDefault();
-      const p=posFrom(e);
-      ctx.strokeStyle=annColor; ctx.lineWidth=3; ctx.lineCap='round';
-      ctx.beginPath(); ctx.moveTo(lastX*c.width,lastY*c.height); ctx.lineTo(p.x*c.width,p.y*c.height); ctx.stroke();
-      broadcastAnn({type:'ann:line',x0:lastX,y0:lastY,x1:p.x,y1:p.y,c:annColor});
-      lastX=p.x; lastY=p.y;
-    }
-    function end(){ drawing=false; }
-    c.addEventListener('mousedown',start); c.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
-    c.addEventListener('touchstart',start); c.addEventListener('touchmove',move); c.addEventListener('touchend',end);
+    attachDrawing(c, m=>broadcastAnn(Object.assign({},m,{type:'ann:line'})), 'ann:line');
   }
   annBtn.addEventListener('click',()=>{
     annOn=!annOn; updateAnnBtn();
@@ -625,12 +750,100 @@ function runPresenter(){
     if(c) c.getContext('2d').clearRect(0,0,c.width,c.height);
     broadcastAnn({type:'ann:clear'});
   });
-  document.querySelectorAll('.ann-swatch').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      annColor=btn.getAttribute('data-c');
-      document.querySelectorAll('.ann-swatch').forEach(b=>b.classList.remove('sel'));
-      btn.classList.add('sel');
+
+  /* ── Quadro em branco (texto + caixas pra mapa mental) ── */
+  const boardView=document.getElementById('boardView');
+  const boardCanvas=document.getElementById('boardCanvas');
+  const boardElsLayer=document.getElementById('boardElsLayer');
+  let boardEls=[], boardIdSeq=1, boardOpen=false;
+
+  function broadcastBoard(msg){ broadcastAnn(msg); }
+
+  function boardSync(){ broadcastBoard({type:'board:sync', elements:boardEls.map(({dom,...rest})=>rest)}); }
+
+  function makeBoardEl(data){
+    const d=document.createElement('div');
+    d.className='board-el '+data.type;
+    d.style.left=(data.x*1280)+'px'; d.style.top=(data.y*720)+'px';
+    if(data.type==='box'){ d.style.width=(data.w*1280)+'px'; d.style.height=(data.h*720)+'px'; }
+    d.style.color=data.color;
+    d.contentEditable='true';
+    d.textContent=data.text;
+    d.spellcheck=false;
+
+    let dragging=false, dx=0, dy=0;
+    d.addEventListener('mousedown',e=>{
+      if(document.activeElement===d) return; // já editando texto — não arrasta
+      if(e.target.classList.contains('rsz')||e.target.classList.contains('del')) return;
+      dragging=true;
+      const wrapR=boardElsLayer.getBoundingClientRect();
+      dx=e.clientX-(wrapR.left+data.x*wrapR.width);
+      dy=e.clientY-(wrapR.top+data.y*wrapR.height);
+      e.preventDefault();
     });
+    window.addEventListener('mousemove',e=>{
+      if(!dragging) return;
+      const wrapR=boardElsLayer.getBoundingClientRect();
+      data.x=Math.max(0,Math.min(1,(e.clientX-dx-wrapR.left)/wrapR.width));
+      data.y=Math.max(0,Math.min(1,(e.clientY-dy-wrapR.top)/wrapR.height));
+      d.style.left=(data.x*1280)+'px'; d.style.top=(data.y*720)+'px';
+    });
+    window.addEventListener('mouseup',()=>{ if(dragging){ dragging=false; boardSync(); } });
+
+    d.addEventListener('dblclick',()=>{ d.focus(); });
+    d.addEventListener('blur',()=>{ data.text=d.textContent; boardSync(); });
+    d.addEventListener('keydown',e=>{ if(e.key==='Enter'&&data.type==='text'){ e.preventDefault(); d.blur(); } });
+
+    const del=document.createElement('div'); del.className='del'; del.textContent='×';
+    del.addEventListener('click',e=>{ e.stopPropagation(); boardEls=boardEls.filter(x=>x.id!==data.id); d.remove(); boardSync(); });
+    d.appendChild(del);
+
+    if(data.type==='box'){
+      const rsz=document.createElement('div'); rsz.className='rsz';
+      let resizing=false;
+      rsz.addEventListener('mousedown',e=>{ resizing=true; e.stopPropagation(); e.preventDefault(); });
+      window.addEventListener('mousemove',e=>{
+        if(!resizing) return;
+        const wrapR=boardElsLayer.getBoundingClientRect();
+        data.w=Math.max(.05,(e.clientX-wrapR.left)/wrapR.width-data.x);
+        data.h=Math.max(.05,(e.clientY-wrapR.top)/wrapR.height-data.y);
+        d.style.width=(data.w*1280)+'px'; d.style.height=(data.h*720)+'px';
+      });
+      window.addEventListener('mouseup',()=>{ if(resizing){ resizing=false; boardSync(); } });
+      d.appendChild(rsz);
+    }
+    data.dom=d;
+    return d;
+  }
+
+  function addBoardEl(type){
+    const n=boardEls.length;
+    const data={id:boardIdSeq++, type, x:.35+((n%4)*.06), y:.3+((n%4)*.08), w:.22, h:.14, text:type==='box'?'Caixa':'Texto', color:curColor==='#ffffff'?'#111111':curColor};
+    const dom=makeBoardEl(data);
+    boardEls.push(data);
+    boardElsLayer.appendChild(dom);
+    boardSync();
+    setTimeout(()=>{ dom.focus(); document.execCommand&&document.execCommand('selectAll',false,null); },50);
+  }
+  document.getElementById('addTextBtn').addEventListener('click',()=>addBoardEl('text'));
+  document.getElementById('addBoxBtn').addEventListener('click',()=>addBoardEl('box'));
+
+  document.getElementById('boardClearBtn').addEventListener('click',()=>{
+    boardEls=[]; boardElsLayer.innerHTML='';
+    boardCanvas.getContext('2d').clearRect(0,0,1280,720);
+    boardSync(); broadcastBoard({type:'board:clear'});
+  });
+
+  let boardDrawAttached=false;
+  document.getElementById('openBoardBtn').addEventListener('click',()=>{
+    boardOpen=true; boardView.style.display='flex';
+    if(!boardDrawAttached){ attachDrawing(boardCanvas, m=>broadcastBoard(Object.assign({},m,{type:'board:line'})), 'board:line'); boardDrawAttached=true; }
+    broadcastBoard({type:'board:on'});
+    boardSync();
+  });
+  document.getElementById('closeBoardBtn').addEventListener('click',()=>{
+    boardOpen=false; boardView.style.display='none';
+    broadcastBoard({type:'board:off'});
   });
 
   const dot=document.getElementById('connDot'), label=document.getElementById('connLabel');
