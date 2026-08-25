@@ -29,12 +29,12 @@ html,body{height:100%;background:#e6e5e2;font-family:'Inter',system-ui,sans-seri
 .s-wait{background:#0a0a0a;}
 .s-wait::after{color:rgba(255,255,255,.18);}
 .s-wait .pad{padding:0;}
-.wait-photo-col{position:absolute;right:6%;bottom:0;width:40%;height:100%;overflow:hidden;}
-.wait-photo-col img{position:absolute;right:-10%;bottom:0;height:98%;width:auto;object-fit:contain;}
-.wait-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(10,10,10,.9) 34%,rgba(10,10,10,.55) 54%,rgba(10,10,10,.05) 74%);}
+.wait-photo-col{position:absolute;right:0;bottom:0;width:46%;height:100%;overflow:hidden;background:#000 url('assets/hero-bg.jpg') center/cover no-repeat;}
+.wait-photo-col img{position:absolute;left:50%;bottom:0;height:96%;width:auto;max-width:none;object-fit:contain;transform:translateX(-50%);}
+.wait-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(10,10,10,.92) 30%,rgba(10,10,10,.55) 50%,rgba(10,10,10,.05) 70%);}
 .wait-content{position:relative;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 7.5%;max-width:62%;}
-.wait-pill{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:8px 16px;border-radius:100px;margin-bottom:auto;margin-top:8%;}
-.wait-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:waitpulse 1.4s ease-in-out infinite;}
+.wait-pill{display:inline-flex;align-items:center;gap:12px;align-self:flex-start;font-size:.95rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(249,115,22,.16);border:1px solid rgba(249,115,22,.45);padding:14px 26px;border-radius:100px;margin-bottom:auto;margin-top:8%;}
+.wait-dot{width:10px;height:10px;border-radius:50%;background:var(--orange);animation:waitpulse 1.4s ease-in-out infinite;}
 @keyframes waitpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.75);}}
 .wait-title{font-size:3.4rem;font-weight:900;letter-spacing:-.045em;line-height:1.1;color:#fff;margin-bottom:auto;padding-bottom:10%;}
 
