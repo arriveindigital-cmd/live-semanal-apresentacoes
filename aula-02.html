@@ -30,7 +30,7 @@ html,body{height:100%;background:#e6e5e2;font-family:'Inter',system-ui,sans-seri
 .s-wait::after{color:rgba(255,255,255,.18);}
 .s-wait .pad{padding:0;}
 .wait-photo-col{position:absolute;right:0;bottom:0;width:46%;height:100%;overflow:hidden;background:#000 url('assets/hero-bg.jpg') center/cover no-repeat;}
-.wait-photo-col img{position:absolute;left:50%;bottom:0;height:96%;width:auto;max-width:none;object-fit:contain;transform:translateX(-50%);}
+.wait-photo-col img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:30% top;}
 .wait-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(10,10,10,.92) 30%,rgba(10,10,10,.55) 50%,rgba(10,10,10,.05) 70%);}
 .wait-content{position:relative;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 7.5%;max-width:62%;}
 .wait-pill{display:inline-flex;align-items:center;gap:12px;align-self:flex-start;font-size:.95rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(249,115,22,.16);border:1px solid rgba(249,115,22,.45);padding:14px 26px;border-radius:100px;margin-bottom:auto;margin-top:8%;}
@@ -43,7 +43,7 @@ html,body{height:100%;background:#e6e5e2;font-family:'Inter',system-ui,sans-seri
 .s-hero::after{color:rgba(255,255,255,.15);}
 .s-hero .pad{flex-direction:row;padding:0;}
 .hero-photo-col{position:relative;flex:0 0 44%;height:100%;overflow:hidden;background:#000;}
-.hero-photo-col img{width:100%;height:100%;}
+.hero-photo-col img{width:100%;height:100%;object-position:center top;}
 .hero-text-col{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding:0 5% 0 6%;}
 .hero-text-col .eyebrow{color:var(--orange);margin-bottom:16px;}
 .hero-heading{font-size:2.5rem;font-weight:800;letter-spacing:-.035em;line-height:1.18;color:#fff;}
@@ -261,7 +261,7 @@ const SLIDES = [
  notes:['"465 mil seguidores, 3.007 posts. Isso é operação de anos."']},
 
 {type:'hero', block:'1 — Quem somos nós', eyebrow:'QUEM TE ENSINA HOJE',
- img:'assets/hero-experts.png', imgBg:'assets/hero-bg.jpg', fit:'contain',
+ img:'assets/hero-experts.png', imgBg:'assets/hero-bg.jpg', fit:'cover', pos:'15% top',
  heading:'Arrive In Digital',
  body:'<p>Eu sou o <strong>Miguel</strong>, sócio-fundador da Arrive In Digital. A gente trabalha todo dia com posicionamento, conteúdo e anúncio pra corretor e imobiliária, em todo o Brasil.</p><p>Eu vivi essa mesma lógica na prática, estruturando conteúdo e anúncio de uma imobiliária de mais de <strong>R$200 milhões de VGV</strong> por ano.</p>',
  notes:['Curto — 2 frases, não é o foco da aula.','Foto e fundo reais da LP da Live Semanal — consistência de marca.']},
@@ -395,7 +395,7 @@ function padHTML(s){
           <div class="wait-title">${s.title}</div>
         </div>`;
     case 'hero':
-      return `<div class="hero-photo-col"${s.imgBg?` style="background:#000 url('${s.imgBg}') center/cover no-repeat"`:''}><img src="${s.img}" alt="" style="object-fit:${s.fit||'cover'}"></div>
+      return `<div class="hero-photo-col"${s.imgBg?` style="background:#000 url('${s.imgBg}') center/cover no-repeat"`:''}><img src="${s.img}" alt="" style="object-fit:${s.fit||'cover'};object-position:${s.pos||'center top'}"></div>
         <div class="hero-text-col">
           <span class="eyebrow">${s.eyebrow}</span>
           <div class="hero-heading">${s.heading}</div>
