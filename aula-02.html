@@ -241,6 +241,42 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #audBoardView{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#0d0d0d;}
 #audBoardStageWrap{position:relative;width:1280px;height:720px;background:#fafaf8;flex-shrink:0;overflow:hidden;}
 #audBoardStageWrap .board-el{cursor:default;}
+
+/* ══════════ COMPARTILHAR (modal + viewer público) ══════════ */
+#shareModal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:100;font-family:'Inter',sans-serif;}
+.share-card{width:100%;max-width:440px;background:#1c1c1c;border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:26px 28px;color:#fff;}
+.share-title{font-size:1.1rem;font-weight:800;margin-bottom:8px;}
+.share-desc{font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:18px;}
+.share-row{display:flex;align-items:center;gap:10px;font-size:.86rem;margin-bottom:12px;cursor:pointer;}
+.share-row input{width:16px;height:16px;}
+.share-row.disabled{opacity:.4;cursor:not-allowed;}
+.share-link-row{display:flex;gap:8px;margin-top:14px;}
+#shareLinkInput{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:8px;color:#fff;padding:9px 12px;font-size:.8rem;font-family:inherit;}
+.share-status{font-size:.76rem;color:#22c55e;margin-top:10px;min-height:1em;}
+.share-close{margin-top:18px;width:100%;}
+#shareModal button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:9px 14px;font-size:.82rem;font-weight:600;font-family:inherit;}
+#shareModal button:hover{background:rgba(255,255,255,.14);}
+
+#shareView{position:fixed;inset:0;background:#0d0d0d;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Inter',sans-serif;}
+#shareStage-wrap{flex:1;display:flex;align-items:center;justify-content:center;width:100%;}
+#shareStage{position:relative;width:1280px;height:720px;}
+#shareStage .slide{position:absolute;top:0;left:0;opacity:0;transform:scale(.98);transition:opacity .28s ease,transform .28s ease;pointer-events:none;box-shadow:0 32px 96px rgba(0,0,0,.3);}
+#shareStage .slide.active{opacity:1;transform:scale(1);}
+#shareAnnOverlay{position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;z-index:5;display:none;}
+#shareNav{display:flex;align-items:center;gap:14px;padding:16px;color:#fff;}
+#shareNav button{cursor:pointer;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:9px 16px;font-size:.85rem;font-weight:600;font-family:inherit;}
+#shareNav button:hover{background:rgba(255,255,255,.14);}
+#shareCounter{font-variant-numeric:tabular-nums;font-size:.85rem;color:rgba(255,255,255,.6);}
+#shareBoardOverlay{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:60;}
+#shareBoardToolbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
+#shareBoardToolbar button, #shareBoardSelect{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:8px 14px;font-size:.8rem;font-family:'Inter',sans-serif;}
+#shareBoardWrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:#0d0d0d;}
+#shareBoardInner{position:relative;width:1280px;height:720px;background:#fafaf8;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);flex-shrink:0;}
+#shareBoardCanvas{position:absolute;top:0;left:0;}
+#shareBoardConnsSvg{position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;overflow:visible;}
+#shareBoardConnsSvg line{stroke:#3b82f6;stroke-width:3;}
+#shareBoardElsLayer{position:absolute;inset:0;}
+#shareBoardElsLayer .board-el{cursor:default;}
 </style>
 </head>
 <body>
@@ -284,6 +320,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <div class="p-block" id="pBlock">1</div>
     <div class="p-status"><span class="dot" id="connDot"></span><span id="connLabel">Público desconectado</span></div>
     <button id="openAudienceBtn">Abrir tela do público ↗</button>
+    <button id="openShareBtn">🔗 Compartilhar</button>
     <div class="p-timer" id="timer" title="Clique pra zerar">00:00</div>
     <div class="p-counter" id="pCounter">1 / 1</div>
   </header>
@@ -330,6 +367,48 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button id="openBoardBtn">🧠 Mapa mental</button>
     <span class="hint">← → navegam · P/M/U/E ferramentas · Ctrl+Z/Ctrl+Shift+Z desfaz/refaz</span>
   </footer>
+</div>
+
+<div id="shareModal" style="display:none">
+  <div class="share-card">
+    <div class="share-title">🔗 Compartilhar com os alunos</div>
+    <p class="share-desc">Esse link abre os slides pra qualquer pessoa, sem senha — sem os controles de apresentador.</p>
+    <label class="share-row"><input type="checkbox" id="shareAnnToggle"> Mostrar as anotações que eu fiz nos slides</label>
+    <label class="share-row"><input type="checkbox" id="shareBoardToggle"> Mostrar o mapa mental (só habilita se tiver algo salvo)</label>
+    <div class="share-link-row">
+      <input type="text" id="shareLinkInput" readonly>
+      <button id="shareCopyBtn">Copiar link</button>
+    </div>
+    <div class="share-status" id="shareStatus"></div>
+    <button id="shareCloseBtn" class="share-close">Fechar</button>
+  </div>
+</div>
+
+<div id="shareView" style="display:none">
+  <div id="shareStage-wrap">
+    <div id="shareStage">
+      <canvas id="shareAnnOverlay" width="1280" height="720"></canvas>
+    </div>
+  </div>
+  <div id="shareNav">
+    <button id="sharePrevBtn">‹</button>
+    <span id="shareCounter">1 / 1</span>
+    <button id="shareNextBtn">›</button>
+    <button id="shareBoardBtn" style="display:none">🧠 Ver mapa mental</button>
+  </div>
+  <div id="shareBoardOverlay" style="display:none">
+    <div id="shareBoardToolbar">
+      <select id="shareBoardSelect" title="Mapas mentais"></select>
+      <button id="shareBoardCloseBtn" style="margin-left:auto">← Voltar aos slides</button>
+    </div>
+    <div id="shareBoardWrap">
+      <div id="shareBoardInner">
+        <canvas id="shareBoardCanvas" width="1280" height="720"></canvas>
+        <svg id="shareBoardConnsSvg" viewBox="0 0 1280 720"></svg>
+        <div id="shareBoardElsLayer"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="boardView" style="display:none">
@@ -628,6 +707,9 @@ if(view==='audience'){
 }else if(view==='presenter'){
   document.getElementById('launcher').style.display='none';
   runPresenter();
+}else if(view==='share'){
+  document.getElementById('launcher').style.display='none';
+  runShareViewer();
 }
 
 /* ═══════════════════════ MODO PÚBLICO ═══════════════════════ */
@@ -760,6 +842,113 @@ function runAudience(){
   });
 }
 
+/* ═══════════════════════ COMPARTILHAR (visualização pública, sem senha) ═══════════════════════ */
+function runShareViewer(){
+  const shareView=document.getElementById('shareView');
+  shareView.style.display='flex';
+  const stageWrap=document.getElementById('shareStage-wrap');
+  const stage=document.getElementById('shareStage');
+  const annOverlay=document.getElementById('shareAnnOverlay');
+  const annCtx=annOverlay.getContext('2d');
+  const counter=document.getElementById('shareCounter');
+  const boardBtn=document.getElementById('shareBoardBtn');
+
+  const els=SLIDES.map(buildSlideEl);
+  els.forEach(e=>stage.appendChild(e));
+
+  function fit(){
+    const scale=Math.min((window.innerWidth-40)/1280,(window.innerHeight-140)/720,1.3);
+    stage.style.transform=`scale(${scale})`;
+    stage.style.transformOrigin='center center';
+  }
+  fit(); window.addEventListener('resize',fit);
+
+  let idx=0, remoteData={annBySlide:{},boards:[],shareSettings:{}};
+
+  function renderAnnOverlay(){
+    annCtx.clearRect(0,0,1280,720);
+    if(!remoteData.shareSettings.annotations) return;
+    const saved=remoteData.annBySlide && remoteData.annBySlide[idx];
+    if(!saved) return;
+    const img=new Image();
+    img.onload=()=>annCtx.drawImage(img,0,0,1280,720);
+    img.src=saved;
+  }
+  function setSlide(i){
+    if(i<0||i>=SLIDES.length) return;
+    idx=i;
+    els.forEach((e,n)=>e.classList.toggle('active',n===idx));
+    counter.textContent=(idx+1)+' / '+SLIDES.length;
+    renderAnnOverlay();
+  }
+  document.getElementById('sharePrevBtn').addEventListener('click',()=>setSlide(idx-1));
+  document.getElementById('shareNextBtn').addEventListener('click',()=>setSlide(idx+1));
+  document.addEventListener('keydown',e=>{
+    if(document.getElementById('shareBoardOverlay').style.display==='flex') return;
+    if(e.key==='ArrowRight'||e.key===' '){ e.preventDefault(); setSlide(idx+1); }
+    if(e.key==='ArrowLeft') setSlide(idx-1);
+  });
+
+  /* mapa mental (leitura) */
+  const boardOverlay=document.getElementById('shareBoardOverlay');
+  const boardCanvas=document.getElementById('shareBoardCanvas');
+  const boardElsLayer=document.getElementById('shareBoardElsLayer');
+  const boardConnsSvg=document.getElementById('shareBoardConnsSvg');
+  const boardSelect=document.getElementById('shareBoardSelect');
+
+  function renderShareBoard(b){
+    if(!b) return;
+    boardElsLayer.innerHTML='';
+    const byId={};
+    (b.els||[]).forEach(el=>{
+      const d=document.createElement('div');
+      d.className='board-el '+el.type;
+      d.style.left=(el.x*1280)+'px'; d.style.top=(el.y*720)+'px';
+      if(el.type==='box'){
+        d.style.width=(el.w*1280)+'px'; d.style.height=(el.h*720)+'px';
+        d.style.borderColor=el.borderColor||'#111'; d.style.background=el.fillColor||'rgba(255,255,255,.7)';
+      } else if(el.type==='image'){
+        d.style.width=(el.w*1280)+'px'; d.style.height=(el.h*720)+'px';
+        const img=document.createElement('img'); img.src=el.src||''; img.style.cssText='width:100%;height:100%;object-fit:contain;';
+        d.appendChild(img);
+      }
+      if(el.type!=='image'){ d.style.color=el.color||'#111'; d.textContent=el.text||''; }
+      boardElsLayer.appendChild(d);
+      byId[el.id]={x:el.x,y:el.y,w:el.w||0,h:el.h||0,type:el.type};
+    });
+    const boxLike=t=>t==='box'||t==='image';
+    boardConnsSvg.innerHTML=(b.conns||[]).map(cn=>{
+      const a=byId[cn.a], c=byId[cn.b];
+      if(!a||!c) return '';
+      const ax=(a.x+(boxLike(a.type)?a.w/2:.05))*1280, ay=(a.y+(boxLike(a.type)?a.h/2:.02))*720;
+      const bx=(c.x+(boxLike(c.type)?c.w/2:.05))*1280, by=(c.y+(boxLike(c.type)?c.h/2:.02))*720;
+      return `<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}"/>`;
+    }).join('');
+    const ctx=boardCanvas.getContext('2d');
+    ctx.clearRect(0,0,1280,720);
+    if(b.drawing){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0,1280,720); img.src=b.drawing; }
+  }
+  boardSelect.addEventListener('change',()=>{
+    renderShareBoard(remoteData.boards[parseInt(boardSelect.value,10)]);
+  });
+  boardBtn.addEventListener('click',()=>{
+    boardOverlay.style.display='flex';
+    boardSelect.innerHTML=remoteData.boards.map((b,i)=>`<option value="${i}">${b.name}</option>`).join('');
+    renderShareBoard(remoteData.boards[0]);
+  });
+  document.getElementById('shareBoardCloseBtn').addEventListener('click',()=>{ boardOverlay.style.display='none'; });
+
+  fetch('api/public-load.php?liveId='+encodeURIComponent(LIVE_ID))
+    .then(r=>r.json())
+    .then(data=>{
+      remoteData=Object.assign({annBySlide:{},boards:[],shareSettings:{}},data);
+      const hasBoard=(remoteData.boards||[]).some(b=>(b.els&&b.els.length)||b.drawing);
+      if(remoteData.shareSettings.board && hasBoard) boardBtn.style.display='block';
+      setSlide(0);
+    })
+    .catch(()=>{ setSlide(0); });
+}
+
 /* ═══════════════════════ MODO APRESENTADOR ═══════════════════════ */
 function runPresenter(){
   document.getElementById('presenter').style.display='flex';
@@ -814,6 +1003,57 @@ function runPresenter(){
     try{ localStorage.setItem(K_MSG, JSON.stringify(full)); }catch(e){}
   }
   document.getElementById('openAudienceBtn').addEventListener('click',openAudience);
+
+  /* ── Compartilhar (link público sem senha, via backend) ── */
+  let shareSettings={annotations:false, board:false};
+  try{
+    const raw=localStorage.getItem(LIVE_ID+'_share');
+    if(raw) shareSettings=Object.assign(shareSettings, JSON.parse(raw));
+  }catch(e){}
+  let pushTimer=null;
+  function pushToServer(){
+    clearTimeout(pushTimer);
+    pushTimer=setTimeout(()=>{
+      fetch('api/save.php',{
+        method:'POST', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({liveId:LIVE_ID, annBySlide, boards, shareSettings})
+      }).catch(()=>{});
+    },1200);
+  }
+  const shareModal=document.getElementById('shareModal');
+  const shareAnnToggle=document.getElementById('shareAnnToggle');
+  const shareBoardToggle=document.getElementById('shareBoardToggle');
+  const shareStatus=document.getElementById('shareStatus');
+  function openShareModal(){
+    saveBoardsToStorage();
+    shareAnnToggle.checked=!!shareSettings.annotations;
+    const hasBoard=boards.some(b=>(b.els&&b.els.length)||b.drawing);
+    shareBoardToggle.disabled=!hasBoard;
+    shareBoardToggle.checked=hasBoard && !!shareSettings.board;
+    shareBoardToggle.closest('.share-row').classList.toggle('disabled',!hasBoard);
+    const link=location.origin+location.pathname+'?view=share';
+    document.getElementById('shareLinkInput').value=link;
+    shareStatus.textContent='';
+    shareModal.style.display='flex';
+  }
+  document.getElementById('openShareBtn').addEventListener('click',openShareModal);
+  document.getElementById('shareCloseBtn').addEventListener('click',()=>{ shareModal.style.display='none'; });
+  function saveShareSettings(){
+    try{ localStorage.setItem(LIVE_ID+'_share', JSON.stringify(shareSettings)); }catch(e){}
+    pushToServer();
+    shareStatus.textContent='Salvando...';
+    setTimeout(()=>{ shareStatus.textContent='Configuração salva.'; },1300);
+  }
+  shareAnnToggle.addEventListener('change',()=>{ shareSettings.annotations=shareAnnToggle.checked; saveShareSettings(); });
+  shareBoardToggle.addEventListener('change',()=>{ shareSettings.board=shareBoardToggle.checked; saveShareSettings(); });
+  document.getElementById('shareCopyBtn').addEventListener('click',()=>{
+    const input=document.getElementById('shareLinkInput');
+    input.select();
+    navigator.clipboard && navigator.clipboard.writeText(input.value).then(()=>{
+      shareStatus.textContent='Link copiado!';
+    }).catch(()=>{ document.execCommand&&document.execCommand('copy'); shareStatus.textContent='Link copiado!'; });
+  });
 
   function go(n){ idx=Math.max(0,Math.min(SLIDES.length-1,n)); render(); }
   document.getElementById('prevBtn').addEventListener('click',()=>go(idx-1));
@@ -988,6 +1228,7 @@ function runPresenter(){
   }
   function saveAnnBySlide(){
     try{ localStorage.setItem(LIVE_ID+'_ann', JSON.stringify(annBySlide)); }catch(e){}
+    pushToServer();
   }
   const annBtn=document.getElementById('annToggleBtn');
   function updateAnnBtn(){ annBtn.classList.toggle('active',annOn); }
@@ -1101,6 +1342,7 @@ function runPresenter(){
     const cur=boards[activeBoardIdx];
     if(cur){ cur.els=boardEls.map(({dom,...rest})=>rest); cur.conns=boardConns; }
     try{ localStorage.setItem(LIVE_ID+'_boards', JSON.stringify(boards)); }catch(e){}
+    pushToServer();
   }
   function renderBoardMapSelect(){
     const sel=document.getElementById('boardMapSelect');
