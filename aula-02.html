@@ -889,9 +889,11 @@ function runPresenter(){
         const icon=TOOL_ICONS[curTool]||'';
         cursor.className='eraser-cursor is-tool';
         cursor.textContent=icon;
-        cursor.style.width='auto'; cursor.style.height='auto';
+        cursor.style.width=''; cursor.style.height='';
         cursor.style.display=icon?'block':'none';
-        cursor.style.transform=`translate(${p.cx+6}px, ${p.cy+6}px)`;
+        // translate posiciona o canto do box no ponto exato; translate(-50%,-50%) recentraliza
+        // o emoji (que tem largura/altura variável) exatamente em cima do ponteiro real
+        cursor.style.transform=`translate(${p.cx}px, ${p.cy}px) translate(-50%, -50%)`;
         canvas.style.cursor='none';
       }
     }
