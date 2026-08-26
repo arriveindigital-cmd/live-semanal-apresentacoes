@@ -181,7 +181,8 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 .eraser-size-val{font-size:.7rem;color:rgba(255,255,255,.6);min-width:34px;text-align:center;font-variant-numeric:tabular-nums;}
 .eraser-cursor{position:absolute;top:0;left:0;pointer-events:none;display:none;z-index:20;transform:translate(0,0);}
 .eraser-cursor.is-eraser{border:2px solid rgba(255,255,255,.85);border-radius:50%;background:rgba(255,255,255,.15);box-shadow:0 0 0 1px rgba(0,0,0,.4);}
-.eraser-cursor.is-tool{font-size:22px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.7));}
+.tool-dot{position:absolute;top:0;left:0;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 1.5px rgba(255,255,255,.95),0 0 0 2.5px rgba(0,0,0,.55);}
+.tool-badge{position:absolute;top:9px;left:9px;font-size:17px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.75));}
 #elPropsBar{display:none;align-items:center;gap:10px;padding:8px 18px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(59,130,246,.08);flex-wrap:wrap;}
 #elPropsBar .eplabel{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.05em;}
 .eptarget-btn{font-size:.72rem;padding:6px 10px;}
@@ -888,12 +889,14 @@ function runPresenter(){
       } else {
         const icon=TOOL_ICONS[curTool]||'';
         cursor.className='eraser-cursor is-tool';
-        cursor.textContent=icon;
-        cursor.style.width=''; cursor.style.height='';
+        cursor.style.width='0'; cursor.style.height='0';
+        // o cursor em si fica com tamanho zero exatamente sobre o ponteiro real;
+        // o pontinho colorido (filho, centralizado nele) marca o ponto exato onde o traço sai,
+        // e o emoji (deslocado) é só um rótulo pra identificar a ferramenta, sem fingir precisão
+        const dotColor=(curTool==='pen'||curTool==='marker'||curTool==='underline')?curColor:'#9ca3af';
+        cursor.innerHTML=icon?`<span class="tool-dot" style="background:${dotColor}"></span><span class="tool-badge">${icon}</span>`:'';
         cursor.style.display=icon?'block':'none';
-        // translate posiciona o canto do box no ponto exato; translate(-50%,-50%) recentraliza
-        // o emoji (que tem largura/altura variável) exatamente em cima do ponteiro real
-        cursor.style.transform=`translate(${p.cx}px, ${p.cy}px) translate(-50%, -50%)`;
+        cursor.style.transform=`translate(${p.cx}px, ${p.cy}px)`;
         canvas.style.cursor='none';
       }
     }
