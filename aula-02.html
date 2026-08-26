@@ -261,8 +261,9 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #shareModal button:hover{background:rgba(255,255,255,.14);}
 
 #shareView{position:fixed;inset:0;background:#0d0d0d;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Inter',sans-serif;}
-#shareStage-wrap{flex:1;display:flex;align-items:center;justify-content:center;width:100%;}
-#shareStage{position:relative;width:1280px;height:720px;}
+#shareStage-wrap{flex:1;display:flex;align-items:center;justify-content:center;width:100%;overflow:auto;min-height:0;}
+#shareStage{position:relative;width:1280px;height:720px;flex-shrink:0;}
+#shareStageInner{position:absolute;top:0;left:0;width:1280px;height:720px;transform-origin:top left;}
 #shareStage .slide{position:absolute;top:0;left:0;opacity:0;transform:scale(.98);transition:opacity .28s ease,transform .28s ease;pointer-events:none;box-shadow:0 32px 96px rgba(0,0,0,.3);}
 #shareStage .slide.active{opacity:1;transform:scale(1);}
 #shareAnnOverlay{position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;z-index:5;display:none;}
@@ -301,6 +302,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
   #shareView[data-printing="slide"] #shareStage-wrap *{visibility:visible;}
   #shareView[data-printing="slide"] #shareStage-wrap{position:static;display:block;}
   #shareView[data-printing="slide"] #shareStage{position:static;width:auto;height:auto;transform:none!important;}
+  #shareView[data-printing="slide"] #shareStageInner{position:static;transform:none!important;}
   /* sem margin/padding e sem cantos arredondados -- o slide precisa preencher a página inteira, sangria total */
   #shareView[data-printing="slide"] #shareStage .slide{position:relative!important;opacity:1!important;transform:none!important;top:auto;left:auto;margin:0!important;padding:0!important;page-break-after:always;box-shadow:none!important;border-radius:0!important;}
   #shareView[data-printing="slide"] #shareAnnOverlay{display:none!important;}
@@ -457,7 +459,9 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 <div id="shareView" style="display:none">
   <div id="shareStage-wrap">
     <div id="shareStage">
-      <canvas id="shareAnnOverlay" width="1280" height="720"></canvas>
+      <div id="shareStageInner">
+        <canvas id="shareAnnOverlay" width="1280" height="720"></canvas>
+      </div>
     </div>
   </div>
   <div id="shareNav">
@@ -962,6 +966,7 @@ function runShareViewer(){
   const shareView=document.getElementById('shareView');
   shareView.style.display='flex';
   const stage=document.getElementById('shareStage');
+  const stageInner=document.getElementById('shareStageInner');
   const annOverlay=document.getElementById('shareAnnOverlay');
   const annCtx=annOverlay.getContext('2d');
   const counter=document.getElementById('shareCounter');
@@ -969,12 +974,18 @@ function runShareViewer(){
   const annToggleBtn=document.getElementById('shareAnnToggleBtn');
 
   const els=SLIDES.map(buildSlideEl);
-  els.forEach(e=>stage.appendChild(e));
+  els.forEach(e=>stageInner.appendChild(e));
 
   function fit(){
-    const scale=Math.min((window.innerWidth-40)/1280,(window.innerHeight-140)/720,1.3);
-    stage.style.transform=`scale(${scale})`;
-    stage.style.transformOrigin='center center';
+    // no celular (retrato), priorizar a LARGURA da tela e deixar rolar verticalmente
+    // fica muito melhor pra ler do que espremer o slide inteiro (16:9) numa tela estreita
+    const narrow=window.innerWidth<760;
+    const scale=narrow
+      ? Math.min((window.innerWidth-16)/1280,1.3)
+      : Math.min((window.innerWidth-40)/1280,(window.innerHeight-140)/720,1.3);
+    stage.style.width=(1280*scale)+'px';
+    stage.style.height=(720*scale)+'px';
+    stageInner.style.transform=`scale(${scale})`;
   }
   fit(); window.addEventListener('resize',fit);
 
@@ -1137,7 +1148,12 @@ function runShareViewer(){
     if(cx!==undefined){ bPanX=cx-(cx-bPanX)*(z/bZoom); bPanY=cy-(cy-bPanY)*(z/bZoom); }
     bZoom=z; applyBoardView();
   }
-  function resetBoardZoom(){ bZoom=1; bPanX=0; bPanY=0; applyBoardView(); }
+  function resetBoardZoom(){
+    // em telas estreitas, começa já ajustado à largura em vez de 100% (que ficaria maior que a tela)
+    const wrapW=boardWrap.clientWidth||window.innerWidth;
+    bZoom=window.innerWidth<760 ? Math.max(.3,Math.min(1,(wrapW-24)/1280)) : 1;
+    bPanX=0; bPanY=0; applyBoardView();
+  }
   document.getElementById('shareZoomInBtn').addEventListener('click',()=>setBoardZoom(bZoom+.1));
   document.getElementById('shareZoomOutBtn').addEventListener('click',()=>setBoardZoom(bZoom-.1));
   document.getElementById('shareZoomResetBtn').addEventListener('click',resetBoardZoom);
