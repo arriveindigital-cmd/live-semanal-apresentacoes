@@ -268,8 +268,8 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #shareStage .slide.active{opacity:1;transform:scale(1);}
 #shareAnnOverlay{position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;z-index:5;display:none;}
 #shareNav{display:flex;align-items:center;gap:14px;padding:16px;color:#fff;}
-#shareNav button{cursor:pointer;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:9px 16px;font-size:.85rem;font-weight:600;font-family:inherit;}
-#shareNav button:hover{background:rgba(255,255,255,.14);}
+#shareNav button, #shareNav a{cursor:pointer;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:9px 16px;font-size:.85rem;font-weight:600;font-family:inherit;text-decoration:none;display:inline-block;}
+#shareNav button:hover, #shareNav a:hover{background:rgba(255,255,255,.14);}
 #shareCounter{font-variant-numeric:tabular-nums;font-size:.85rem;color:rgba(255,255,255,.6);}
 #shareBoardOverlay{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:60;touch-action:none;}
 #shareBoardToolbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
@@ -347,7 +347,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 
   /* compartilhar (link público) */
   #shareNav{flex-wrap:wrap;justify-content:center;gap:8px;padding:10px;}
-  #shareNav button{padding:8px 12px;font-size:.78rem;}
+  #shareNav button, #shareNav a{padding:8px 12px;font-size:.78rem;}
   .share-card{padding:20px 18px;max-width:92vw;}
   .share-title{font-size:1rem;}
 }
@@ -395,6 +395,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <div class="p-status"><span class="dot" id="connDot"></span><span id="connLabel">Público desconectado</span></div>
     <button id="openAudienceBtn">Abrir tela do público ↗</button>
     <button id="openShareBtn">🔗 Compartilhar</button>
+    <button id="genPdfBtn" title="Sincroniza os dados pra eu pedir ao Claude gerar o PDF final da aula">🖨️ Gerar PDF da aula</button>
     <div class="p-timer" id="timer" title="Clique pra zerar">00:00</div>
     <div class="p-counter" id="pCounter">1 / 1</div>
     <a href="index.html" id="exitBtn" title="Voltar pra lista de aulas">← Sair</a>
@@ -473,22 +474,17 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button id="shareNextBtn">›</button>
     <button id="shareAnnToggleBtn" style="display:none">👁️ Anotações</button>
     <button id="shareBoardBtn" style="display:none">🧠 Ver mapa mental</button>
-    <button id="shareExportOpenBtn">🔗 Compartilhar / Exportar</button>
+    <a id="sharePdfLink" href="#" style="display:none">📄 Baixar PDF da aula</a>
+    <button id="shareExportOpenBtn">🔗 Compartilhar</button>
   </div>
   <div id="shareExportModal" style="display:none">
     <div class="share-card">
       <div class="share-title">🔗 Compartilhar</div>
+      <p class="share-desc">Esse link abre os slides pra qualquer pessoa, sem senha.</p>
       <div class="share-link-row">
         <input type="text" id="shareModalLinkInput" readonly>
         <button id="shareModalCopyBtn">Copiar link</button>
       </div>
-      <div class="share-title" style="margin-top:22px">📄 Exportar apresentação</div>
-      <p class="share-desc">Abre a impressão do navegador — escolha "Salvar como PDF" (ou a impressora PDF) como destino. É a única forma de manter o texto selecionável e sem distorcer o slide.</p>
-      <label class="share-row"><input type="checkbox" id="exportAnnCheck"> Incluir as anotações nos slides</label>
-      <button id="exportSlidesPdfBtn" style="width:100%;margin-top:6px">Baixar PDF dos slides</button>
-      <div class="share-title" id="exportBoardTitle" style="margin-top:22px">🧠 Exportar mapa mental</div>
-      <p class="share-desc" id="exportBoardDesc">Gera um PDF separado, só com o mapa mental.</p>
-      <button id="exportBoardPdfBtn" style="width:100%">Baixar PDF do mapa mental</button>
       <div class="share-status" id="exportStatus"></div>
       <button id="shareExportCloseBtn" class="share-close">Fechar</button>
     </div>
@@ -1025,20 +1021,12 @@ function runShareViewer(){
     annToggleBtn.classList.toggle('active',annShownByViewer);
     renderAnnOverlay();
   });
-  /* ── Compartilhar / Exportar (um botão só, com popup) ── */
+  /* ── Compartilhar (só o link) ── */
   const exportModal=document.getElementById('shareExportModal');
   const exportStatus=document.getElementById('exportStatus');
-  const exportAnnCheck=document.getElementById('exportAnnCheck');
-  const exportBoardPdfBtn=document.getElementById('exportBoardPdfBtn');
-  const exportBoardTitle=document.getElementById('exportBoardTitle');
-  const exportBoardDesc=document.getElementById('exportBoardDesc');
   document.getElementById('shareExportOpenBtn').addEventListener('click',()=>{
     const cleanLink=location.origin+location.pathname.replace(/\.html$/,'')+location.search;
     document.getElementById('shareModalLinkInput').value=cleanLink;
-    const hasBoard=(remoteData.boards||[]).some(b=>(b.els&&b.els.length)||b.drawing) && remoteData.shareSettings.board;
-    exportBoardPdfBtn.style.display=hasBoard?'block':'none';
-    exportBoardTitle.style.display=hasBoard?'block':'none';
-    exportBoardDesc.style.display=hasBoard?'block':'none';
     exportStatus.textContent='';
     exportModal.style.display='flex';
   });
@@ -1051,8 +1039,9 @@ function runShareViewer(){
     }).catch(()=>{ document.execCommand&&document.execCommand('copy'); exportStatus.textContent='Link copiado!'; });
   });
 
-  /* ── Exportar PDF via impressão do navegador (mantém texto selecionável e escala correta —
-     gerar via captura de imagem distorcia o slide e perdia o texto) ── */
+  /* ── PDF: gerado à parte (pelo Erik, pedindo pro Claude), fica como arquivo estático em /pdfs/.
+     Aqui só compõe a anotação em cima do slide (usado quando a página é aberta com ?autoprint=1
+     por um Chrome automatizado) e mostra o link de download se o arquivo já existir. ── */
   function prepareAnnotationOverlays(withAnn){
     document.querySelectorAll('.print-ann-overlay').forEach(el=>el.remove());
     if(!withAnn) return;
@@ -1065,28 +1054,11 @@ function runShareViewer(){
       slideEl.appendChild(img);
     });
   }
-  window.addEventListener('afterprint',()=>{
-    document.querySelectorAll('.print-ann-overlay').forEach(el=>el.remove());
-    delete shareView.dataset.printing;
-    exportModal.style.display='none';
-    exportStatus.textContent='';
-  });
-  document.getElementById('exportSlidesPdfBtn').addEventListener('click',()=>{
-    prepareAnnotationOverlays(exportAnnCheck.checked);
-    shareView.dataset.printing='slide';
-    exportStatus.textContent='Na tela de impressão, escolha "Salvar como PDF" (ou a impressora PDF) como destino.';
-    setTimeout(()=>window.print(),60);
-  });
-  exportBoardPdfBtn.addEventListener('click',()=>{
-    const b=remoteData.boards.find(x=>(x.els&&x.els.length)||x.drawing);
-    if(!b) return;
-    boardOverlay.style.display='flex';
-    renderShareBoard(b);
-    resetBoardZoom();
-    shareView.dataset.printing='board';
-    exportStatus.textContent='Na tela de impressão, escolha "Salvar como PDF" (ou a impressora PDF) como destino.';
-    setTimeout(()=>window.print(),60);
-  });
+  if(params.get('autoprint')){
+    // usado só pelo processo de geração automática do PDF -- deixa a página pronta pra
+    // impressão (com a anotação já composta) sem precisar clicar em nada
+    document.getElementById('shareNav').style.display='none';
+  }
 
   /* mapa mental (leitura, com zoom/pan) */
   const boardOverlay=document.getElementById('shareBoardOverlay');
@@ -1200,12 +1172,19 @@ function runShareViewer(){
   boardWrap.addEventListener('touchend',e=>{ if(e.touches.length<2) pinchDist=0; if(e.touches.length===0) bPanEnd(); });
   boardWrap.addEventListener('touchcancel',bPanEnd);
 
+  const pdfLink=document.getElementById('sharePdfLink');
   function applyRemoteData(data){
-    remoteData=Object.assign({annBySlide:{},boards:[],shareSettings:{}},data);
+    remoteData=Object.assign({annBySlide:{},boards:[],shareSettings:{},pdfAvailable:false},data);
     annToggleBtn.style.display=remoteData.shareSettings.annotations?'inline-block':'none';
     if(remoteData.shareSettings.annotations) annToggleBtn.classList.add('active');
     const hasBoard=(remoteData.boards||[]).some(b=>(b.els&&b.els.length)||b.drawing);
     boardBtn.style.display=(remoteData.shareSettings.board && hasBoard)?'inline-block':'none';
+    if(remoteData.pdfAvailable){
+      pdfLink.href='pdfs/'+encodeURIComponent(LIVE_ID)+'.pdf?v='+Date.now();
+      pdfLink.style.display='inline-block';
+    } else {
+      pdfLink.style.display='none';
+    }
     renderAnnOverlay();
   }
   function load(){
@@ -1213,8 +1192,15 @@ function runShareViewer(){
       .then(r=>r.json())
       .then(applyRemoteData);
   }
-  load().then(()=>setSlide(0)).catch(()=>setSlide(0));
-  setInterval(load,25000); // atualiza sozinho de tempos em tempos, sem precisar recarregar a página
+  load().then(()=>{
+    setSlide(0);
+    if(params.get('autoprint')){
+      // deixa a página pronta pra impressão automatizada (gerador de PDF), sem precisar de clique
+      prepareAnnotationOverlays(true);
+      shareView.dataset.printing='slide';
+    }
+  }).catch(()=>setSlide(0));
+  if(!params.get('autoprint')) setInterval(load,25000); // atualiza sozinho de tempos em tempos, sem precisar recarregar a página
 }
 
 /* ═══════════════════════ MODO APRESENTADOR ═══════════════════════ */
@@ -1315,6 +1301,15 @@ function runPresenter(){
       .catch(()=>{ shareStatus.textContent='Não consegui sincronizar — verifique a conexão.'; });
   }
   document.getElementById('openShareBtn').addEventListener('click',openShareModal);
+  document.getElementById('genPdfBtn').addEventListener('click',()=>{
+    const b=document.getElementById('genPdfBtn');
+    const old=b.textContent;
+    b.textContent='Sincronizando...'; b.disabled=true;
+    pushToServerNow()
+      .then(()=>{ alert('Dados sincronizados!\n\nAgora é só pedir pro Claude, no chat: "gera o PDF da aula 02" — ele gera o arquivo com as anotações e deixa disponível pra baixar no link público.'); })
+      .catch(()=>{ alert('Não consegui sincronizar — confere a conexão e tenta de novo antes de pedir o PDF.'); })
+      .finally(()=>{ b.textContent=old; b.disabled=false; });
+  });
   document.getElementById('shareCloseBtn').addEventListener('click',()=>{ shareModal.style.display='none'; });
   function saveShareSettings(){
     try{ localStorage.setItem(LIVE_ID+'_share', JSON.stringify(shareSettings)); }catch(e){}
