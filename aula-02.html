@@ -154,6 +154,8 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #presenter button.active{background:var(--orange);border-color:var(--orange);}
 #presenter .p-timer{font-variant-numeric:tabular-nums;font-size:.85rem;color:rgba(255,255,255,.55);cursor:pointer;margin-left:auto;}
 #presenter .p-counter{font-variant-numeric:tabular-nums;font-size:.85rem;font-weight:700;background:rgba(255,255,255,.06);padding:5px 12px;border-radius:100px;}
+#exitBtn{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;border-radius:8px;padding:7px 14px;font-size:.78rem;font-weight:600;font-family:inherit;text-decoration:none;}
+#exitBtn:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.4);}
 #presenter .p-block{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(249,115,22,.15);color:#f97316;padding:5px 12px;border-radius:100px;}
 #presenter main{flex:1;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:auto 1fr;gap:16px;padding:18px 22px;overflow:hidden;}
 .pv-col{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0;overflow:hidden;}
@@ -310,6 +312,40 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
   #shareView[data-printing="board"] #shareBoardWorld{transform:none!important;}
   @page{size:1280px 720px;margin:0;}
 }
+
+/* ══════════ MOBILE ══════════ */
+@media (max-width:760px){
+  /* launcher */
+  #launcher{gap:22px;padding:24px;}
+  #launcher h1{font-size:1.4rem;}
+  #launcher .opts{flex-direction:column;width:100%;max-width:340px;}
+  .lbtn{width:100%;padding:20px 22px;}
+
+  /* presenter: empilha os painéis, toolbar vira rolagem horizontal */
+  #presenter header{padding:10px 12px;gap:8px;}
+  #presenter .p-title{font-size:.82rem;}
+  #presenter main{grid-template-columns:1fr;grid-template-rows:auto auto auto;gap:10px;padding:10px 12px;overflow-y:auto;}
+  #nowWrap{grid-column:1;grid-row:1;}
+  #nextWrap{grid-column:1;grid-row:2;}
+  #notesWrap{grid-column:1;grid-row:3;}
+  #presenter footer{padding:10px 12px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  #presenter footer .hint{display:none;}
+  #presenter footer>*{flex-shrink:0;}
+
+  /* audiência */
+  #fsHint{display:none!important;}
+
+  /* mapa mental (presenter e compartilhar): toolbar rola na horizontal */
+  #boardToolbar, #shareBoardToolbar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  #boardToolbar>*, #shareBoardToolbar>*{flex-shrink:0;}
+  #boardToolbar .hint{display:none;}
+
+  /* compartilhar (link público) */
+  #shareNav{flex-wrap:wrap;justify-content:center;gap:8px;padding:10px;}
+  #shareNav button{padding:8px 12px;font-size:.78rem;}
+  .share-card{padding:20px 18px;max-width:92vw;}
+  .share-title{font-size:1rem;}
+}
 </style>
 </head>
 <body>
@@ -356,6 +392,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button id="openShareBtn">🔗 Compartilhar</button>
     <div class="p-timer" id="timer" title="Clique pra zerar">00:00</div>
     <div class="p-counter" id="pCounter">1 / 1</div>
+    <a href="index.html" id="exitBtn" title="Voltar pra lista de aulas">← Sair</a>
   </header>
   <main>
     <div class="pv-col" id="nowWrap">
@@ -1112,16 +1149,17 @@ function runShareViewer(){
   },{passive:false});
   let bPanning=false, bPanStartX=0, bPanStartY=0, bOrigX=0, bOrigY=0;
   boardWrap.classList.add('pan-grab');
-  boardWrap.addEventListener('mousedown',e=>{
-    bPanning=true; bPanStartX=e.clientX; bPanStartY=e.clientY; bOrigX=bPanX; bOrigY=bPanY;
-    boardWrap.classList.add('panning');
-  });
-  window.addEventListener('mousemove',e=>{
-    if(!bPanning) return;
-    bPanX=bOrigX+(e.clientX-bPanStartX); bPanY=bOrigY+(e.clientY-bPanStartY);
-    applyBoardView();
-  });
-  window.addEventListener('mouseup',()=>{ if(bPanning){ bPanning=false; boardWrap.classList.remove('panning'); } });
+  function bPanStart(x,y){ bPanning=true; bPanStartX=x; bPanStartY=y; bOrigX=bPanX; bOrigY=bPanY; boardWrap.classList.add('panning'); }
+  function bPanMove(x,y){ if(!bPanning) return; bPanX=bOrigX+(x-bPanStartX); bPanY=bOrigY+(y-bPanStartY); applyBoardView(); }
+  function bPanEnd(){ if(bPanning){ bPanning=false; boardWrap.classList.remove('panning'); } }
+  boardWrap.addEventListener('mousedown',e=>bPanStart(e.clientX,e.clientY));
+  window.addEventListener('mousemove',e=>bPanMove(e.clientX,e.clientY));
+  window.addEventListener('mouseup',bPanEnd);
+  // toque (celular/tablet) -- eventos de mouse não disparam de forma confiável a partir de toque
+  boardWrap.addEventListener('touchstart',e=>{ const t=e.touches[0]; bPanStart(t.clientX,t.clientY); },{passive:true});
+  boardWrap.addEventListener('touchmove',e=>{ if(!bPanning) return; e.preventDefault(); const t=e.touches[0]; bPanMove(t.clientX,t.clientY); },{passive:false});
+  boardWrap.addEventListener('touchend',bPanEnd);
+  boardWrap.addEventListener('touchcancel',bPanEnd);
 
   function applyRemoteData(data){
     remoteData=Object.assign({annBySlide:{},boards:[],shareSettings:{}},data);
@@ -1160,6 +1198,10 @@ function runPresenter(){
   }
 
   let idx=0;
+  {
+    const savedIdx=parseInt(localStorage.getItem(K_IDX)||'0',10);
+    if(!isNaN(savedIdx)&&savedIdx>=0&&savedIdx<SLIDES.length) idx=savedIdx;
+  }
   function render(){
     nowBox.innerHTML=''; nextBox.innerHTML='';
     const cur=SLIDES[idx];
@@ -1920,17 +1962,16 @@ function runPresenter(){
     setZoom(boardZoom+(e.deltaY<0?.08:-.08), e.clientX-r.left, e.clientY-r.top);
   },{passive:false});
   let panning=false, panStartX=0, panStartY=0, panOrigX=0, panOrigY=0;
-  boardCanvasWrap.addEventListener('mousedown',e=>{
-    if(curTool!=='pan') return;
-    panning=true; panStartX=e.clientX; panStartY=e.clientY; panOrigX=boardPanX; panOrigY=boardPanY;
-    boardCanvasWrap.classList.add('panning');
-  });
-  window.addEventListener('mousemove',e=>{
-    if(!panning) return;
-    boardPanX=panOrigX+(e.clientX-panStartX); boardPanY=panOrigY+(e.clientY-panStartY);
-    applyBoardTransform();
-  });
-  window.addEventListener('mouseup',()=>{ if(panning){ panning=false; boardCanvasWrap.classList.remove('panning'); } });
+  function bcPanStart(x,y){ if(curTool!=='pan') return; panning=true; panStartX=x; panStartY=y; panOrigX=boardPanX; panOrigY=boardPanY; boardCanvasWrap.classList.add('panning'); }
+  function bcPanMove(x,y){ if(!panning) return; boardPanX=panOrigX+(x-panStartX); boardPanY=panOrigY+(y-panStartY); applyBoardTransform(); }
+  function bcPanEnd(){ if(panning){ panning=false; boardCanvasWrap.classList.remove('panning'); } }
+  boardCanvasWrap.addEventListener('mousedown',e=>bcPanStart(e.clientX,e.clientY));
+  window.addEventListener('mousemove',e=>bcPanMove(e.clientX,e.clientY));
+  window.addEventListener('mouseup',bcPanEnd);
+  boardCanvasWrap.addEventListener('touchstart',e=>{ if(curTool!=='pan') return; const t=e.touches[0]; bcPanStart(t.clientX,t.clientY); },{passive:true});
+  boardCanvasWrap.addEventListener('touchmove',e=>{ if(!panning) return; e.preventDefault(); const t=e.touches[0]; bcPanMove(t.clientX,t.clientY); },{passive:false});
+  boardCanvasWrap.addEventListener('touchend',bcPanEnd);
+  boardCanvasWrap.addEventListener('touchcancel',bcPanEnd);
   boardCanvasWrap.addEventListener('click',e=>{
     if(e.target===boardCanvas||e.target===boardCanvasWrap||e.target.id==='boardDots'){
       clearSelection();
