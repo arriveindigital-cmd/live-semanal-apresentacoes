@@ -283,6 +283,9 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #shareAnnToggleBtn.active{background:var(--orange);border-color:var(--orange);}
 @media print{
   body *{visibility:hidden;}
+  /* #shareView é position:fixed pra tela — em impressão, fixed nunca pagina (o navegador
+     só captura 1 viewport), então precisa virar fluxo normal pra render multi-página funcionar */
+  #shareView[data-printing]{position:static!important;height:auto!important;display:block!important;}
   /* exporta a apresentação inteira: cada slide vira uma página do PDF (sem a camada de anotação, que é só pra tela) */
   #shareView[data-printing="slide"] #shareStage-wrap,
   #shareView[data-printing="slide"] #shareStage-wrap *{visibility:visible;}
@@ -290,9 +293,11 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
   #shareView[data-printing="slide"] #shareStage{position:static;width:auto;height:auto;transform:none!important;}
   #shareView[data-printing="slide"] #shareStage .slide{position:relative!important;opacity:1!important;transform:none!important;top:auto;left:auto;margin:0 auto;page-break-after:always;box-shadow:none;}
   #shareView[data-printing="slide"] #shareAnnOverlay{display:none;}
+  #shareView[data-printing="board"] #shareBoardOverlay{position:static!important;display:block!important;}
+  #shareView[data-printing="board"] #shareBoardWrap{position:static!important;display:block!important;overflow:visible!important;}
   #shareView[data-printing="board"] #shareBoardInner,
   #shareView[data-printing="board"] #shareBoardInner *{visibility:visible;}
-  #shareView[data-printing="board"] #shareBoardInner{position:fixed;top:0;left:0;box-shadow:none;border-radius:0;}
+  #shareView[data-printing="board"] #shareBoardInner{position:relative!important;margin:0 auto;box-shadow:none;border-radius:0;}
   #shareView[data-printing="board"] #shareBoardWorld{transform:none!important;}
   @page{size:landscape;margin:8mm;}
 }
@@ -415,7 +420,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button id="shareNextBtn">›</button>
     <button id="shareAnnToggleBtn" style="display:none">👁️ Anotações</button>
     <button id="shareBoardBtn" style="display:none">🧠 Ver mapa mental</button>
-    <button id="sharePdfBtn">📄 Exportar PDF</button>
+    <button id="sharePdfBtn" title="Se o navegador não escolher paisagem sozinho, muda em 'Mais configurações → Layout' na tela de impressão">📄 Exportar PDF</button>
     <button id="shareLinkBtn">🔗 Copiar link</button>
   </div>
   <div id="shareBoardOverlay" style="display:none">
@@ -427,7 +432,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
       <button id="shareZoomInBtn">+</button>
       <button id="shareZoomResetBtn" title="Ajustar à tela">⤢</button>
       <span class="tb-sep"></span>
-      <button id="shareBoardPdfBtn">📄 Exportar PDF</button>
+      <button id="shareBoardPdfBtn" title="Se o navegador não escolher paisagem sozinho, muda em 'Mais configurações → Layout' na tela de impressão">📄 Exportar PDF</button>
       <button id="shareBoardCloseBtn" style="margin-left:auto">← Voltar aos slides</button>
     </div>
     <div id="shareBoardWrap">
@@ -926,7 +931,8 @@ function runShareViewer(){
     renderAnnOverlay();
   });
   document.getElementById('shareLinkBtn').addEventListener('click',()=>{
-    navigator.clipboard && navigator.clipboard.writeText(location.href).then(()=>{
+    const cleanLink=location.origin+location.pathname.replace(/\.html$/,'')+location.search;
+    navigator.clipboard && navigator.clipboard.writeText(cleanLink).then(()=>{
       const b=document.getElementById('shareLinkBtn');
       const old=b.textContent; b.textContent='Copiado!';
       setTimeout(()=>b.textContent=old,1500);
@@ -1121,6 +1127,9 @@ function runPresenter(){
   const shareAnnToggle=document.getElementById('shareAnnToggle');
   const shareBoardToggle=document.getElementById('shareBoardToggle');
   const shareStatus=document.getElementById('shareStatus');
+  function shareLinkUrl(){
+    return location.origin+location.pathname.replace(/\.html$/,'')+'?view=share';
+  }
   function openShareModal(){
     saveBoardsToStorage();
     shareAnnToggle.checked=!!shareSettings.annotations;
@@ -1128,10 +1137,15 @@ function runPresenter(){
     shareBoardToggle.disabled=!hasBoard;
     shareBoardToggle.checked=hasBoard && !!shareSettings.board;
     shareBoardToggle.closest('.share-row').classList.toggle('disabled',!hasBoard);
-    const link=location.origin+location.pathname+'?view=share';
-    document.getElementById('shareLinkInput').value=link;
-    shareStatus.textContent='';
+    document.getElementById('shareLinkInput').value=shareLinkUrl();
     shareModal.style.display='flex';
+    // reforça a sincronização toda vez que abre — corrige configs de sessões
+    // anteriores que podem não ter chegado a salvar no servidor
+    clearTimeout(pushTimer);
+    shareStatus.textContent='Sincronizando...';
+    pushToServerNow()
+      .then(()=>{ shareStatus.textContent='Tudo sincronizado ✓'; })
+      .catch(()=>{ shareStatus.textContent='Não consegui sincronizar — verifique a conexão.'; });
   }
   document.getElementById('openShareBtn').addEventListener('click',openShareModal);
   document.getElementById('shareCloseBtn').addEventListener('click',()=>{ shareModal.style.display='none'; });
