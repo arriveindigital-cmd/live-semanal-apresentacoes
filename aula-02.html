@@ -203,6 +203,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 .board-el.selected{outline:3px dashed #3b82f6;outline-offset:4px;}
 .board-el.text{padding:4px 8px;font-size:26px;font-weight:800;color:#111;min-width:30px;outline:none;font-family:'Inter',sans-serif;}
 .board-el.box{border:3px solid #111;border-radius:12px;background:rgba(255,255,255,.7);padding:10px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:19px;font-weight:700;color:#111;font-family:'Inter',sans-serif;outline:none;}
+.el-text{outline:none;}
 .board-el .del{position:absolute;top:-11px;right:-11px;width:22px;height:22px;border-radius:50%;background:#ef4444;color:#fff;display:none;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:2px solid #fafaf8;line-height:1;}
 .board-el:hover .del{display:flex;}
 .board-el .rsz{position:absolute;bottom:-6px;right:-6px;width:16px;height:16px;background:#111;border-radius:3px;cursor:nwse-resize;display:none;}
@@ -947,6 +948,12 @@ function runPresenter(){
     },{passive:false});
   }
 
+  /* histórico de undo/redo do desenho, um por slide — trocar de slide e voltar preserva o histórico daquele slide */
+  let annHistoryBySlide={};
+  function getAnnHistory(i){
+    if(!annHistoryBySlide[i]) annHistoryBySlide[i]={undo:[],redo:[]};
+    return annHistoryBySlide[i];
+  }
   function restoreAnnCanvas(c, dataURL){
     const img=new Image();
     img.onload=()=>{
@@ -960,20 +967,21 @@ function runPresenter(){
   }
   function annUndo(){
     const c=nowBox.querySelector('#pAnnCanvas');
-    if(!c || !annUndoBox.stack.length) return;
-    annRedoStack.push(c.toDataURL());
-    restoreAnnCanvas(c, annUndoBox.stack.pop());
+    const h=getAnnHistory(idx);
+    if(!c || !h.undo.length) return;
+    h.redo.push(c.toDataURL());
+    restoreAnnCanvas(c, h.undo.pop());
   }
   function annRedo(){
     const c=nowBox.querySelector('#pAnnCanvas');
-    if(!c || !annRedoStack.length) return;
-    annUndoBox.stack.push(c.toDataURL());
-    restoreAnnCanvas(c, annRedoStack.pop());
+    const h=getAnnHistory(idx);
+    if(!c || !h.redo.length) return;
+    h.undo.push(c.toDataURL());
+    restoreAnnCanvas(c, h.redo.pop());
   }
 
   /* ── Anotação por cima do slide (persiste por slide, em localStorage) ── */
   let annOn=false;
-  let annUndoBox={stack:[]}, annRedoStack=[];
   let annBySlide={};
   function loadAnnBySlide(){
     try{ const raw=localStorage.getItem(LIVE_ID+'_ann'); if(raw) annBySlide=JSON.parse(raw); }catch(e){ annBySlide={}; }
@@ -991,7 +999,6 @@ function runPresenter(){
     c.width=nowBox.clientWidth; c.height=nowBox.clientHeight;
     nowBox.appendChild(c);
     c.style.display=annOn?'block':'none';
-    annUndoBox={stack:[]}; annRedoStack=[];
     const saved=annBySlide[idx];
     if(saved){
       const img=new Image();
@@ -1002,9 +1009,10 @@ function runPresenter(){
       img.src=saved;
     }
     attachDrawing(c, m=>broadcastAnn(Object.assign({},m,{type:'ann:line'})), ()=>{
-      annRedoStack=[];
-      annUndoBox.stack.push(c.toDataURL());
-      if(annUndoBox.stack.length>40) annUndoBox.stack.shift();
+      const h=getAnnHistory(idx);
+      h.redo=[];
+      h.undo.push(c.toDataURL());
+      if(h.undo.length>40) h.undo.shift();
     }, ()=>{ annBySlide[idx]=c.toDataURL(); saveAnnBySlide(); });
   }
   annBtn.addEventListener('click',()=>{
@@ -1164,18 +1172,22 @@ function runPresenter(){
       img.src=data.src||''; img.draggable=false;
       d.appendChild(img);
     }
+    let textSpan=null;
     if(data.type!=='image'){
       d.style.color=data.color;
-      d.contentEditable='true';
-      d.textContent=data.text;
-      d.spellcheck=false;
+      textSpan=document.createElement('span');
+      textSpan.className='el-text';
+      textSpan.contentEditable='true';
+      textSpan.textContent=data.text;
+      textSpan.spellcheck=false;
+      d.appendChild(textSpan);
     }
 
     let dragging=false, dx=0, dy=0, downX=0, downY=0, moved=false;
     d.addEventListener('mousedown',e=>{
-      if(document.activeElement===d) return; // já editando texto — não arrasta
+      if(document.activeElement===textSpan) return; // já editando texto — não arrasta
       if(e.target.classList.contains('rsz')||e.target.classList.contains('del')||e.target.classList.contains('conn-handle')) return;
-      if(curTool==='connect') return;
+      if(curTool==='connect'||curTool==='pan') return;
       dragging=true; moved=false; downX=e.clientX; downY=e.clientY;
       const wrapR=boardElsLayer.getBoundingClientRect();
       dx=e.clientX-(wrapR.left+data.x*wrapR.width);
@@ -1215,9 +1227,9 @@ function runPresenter(){
     });
 
     if(data.type!=='image'){
-      d.addEventListener('dblclick',()=>{ d.focus(); });
-      d.addEventListener('blur',()=>{ data.text=d.textContent; boardSync(); });
-      d.addEventListener('keydown',e=>{ if(e.key==='Enter'&&data.type==='text'){ e.preventDefault(); d.blur(); } });
+      d.addEventListener('dblclick',()=>{ textSpan.focus(); });
+      textSpan.addEventListener('blur',()=>{ data.text=textSpan.textContent; boardSync(); });
+      textSpan.addEventListener('keydown',e=>{ if(e.key==='Enter'&&data.type==='text'){ e.preventDefault(); textSpan.blur(); } });
     }
 
     const del=document.createElement('div'); del.className='del'; del.textContent='×';
@@ -1294,7 +1306,10 @@ function runPresenter(){
     boardEls.push(data);
     boardElsLayer.appendChild(dom);
     boardSync();
-    setTimeout(()=>{ dom.focus(); document.execCommand&&document.execCommand('selectAll',false,null); },50);
+    setTimeout(()=>{
+      const ts=dom.querySelector('.el-text');
+      if(ts){ ts.focus(); document.execCommand&&document.execCommand('selectAll',false,null); }
+    },50);
   }
   document.getElementById('addTextBtn').addEventListener('click',()=>addBoardEl('text'));
   document.getElementById('addBoxBtn').addEventListener('click',()=>addBoardEl('box'));
