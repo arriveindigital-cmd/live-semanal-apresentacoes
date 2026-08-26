@@ -769,15 +769,33 @@ function runAudience(){
   fit();window.addEventListener('resize',fit);
 
   let idx=0;
-  const saved=parseInt(localStorage.getItem(K_IDX)||'0',10);
-  if(!isNaN(saved)&&saved>=0&&saved<SLIDES.length) idx=saved;
+  const savedIdx=parseInt(localStorage.getItem(K_IDX)||'0',10);
+  if(!isNaN(savedIdx)&&savedIdx>=0&&savedIdx<SLIDES.length) idx=savedIdx;
 
+  // lê o estado de anotação direto do localStorage (mesmo navegador do apresentador) —
+  // não depende de receber uma mensagem ao vivo, então sobrevive a um F5 nesta aba
+  function readAnnOn(){ return localStorage.getItem(LIVE_ID+'_annOn')==='1'; }
+  function readAnnForSlide(i){
+    try{
+      const raw=localStorage.getItem(LIVE_ID+'_ann');
+      if(!raw) return null;
+      const obj=JSON.parse(raw);
+      return obj[i]||null;
+    }catch(e){ return null; }
+  }
   function setSlide(i){
     if(i<0||i>=SLIDES.length) return;
     idx=i;
     els.forEach((e,n)=>e.classList.toggle('active',n===idx));
     annCtx.clearRect(0,0,1280,720);
-    annCanvas.style.display='none';
+    const on=readAnnOn();
+    annCanvas.style.display=on?'block':'none';
+    const savedAnn=readAnnForSlide(idx);
+    if(savedAnn){
+      const img=new Image();
+      img.onload=()=>annCtx.drawImage(img,0,0,1280,720);
+      img.src=savedAnn;
+    }
   }
   setSlide(idx);
 
@@ -1087,7 +1105,7 @@ function runPresenter(){
     broadcastToAudience();
     broadcastAnn({type:'ann:clear'});
     if(annOn) broadcastAnn({type:'ann:off'});
-    annOn=false; updateAnnBtn();
+    setAnnOn(false);
   }
 
   let audienceWin=null;
@@ -1111,7 +1129,6 @@ function runPresenter(){
     const raw=localStorage.getItem(LIVE_ID+'_share');
     if(raw) shareSettings=Object.assign(shareSettings, JSON.parse(raw));
   }catch(e){}
-  let pushTimer=null;
   function pushToServerNow(){
     return fetch('api/save.php',{
       method:'POST', credentials:'include',
@@ -1119,10 +1136,10 @@ function runPresenter(){
       body: JSON.stringify({liveId:LIVE_ID, annBySlide, boards, shareSettings})
     });
   }
-  function pushToServer(){
-    clearTimeout(pushTimer);
-    pushTimer=setTimeout(()=>{ pushToServerNow().catch(()=>{}); },1200);
-  }
+  // salva sempre na hora — nenhum desses pontos de chamada é de alta frequência
+  // (cada um dispara só uma vez por traço/edição concluída, não por pixel de mouse),
+  // então o debounce só corria o risco de perder uma gravação se a aba fechasse antes do tempo
+  function pushToServer(){ pushToServerNow().catch(()=>{}); }
   const shareModal=document.getElementById('shareModal');
   const shareAnnToggle=document.getElementById('shareAnnToggle');
   const shareBoardToggle=document.getElementById('shareBoardToggle');
@@ -1141,7 +1158,6 @@ function runPresenter(){
     shareModal.style.display='flex';
     // reforça a sincronização toda vez que abre — corrige configs de sessões
     // anteriores que podem não ter chegado a salvar no servidor
-    clearTimeout(pushTimer);
     shareStatus.textContent='Sincronizando...';
     pushToServerNow()
       .then(()=>{ shareStatus.textContent='Tudo sincronizado ✓'; })
@@ -1151,7 +1167,6 @@ function runPresenter(){
   document.getElementById('shareCloseBtn').addEventListener('click',()=>{ shareModal.style.display='none'; });
   function saveShareSettings(){
     try{ localStorage.setItem(LIVE_ID+'_share', JSON.stringify(shareSettings)); }catch(e){}
-    clearTimeout(pushTimer); // muda de configuração é ação deliberada — salva na hora, sem esperar o debounce
     shareStatus.textContent='Salvando...';
     pushToServerNow()
       .then(()=>{ shareStatus.textContent='Configuração salva ✓'; })
@@ -1196,7 +1211,7 @@ function runPresenter(){
       const t=TOOL_KEYS[e.key.toLowerCase()];
       if(t){ e.preventDefault(); selectTool(t); return; }
     }
-    if(annOn||boardOpen) return; // não navega enquanto desenha ou com o mapa aberto
+    if(boardOpen) return; // não navega com o mapa mental em tela cheia aberto (anotar no slide não deve travar isso)
     if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); go(idx+1); }
     if(e.key==='ArrowLeft') go(idx-1);
   });
@@ -1344,6 +1359,10 @@ function runPresenter(){
   }
   const annBtn=document.getElementById('annToggleBtn');
   function updateAnnBtn(){ annBtn.classList.toggle('active',annOn); }
+  function setAnnOn(v){
+    annOn=v; updateAnnBtn();
+    try{ localStorage.setItem(LIVE_ID+'_annOn', v?'1':'0'); }catch(e){}
+  }
   function setupAnnCanvas(){
     let c=nowBox.querySelector('#pAnnCanvas');
     if(c) c.remove();
@@ -1369,7 +1388,7 @@ function runPresenter(){
     }, ()=>{ annBySlide[idx]=c.toDataURL(); saveAnnBySlide(); });
   }
   annBtn.addEventListener('click',()=>{
-    annOn=!annOn; updateAnnBtn();
+    setAnnOn(!annOn);
     const c=nowBox.querySelector('#pAnnCanvas');
     if(c) c.style.display=annOn?'block':'none';
     broadcastAnn({type:annOn?'ann:on':'ann:off'});
