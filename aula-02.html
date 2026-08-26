@@ -198,7 +198,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #boardView{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:50;}
 #boardToolbar{display:flex;align-items:center;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap;flex-shrink:0;}
 #boardStageWrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0d0d0d;}
-#boardCanvasWrap{position:relative;width:1280px;height:720px;background:#fafaf8;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);flex-shrink:0;}
+#boardCanvasWrap{position:relative;width:1280px;height:720px;background:#fafaf8;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);flex-shrink:0;touch-action:none;}
 #boardCanvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;}
 #boardElsLayer{position:absolute;inset:0;pointer-events:none;}
 .board-el{position:absolute;cursor:move;user-select:none;pointer-events:auto;}
@@ -274,7 +274,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #shareBoardOverlay{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:60;}
 #shareBoardToolbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
 #shareBoardToolbar button, #shareBoardSelect{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:8px 14px;font-size:.8rem;font-family:'Inter',sans-serif;}
-#shareBoardWrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:#0d0d0d;}
+#shareBoardWrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:#0d0d0d;touch-action:none;}
 #shareBoardInner{position:relative;width:1280px;height:720px;background:#fafaf8;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);flex-shrink:0;}
 #shareBoardWorld{position:absolute;inset:0;transform-origin:0 0;}
 #shareBoardWrap.pan-grab{cursor:grab;}
@@ -1139,8 +1139,13 @@ function runShareViewer(){
 
   /* zoom e pan (só visualização) */
   let bZoom=1, bPanX=0, bPanY=0;
+  const boardInner=document.getElementById('shareBoardInner');
   function applyBoardView(){
     boardWorld.style.transform=`translate(${bPanX}px, ${bPanY}px) scale(${bZoom})`;
+    // o container tem que ter o tamanho real batendo com o zoom -- senão fica um bloco de
+    // 1280x720 invisível maior que a tela, e o navegador rola pra um canto qualquer dele
+    boardInner.style.width=(1280*bZoom)+'px';
+    boardInner.style.height=(720*bZoom)+'px';
     document.getElementById('shareZoomVal').textContent=Math.round(bZoom*100)+'%';
   }
   function setBoardZoom(z,cx,cy){
@@ -1157,7 +1162,6 @@ function runShareViewer(){
   document.getElementById('shareZoomInBtn').addEventListener('click',()=>setBoardZoom(bZoom+.1));
   document.getElementById('shareZoomOutBtn').addEventListener('click',()=>setBoardZoom(bZoom-.1));
   document.getElementById('shareZoomResetBtn').addEventListener('click',resetBoardZoom);
-  const boardInner=document.getElementById('shareBoardInner');
   boardWrap.addEventListener('wheel',e=>{
     e.preventDefault();
     const r=boardInner.getBoundingClientRect();
@@ -1171,10 +1175,26 @@ function runShareViewer(){
   boardWrap.addEventListener('mousedown',e=>bPanStart(e.clientX,e.clientY));
   window.addEventListener('mousemove',e=>bPanMove(e.clientX,e.clientY));
   window.addEventListener('mouseup',bPanEnd);
-  // toque (celular/tablet) -- eventos de mouse não disparam de forma confiável a partir de toque
-  boardWrap.addEventListener('touchstart',e=>{ const t=e.touches[0]; bPanStart(t.clientX,t.clientY); },{passive:true});
-  boardWrap.addEventListener('touchmove',e=>{ if(!bPanning) return; e.preventDefault(); const t=e.touches[0]; bPanMove(t.clientX,t.clientY); },{passive:false});
-  boardWrap.addEventListener('touchend',bPanEnd);
+  // toque: 1 dedo move, 2 dedos (pinça) dá zoom -- touch-action:none no CSS evita que o
+  // navegador tente rolar a página por cima do gesto
+  let pinchDist=0, pinchZoom=1;
+  function touchDist(t){ return Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY); }
+  function touchMid(t){ return {x:(t[0].clientX+t[1].clientX)/2, y:(t[0].clientY+t[1].clientY)/2}; }
+  boardWrap.addEventListener('touchstart',e=>{
+    if(e.touches.length===2){ bPanning=false; pinchDist=touchDist(e.touches); pinchZoom=bZoom; }
+    else if(e.touches.length===1){ const t=e.touches[0]; bPanStart(t.clientX,t.clientY); }
+  },{passive:true});
+  boardWrap.addEventListener('touchmove',e=>{
+    if(e.touches.length===2){
+      e.preventDefault();
+      const mid=touchMid(e.touches), r=boardInner.getBoundingClientRect();
+      setBoardZoom(pinchZoom*(touchDist(e.touches)/pinchDist), mid.x-r.left, mid.y-r.top);
+    } else if(e.touches.length===1 && bPanning){
+      e.preventDefault();
+      const t=e.touches[0]; bPanMove(t.clientX,t.clientY);
+    }
+  },{passive:false});
+  boardWrap.addEventListener('touchend',e=>{ if(e.touches.length<2) pinchDist=0; if(e.touches.length===0) bPanEnd(); });
   boardWrap.addEventListener('touchcancel',bPanEnd);
 
   function applyRemoteData(data){
@@ -1956,6 +1976,10 @@ function runPresenter(){
   /* zoom e pan do mapa mental */
   function applyBoardTransform(){
     boardWorld.style.transform=`translate(${boardPanX}px, ${boardPanY}px) scale(${boardZoom})`;
+    // tamanho real do container tem que bater com o zoom -- senão fica maior que a tela
+    // e o navegador rola pra um canto qualquer dele em vez de centralizar o conteúdo
+    boardCanvasWrap.style.width=(1280*boardZoom)+'px';
+    boardCanvasWrap.style.height=(720*boardZoom)+'px';
     document.getElementById('zoomVal').textContent=Math.round(boardZoom*100)+'%';
     broadcastBoard({type:'board:view', zoom:boardZoom, panX:boardPanX, panY:boardPanY});
   }
@@ -1984,9 +2008,24 @@ function runPresenter(){
   boardCanvasWrap.addEventListener('mousedown',e=>bcPanStart(e.clientX,e.clientY));
   window.addEventListener('mousemove',e=>bcPanMove(e.clientX,e.clientY));
   window.addEventListener('mouseup',bcPanEnd);
-  boardCanvasWrap.addEventListener('touchstart',e=>{ if(curTool!=='pan') return; const t=e.touches[0]; bcPanStart(t.clientX,t.clientY); },{passive:true});
-  boardCanvasWrap.addEventListener('touchmove',e=>{ if(!panning) return; e.preventDefault(); const t=e.touches[0]; bcPanMove(t.clientX,t.clientY); },{passive:false});
-  boardCanvasWrap.addEventListener('touchend',bcPanEnd);
+  let bcPinchDist=0, bcPinchZoom=1;
+  function bcTouchDist(t){ return Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY); }
+  function bcTouchMid(t){ return {x:(t[0].clientX+t[1].clientX)/2, y:(t[0].clientY+t[1].clientY)/2}; }
+  boardCanvasWrap.addEventListener('touchstart',e=>{
+    if(e.touches.length===2){ bcPanEnd(); bcPinchDist=bcTouchDist(e.touches); bcPinchZoom=boardZoom; }
+    else if(e.touches.length===1 && curTool==='pan'){ const t=e.touches[0]; bcPanStart(t.clientX,t.clientY); }
+  },{passive:true});
+  boardCanvasWrap.addEventListener('touchmove',e=>{
+    if(e.touches.length===2){
+      e.preventDefault();
+      const mid=bcTouchMid(e.touches), r=boardCanvasWrap.getBoundingClientRect();
+      setZoom(bcPinchZoom*(bcTouchDist(e.touches)/bcPinchDist), mid.x-r.left, mid.y-r.top);
+    } else if(e.touches.length===1 && panning){
+      e.preventDefault();
+      const t=e.touches[0]; bcPanMove(t.clientX,t.clientY);
+    }
+  },{passive:false});
+  boardCanvasWrap.addEventListener('touchend',e=>{ if(e.touches.length<2) bcPinchDist=0; if(e.touches.length===0) bcPanEnd(); });
   boardCanvasWrap.addEventListener('touchcancel',bcPanEnd);
   boardCanvasWrap.addEventListener('click',e=>{
     if(e.target===boardCanvas||e.target===boardCanvasWrap||e.target.id==='boardDots'){
