@@ -231,12 +231,13 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 .zoom-val{font-size:.7rem;color:rgba(255,255,255,.6);min-width:38px;text-align:center;font-variant-numeric:tabular-nums;}
 #boardMapSelect{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:8px;padding:6px 8px;font-size:.78rem;font-family:'Inter',sans-serif;max-width:160px;}
 @media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}
   body *{visibility:hidden;}
   #boardCanvasWrap, #boardCanvasWrap *{visibility:visible;}
-  #boardCanvasWrap{position:fixed;top:0;left:0;box-shadow:none;border-radius:0;}
+  #boardCanvasWrap{position:fixed;top:0;left:0;box-shadow:none;border-radius:0!important;}
   #boardWorld{transform:none!important;}
   #boardDots{display:none;}
-  @page{size:landscape;margin:8mm;}
+  @page{size:1280px 720px;margin:0;}
 }
 #audBoardView{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#0d0d0d;}
 #audBoardStageWrap{position:relative;width:1280px;height:720px;background:#fafaf8;flex-shrink:0;overflow:hidden;}
@@ -287,25 +288,27 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #shareExportModal button:hover{background:rgba(255,255,255,.14);}
 .print-ann-overlay{position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;z-index:5;}
 @media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}
   /* html,body têm overflow:hidden global (usado no resto do app) -- em impressão isso
      CORTA qualquer conteúdo que passe de 1 página. Sem isso o PDF sai sempre com 1 folha só. */
   html,body{overflow:visible!important;height:auto!important;}
   body *{visibility:hidden;}
   /* #shareView é position:fixed pra tela -- fixed nunca pagina em impressão (só captura 1 viewport) */
-  #shareView[data-printing]{position:static!important;height:auto!important;display:block!important;}
+  #shareView[data-printing]{position:static!important;height:auto!important;display:block!important;background:none!important;}
   #shareView[data-printing="slide"] #shareStage-wrap,
   #shareView[data-printing="slide"] #shareStage-wrap *{visibility:visible;}
   #shareView[data-printing="slide"] #shareStage-wrap{position:static;display:block;}
   #shareView[data-printing="slide"] #shareStage{position:static;width:auto;height:auto;transform:none!important;}
-  #shareView[data-printing="slide"] #shareStage .slide{position:relative!important;opacity:1!important;transform:none!important;top:auto;left:auto;margin:0 auto;page-break-after:always;box-shadow:none;}
+  /* sem margin/padding e sem cantos arredondados -- o slide precisa preencher a página inteira, sangria total */
+  #shareView[data-printing="slide"] #shareStage .slide{position:relative!important;opacity:1!important;transform:none!important;top:auto;left:auto;margin:0!important;padding:0!important;page-break-after:always;box-shadow:none!important;border-radius:0!important;}
   #shareView[data-printing="slide"] #shareAnnOverlay{display:none!important;}
-  #shareView[data-printing="board"] #shareBoardOverlay{position:static!important;display:block!important;}
-  #shareView[data-printing="board"] #shareBoardWrap{position:static!important;display:block!important;overflow:visible!important;}
+  #shareView[data-printing="board"] #shareBoardOverlay{position:static!important;display:block!important;background:none!important;}
+  #shareView[data-printing="board"] #shareBoardWrap{position:static!important;display:block!important;overflow:visible!important;background:none!important;}
   #shareView[data-printing="board"] #shareBoardInner,
   #shareView[data-printing="board"] #shareBoardInner *{visibility:visible;}
-  #shareView[data-printing="board"] #shareBoardInner{position:relative!important;margin:0 auto;box-shadow:none;border-radius:0;}
+  #shareView[data-printing="board"] #shareBoardInner{position:relative!important;margin:0!important;box-shadow:none!important;border-radius:0!important;}
   #shareView[data-printing="board"] #shareBoardWorld{transform:none!important;}
-  @page{size:landscape;margin:8mm;}
+  @page{size:1280px 720px;margin:0;}
 }
 </style>
 </head>
