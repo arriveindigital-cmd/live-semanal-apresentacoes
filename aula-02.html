@@ -272,11 +272,30 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #shareBoardToolbar button, #shareBoardSelect{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:8px 14px;font-size:.8rem;font-family:'Inter',sans-serif;}
 #shareBoardWrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:#0d0d0d;}
 #shareBoardInner{position:relative;width:1280px;height:720px;background:#fafaf8;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);flex-shrink:0;}
+#shareBoardWorld{position:absolute;inset:0;transform-origin:0 0;}
+#shareBoardWrap.pan-grab{cursor:grab;}
+#shareBoardWrap.panning{cursor:grabbing;}
 #shareBoardCanvas{position:absolute;top:0;left:0;}
 #shareBoardConnsSvg{position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;overflow:visible;}
 #shareBoardConnsSvg line{stroke:#3b82f6;stroke-width:3;}
 #shareBoardElsLayer{position:absolute;inset:0;}
 #shareBoardElsLayer .board-el{cursor:default;}
+#shareAnnToggleBtn.active{background:var(--orange);border-color:var(--orange);}
+@media print{
+  body *{visibility:hidden;}
+  /* exporta a apresentação inteira: cada slide vira uma página do PDF (sem a camada de anotação, que é só pra tela) */
+  #shareView[data-printing="slide"] #shareStage-wrap,
+  #shareView[data-printing="slide"] #shareStage-wrap *{visibility:visible;}
+  #shareView[data-printing="slide"] #shareStage-wrap{position:static;display:block;}
+  #shareView[data-printing="slide"] #shareStage{position:static;width:auto;height:auto;transform:none!important;}
+  #shareView[data-printing="slide"] #shareStage .slide{position:relative!important;opacity:1!important;transform:none!important;top:auto;left:auto;margin:0 auto;page-break-after:always;box-shadow:none;}
+  #shareView[data-printing="slide"] #shareAnnOverlay{display:none;}
+  #shareView[data-printing="board"] #shareBoardInner,
+  #shareView[data-printing="board"] #shareBoardInner *{visibility:visible;}
+  #shareView[data-printing="board"] #shareBoardInner{position:fixed;top:0;left:0;box-shadow:none;border-radius:0;}
+  #shareView[data-printing="board"] #shareBoardWorld{transform:none!important;}
+  @page{size:landscape;margin:8mm;}
+}
 </style>
 </head>
 <body>
@@ -394,18 +413,30 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button id="sharePrevBtn">‹</button>
     <span id="shareCounter">1 / 1</span>
     <button id="shareNextBtn">›</button>
+    <button id="shareAnnToggleBtn" style="display:none">👁️ Anotações</button>
     <button id="shareBoardBtn" style="display:none">🧠 Ver mapa mental</button>
+    <button id="sharePdfBtn">📄 Exportar PDF</button>
+    <button id="shareLinkBtn">🔗 Copiar link</button>
   </div>
   <div id="shareBoardOverlay" style="display:none">
     <div id="shareBoardToolbar">
       <select id="shareBoardSelect" title="Mapas mentais"></select>
+      <span class="tb-sep"></span>
+      <button id="shareZoomOutBtn">−</button>
+      <span class="zoom-val" id="shareZoomVal">100%</span>
+      <button id="shareZoomInBtn">+</button>
+      <button id="shareZoomResetBtn" title="Ajustar à tela">⤢</button>
+      <span class="tb-sep"></span>
+      <button id="shareBoardPdfBtn">📄 Exportar PDF</button>
       <button id="shareBoardCloseBtn" style="margin-left:auto">← Voltar aos slides</button>
     </div>
     <div id="shareBoardWrap">
       <div id="shareBoardInner">
-        <canvas id="shareBoardCanvas" width="1280" height="720"></canvas>
-        <svg id="shareBoardConnsSvg" viewBox="0 0 1280 720"></svg>
-        <div id="shareBoardElsLayer"></div>
+        <div id="shareBoardWorld">
+          <canvas id="shareBoardCanvas" width="1280" height="720"></canvas>
+          <svg id="shareBoardConnsSvg" viewBox="0 0 1280 720"></svg>
+          <div id="shareBoardElsLayer"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -846,12 +877,12 @@ function runAudience(){
 function runShareViewer(){
   const shareView=document.getElementById('shareView');
   shareView.style.display='flex';
-  const stageWrap=document.getElementById('shareStage-wrap');
   const stage=document.getElementById('shareStage');
   const annOverlay=document.getElementById('shareAnnOverlay');
   const annCtx=annOverlay.getContext('2d');
   const counter=document.getElementById('shareCounter');
   const boardBtn=document.getElementById('shareBoardBtn');
+  const annToggleBtn=document.getElementById('shareAnnToggleBtn');
 
   const els=SLIDES.map(buildSlideEl);
   els.forEach(e=>stage.appendChild(e));
@@ -864,10 +895,11 @@ function runShareViewer(){
   fit(); window.addEventListener('resize',fit);
 
   let idx=0, remoteData={annBySlide:{},boards:[],shareSettings:{}};
+  let annShownByViewer=true; // preferência do próprio visitante — só importa se o presenter habilitou
 
   function renderAnnOverlay(){
     annCtx.clearRect(0,0,1280,720);
-    if(!remoteData.shareSettings.annotations) return;
+    if(!remoteData.shareSettings.annotations || !annShownByViewer) return;
     const saved=remoteData.annBySlide && remoteData.annBySlide[idx];
     if(!saved) return;
     const img=new Image();
@@ -888,10 +920,28 @@ function runShareViewer(){
     if(e.key==='ArrowRight'||e.key===' '){ e.preventDefault(); setSlide(idx+1); }
     if(e.key==='ArrowLeft') setSlide(idx-1);
   });
+  annToggleBtn.addEventListener('click',()=>{
+    annShownByViewer=!annShownByViewer;
+    annToggleBtn.classList.toggle('active',annShownByViewer);
+    renderAnnOverlay();
+  });
+  document.getElementById('shareLinkBtn').addEventListener('click',()=>{
+    navigator.clipboard && navigator.clipboard.writeText(location.href).then(()=>{
+      const b=document.getElementById('shareLinkBtn');
+      const old=b.textContent; b.textContent='Copiado!';
+      setTimeout(()=>b.textContent=old,1500);
+    });
+  });
+  document.getElementById('sharePdfBtn').addEventListener('click',()=>{
+    shareView.dataset.printing='slide';
+    setTimeout(()=>{ window.print(); delete shareView.dataset.printing; },50);
+  });
 
-  /* mapa mental (leitura) */
+  /* mapa mental (leitura, com zoom/pan) */
   const boardOverlay=document.getElementById('shareBoardOverlay');
   const boardCanvas=document.getElementById('shareBoardCanvas');
+  const boardWorld=document.getElementById('shareBoardWorld');
+  const boardWrap=document.getElementById('shareBoardWrap');
   const boardElsLayer=document.getElementById('shareBoardElsLayer');
   const boardConnsSvg=document.getElementById('shareBoardConnsSvg');
   const boardSelect=document.getElementById('shareBoardSelect');
@@ -935,18 +985,63 @@ function runShareViewer(){
     boardOverlay.style.display='flex';
     boardSelect.innerHTML=remoteData.boards.map((b,i)=>`<option value="${i}">${b.name}</option>`).join('');
     renderShareBoard(remoteData.boards[0]);
+    resetBoardZoom();
   });
   document.getElementById('shareBoardCloseBtn').addEventListener('click',()=>{ boardOverlay.style.display='none'; });
+  document.getElementById('shareBoardPdfBtn').addEventListener('click',()=>{
+    shareView.dataset.printing='board';
+    setTimeout(()=>{ window.print(); delete shareView.dataset.printing; },50);
+  });
 
-  fetch('api/public-load.php?liveId='+encodeURIComponent(LIVE_ID))
-    .then(r=>r.json())
-    .then(data=>{
-      remoteData=Object.assign({annBySlide:{},boards:[],shareSettings:{}},data);
-      const hasBoard=(remoteData.boards||[]).some(b=>(b.els&&b.els.length)||b.drawing);
-      if(remoteData.shareSettings.board && hasBoard) boardBtn.style.display='block';
-      setSlide(0);
-    })
-    .catch(()=>{ setSlide(0); });
+  /* zoom e pan (só visualização) */
+  let bZoom=1, bPanX=0, bPanY=0;
+  function applyBoardView(){
+    boardWorld.style.transform=`translate(${bPanX}px, ${bPanY}px) scale(${bZoom})`;
+    document.getElementById('shareZoomVal').textContent=Math.round(bZoom*100)+'%';
+  }
+  function setBoardZoom(z,cx,cy){
+    z=Math.max(.3,Math.min(2.5,z));
+    if(cx!==undefined){ bPanX=cx-(cx-bPanX)*(z/bZoom); bPanY=cy-(cy-bPanY)*(z/bZoom); }
+    bZoom=z; applyBoardView();
+  }
+  function resetBoardZoom(){ bZoom=1; bPanX=0; bPanY=0; applyBoardView(); }
+  document.getElementById('shareZoomInBtn').addEventListener('click',()=>setBoardZoom(bZoom+.1));
+  document.getElementById('shareZoomOutBtn').addEventListener('click',()=>setBoardZoom(bZoom-.1));
+  document.getElementById('shareZoomResetBtn').addEventListener('click',resetBoardZoom);
+  const boardInner=document.getElementById('shareBoardInner');
+  boardWrap.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const r=boardInner.getBoundingClientRect();
+    setBoardZoom(bZoom+(e.deltaY<0?.08:-.08), e.clientX-r.left, e.clientY-r.top);
+  },{passive:false});
+  let bPanning=false, bPanStartX=0, bPanStartY=0, bOrigX=0, bOrigY=0;
+  boardWrap.classList.add('pan-grab');
+  boardWrap.addEventListener('mousedown',e=>{
+    bPanning=true; bPanStartX=e.clientX; bPanStartY=e.clientY; bOrigX=bPanX; bOrigY=bPanY;
+    boardWrap.classList.add('panning');
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!bPanning) return;
+    bPanX=bOrigX+(e.clientX-bPanStartX); bPanY=bOrigY+(e.clientY-bPanStartY);
+    applyBoardView();
+  });
+  window.addEventListener('mouseup',()=>{ if(bPanning){ bPanning=false; boardWrap.classList.remove('panning'); } });
+
+  function applyRemoteData(data){
+    remoteData=Object.assign({annBySlide:{},boards:[],shareSettings:{}},data);
+    annToggleBtn.style.display=remoteData.shareSettings.annotations?'inline-block':'none';
+    if(remoteData.shareSettings.annotations) annToggleBtn.classList.add('active');
+    const hasBoard=(remoteData.boards||[]).some(b=>(b.els&&b.els.length)||b.drawing);
+    boardBtn.style.display=(remoteData.shareSettings.board && hasBoard)?'inline-block':'none';
+    renderAnnOverlay();
+  }
+  function load(){
+    return fetch('api/public-load.php?liveId='+encodeURIComponent(LIVE_ID))
+      .then(r=>r.json())
+      .then(applyRemoteData);
+  }
+  load().then(()=>setSlide(0)).catch(()=>setSlide(0));
+  setInterval(load,25000); // atualiza sozinho de tempos em tempos, sem precisar recarregar a página
 }
 
 /* ═══════════════════════ MODO APRESENTADOR ═══════════════════════ */
@@ -1011,15 +1106,16 @@ function runPresenter(){
     if(raw) shareSettings=Object.assign(shareSettings, JSON.parse(raw));
   }catch(e){}
   let pushTimer=null;
+  function pushToServerNow(){
+    return fetch('api/save.php',{
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({liveId:LIVE_ID, annBySlide, boards, shareSettings})
+    });
+  }
   function pushToServer(){
     clearTimeout(pushTimer);
-    pushTimer=setTimeout(()=>{
-      fetch('api/save.php',{
-        method:'POST', credentials:'include',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({liveId:LIVE_ID, annBySlide, boards, shareSettings})
-      }).catch(()=>{});
-    },1200);
+    pushTimer=setTimeout(()=>{ pushToServerNow().catch(()=>{}); },1200);
   }
   const shareModal=document.getElementById('shareModal');
   const shareAnnToggle=document.getElementById('shareAnnToggle');
@@ -1041,9 +1137,11 @@ function runPresenter(){
   document.getElementById('shareCloseBtn').addEventListener('click',()=>{ shareModal.style.display='none'; });
   function saveShareSettings(){
     try{ localStorage.setItem(LIVE_ID+'_share', JSON.stringify(shareSettings)); }catch(e){}
-    pushToServer();
+    clearTimeout(pushTimer); // muda de configuração é ação deliberada — salva na hora, sem esperar o debounce
     shareStatus.textContent='Salvando...';
-    setTimeout(()=>{ shareStatus.textContent='Configuração salva.'; },1300);
+    pushToServerNow()
+      .then(()=>{ shareStatus.textContent='Configuração salva ✓'; })
+      .catch(()=>{ shareStatus.textContent='Não consegui salvar — verifique a conexão e tente de novo.'; });
   }
   shareAnnToggle.addEventListener('change',()=>{ shareSettings.annotations=shareAnnToggle.checked; saveShareSettings(); });
   shareBoardToggle.addEventListener('change',()=>{ shareSettings.board=shareBoardToggle.checked; saveShareSettings(); });
