@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Live Semanal · Aula 02</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -195,7 +195,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #boardView .swatch, #boardView .eraser-size-ctrl button, #boardView .zoom-ctrl button{padding:0;}
 
 /* ══════════ QUADRO EM BRANCO (mapa mental) ══════════ */
-#boardView{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:50;}
+#boardView{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:50;touch-action:none;}
 #boardToolbar{display:flex;align-items:center;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap;flex-shrink:0;}
 #boardStageWrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0d0d0d;}
 #boardCanvasWrap{position:relative;width:1280px;height:720px;background:#fafaf8;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);flex-shrink:0;touch-action:none;}
@@ -271,7 +271,7 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #shareNav button{cursor:pointer;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:9px 16px;font-size:.85rem;font-weight:600;font-family:inherit;}
 #shareNav button:hover{background:rgba(255,255,255,.14);}
 #shareCounter{font-variant-numeric:tabular-nums;font-size:.85rem;color:rgba(255,255,255,.6);}
-#shareBoardOverlay{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:60;}
+#shareBoardOverlay{position:fixed;inset:0;background:#1c1c1c;display:flex;flex-direction:column;z-index:60;touch-action:none;}
 #shareBoardToolbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
 #shareBoardToolbar button, #shareBoardSelect{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:8px 14px;font-size:.8rem;font-family:'Inter',sans-serif;}
 #shareBoardWrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:#0d0d0d;touch-action:none;}
@@ -301,8 +301,11 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
   #shareView[data-printing="slide"] #shareStage-wrap,
   #shareView[data-printing="slide"] #shareStage-wrap *{visibility:visible;}
   #shareView[data-printing="slide"] #shareStage-wrap{position:static;display:block;}
-  #shareView[data-printing="slide"] #shareStage{position:static;width:auto;height:auto;transform:none!important;}
-  #shareView[data-printing="slide"] #shareStageInner{position:static;transform:none!important;}
+  #shareView[data-printing="slide"] #shareStage{position:static;width:auto!important;height:auto!important;transform:none!important;}
+  /* shareStageInner tem width/height:1280px/720px fixos pra tela (é o tamanho de UM slide);
+     sem resetar isso pra "auto", os 27 slides empilhados em fluxo normal ficavam espremidos
+     dentro de uma caixa do tamanho de 1 slide só, e o navegador só conseguia paginar 2 folhas. */
+  #shareView[data-printing="slide"] #shareStageInner{position:static;width:auto!important;height:auto!important;transform:none!important;}
   /* sem margin/padding e sem cantos arredondados -- o slide precisa preencher a página inteira, sangria total */
   #shareView[data-printing="slide"] #shareStage .slide{position:relative!important;opacity:1!important;transform:none!important;top:auto;left:auto;margin:0!important;padding:0!important;page-break-after:always;box-shadow:none!important;border-radius:0!important;}
   #shareView[data-printing="slide"] #shareAnnOverlay{display:none!important;}
