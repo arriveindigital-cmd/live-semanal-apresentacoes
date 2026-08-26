@@ -395,7 +395,6 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <div class="p-status"><span class="dot" id="connDot"></span><span id="connLabel">Público desconectado</span></div>
     <button id="openAudienceBtn">Abrir tela do público ↗</button>
     <button id="openShareBtn">🔗 Compartilhar</button>
-    <button id="genPdfBtn" title="Sincroniza os dados pra eu pedir ao Claude gerar o PDF final da aula">🖨️ Gerar PDF da aula</button>
     <div class="p-timer" id="timer" title="Clique pra zerar">00:00</div>
     <div class="p-counter" id="pCounter">1 / 1</div>
     <a href="index.html" id="exitBtn" title="Voltar pra lista de aulas">← Sair</a>
@@ -474,7 +473,6 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
     <button id="shareNextBtn">›</button>
     <button id="shareAnnToggleBtn" style="display:none">👁️ Anotações</button>
     <button id="shareBoardBtn" style="display:none">🧠 Ver mapa mental</button>
-    <a id="sharePdfLink" href="#" style="display:none">📄 Baixar PDF da aula</a>
     <button id="shareExportOpenBtn">🔗 Compartilhar</button>
   </div>
   <div id="shareExportModal" style="display:none">
@@ -1172,19 +1170,12 @@ function runShareViewer(){
   boardWrap.addEventListener('touchend',e=>{ if(e.touches.length<2) pinchDist=0; if(e.touches.length===0) bPanEnd(); });
   boardWrap.addEventListener('touchcancel',bPanEnd);
 
-  const pdfLink=document.getElementById('sharePdfLink');
   function applyRemoteData(data){
-    remoteData=Object.assign({annBySlide:{},boards:[],shareSettings:{},pdfAvailable:false},data);
+    remoteData=Object.assign({annBySlide:{},boards:[],shareSettings:{}},data);
     annToggleBtn.style.display=remoteData.shareSettings.annotations?'inline-block':'none';
     if(remoteData.shareSettings.annotations) annToggleBtn.classList.add('active');
     const hasBoard=(remoteData.boards||[]).some(b=>(b.els&&b.els.length)||b.drawing);
     boardBtn.style.display=(remoteData.shareSettings.board && hasBoard)?'inline-block':'none';
-    if(remoteData.pdfAvailable){
-      pdfLink.href='pdfs/'+encodeURIComponent(LIVE_ID)+'.pdf?v='+Date.now();
-      pdfLink.style.display='inline-block';
-    } else {
-      pdfLink.style.display='none';
-    }
     renderAnnOverlay();
   }
   function load(){
@@ -1301,15 +1292,6 @@ function runPresenter(){
       .catch(()=>{ shareStatus.textContent='Não consegui sincronizar — verifique a conexão.'; });
   }
   document.getElementById('openShareBtn').addEventListener('click',openShareModal);
-  document.getElementById('genPdfBtn').addEventListener('click',()=>{
-    const b=document.getElementById('genPdfBtn');
-    const old=b.textContent;
-    b.textContent='Sincronizando...'; b.disabled=true;
-    pushToServerNow()
-      .then(()=>{ alert('Dados sincronizados!\n\nAgora é só pedir pro Claude, no chat: "gera o PDF da aula 02" — ele gera o arquivo com as anotações e deixa disponível pra baixar no link público.'); })
-      .catch(()=>{ alert('Não consegui sincronizar — confere a conexão e tenta de novo antes de pedir o PDF.'); })
-      .finally(()=>{ b.textContent=old; b.disabled=false; });
-  });
   document.getElementById('shareCloseBtn').addEventListener('click',()=>{ shareModal.style.display='none'; });
   function saveShareSettings(){
     try{ localStorage.setItem(LIVE_ID+'_share', JSON.stringify(shareSettings)); }catch(e){}
