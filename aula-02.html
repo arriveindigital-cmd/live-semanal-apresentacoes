@@ -283,9 +283,30 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
 #shareAnnToggleBtn.active{background:var(--orange);border-color:var(--orange);}
 #shareExportModal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:200;font-family:'Inter',sans-serif;}
 #shareExportModal .share-card{width:100%;max-width:460px;}
-#exportBoardRow.disabled{opacity:.4;cursor:not-allowed;}
 #shareExportModal button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:9px 14px;font-size:.82rem;font-weight:600;font-family:inherit;}
 #shareExportModal button:hover{background:rgba(255,255,255,.14);}
+.print-ann-overlay{position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;z-index:5;}
+@media print{
+  /* html,body têm overflow:hidden global (usado no resto do app) -- em impressão isso
+     CORTA qualquer conteúdo que passe de 1 página. Sem isso o PDF sai sempre com 1 folha só. */
+  html,body{overflow:visible!important;height:auto!important;}
+  body *{visibility:hidden;}
+  /* #shareView é position:fixed pra tela -- fixed nunca pagina em impressão (só captura 1 viewport) */
+  #shareView[data-printing]{position:static!important;height:auto!important;display:block!important;}
+  #shareView[data-printing="slide"] #shareStage-wrap,
+  #shareView[data-printing="slide"] #shareStage-wrap *{visibility:visible;}
+  #shareView[data-printing="slide"] #shareStage-wrap{position:static;display:block;}
+  #shareView[data-printing="slide"] #shareStage{position:static;width:auto;height:auto;transform:none!important;}
+  #shareView[data-printing="slide"] #shareStage .slide{position:relative!important;opacity:1!important;transform:none!important;top:auto;left:auto;margin:0 auto;page-break-after:always;box-shadow:none;}
+  #shareView[data-printing="slide"] #shareAnnOverlay{display:none!important;}
+  #shareView[data-printing="board"] #shareBoardOverlay{position:static!important;display:block!important;}
+  #shareView[data-printing="board"] #shareBoardWrap{position:static!important;display:block!important;overflow:visible!important;}
+  #shareView[data-printing="board"] #shareBoardInner,
+  #shareView[data-printing="board"] #shareBoardInner *{visibility:visible;}
+  #shareView[data-printing="board"] #shareBoardInner{position:relative!important;margin:0 auto;box-shadow:none;border-radius:0;}
+  #shareView[data-printing="board"] #shareBoardWorld{transform:none!important;}
+  @page{size:landscape;margin:8mm;}
+}
 </style>
 </head>
 <body>
@@ -414,11 +435,13 @@ ol.clean .n{font-size:.75rem;font-weight:800;letter-spacing:.08em;flex-shrink:0;
         <input type="text" id="shareModalLinkInput" readonly>
         <button id="shareModalCopyBtn">Copiar link</button>
       </div>
-      <div class="share-title" style="margin-top:22px">📄 Exportar PDF</div>
-      <p class="share-desc">Baixa um arquivo de verdade (não abre a tela de impressão).</p>
+      <div class="share-title" style="margin-top:22px">📄 Exportar apresentação</div>
+      <p class="share-desc">Abre a impressão do navegador — escolha "Salvar como PDF" (ou a impressora PDF) como destino. É a única forma de manter o texto selecionável e sem distorcer o slide.</p>
       <label class="share-row"><input type="checkbox" id="exportAnnCheck"> Incluir as anotações nos slides</label>
-      <label class="share-row" id="exportBoardRow"><input type="checkbox" id="exportBoardCheck"> Incluir o mapa mental (arquivo separado)</label>
-      <button id="exportPdfConfirmBtn" style="width:100%;margin-top:6px">Baixar PDF</button>
+      <button id="exportSlidesPdfBtn" style="width:100%;margin-top:6px">Baixar PDF dos slides</button>
+      <div class="share-title" id="exportBoardTitle" style="margin-top:22px">🧠 Exportar mapa mental</div>
+      <p class="share-desc" id="exportBoardDesc">Gera um PDF separado, só com o mapa mental.</p>
+      <button id="exportBoardPdfBtn" style="width:100%">Baixar PDF do mapa mental</button>
       <div class="share-status" id="exportStatus"></div>
       <button id="shareExportCloseBtn" class="share-close">Fechar</button>
     </div>
@@ -920,7 +943,9 @@ function runShareViewer(){
 
   function renderAnnOverlay(){
     annCtx.clearRect(0,0,1280,720);
-    if(!remoteData.shareSettings.annotations || !annShownByViewer) return;
+    const show=remoteData.shareSettings.annotations && annShownByViewer;
+    annOverlay.style.display=show?'block':'none'; // faltava isso — o canvas fica display:none por padrão no CSS
+    if(!show) return;
     const saved=remoteData.annBySlide && remoteData.annBySlide[idx];
     if(!saved) return;
     const img=new Image();
@@ -949,15 +974,17 @@ function runShareViewer(){
   /* ── Compartilhar / Exportar (um botão só, com popup) ── */
   const exportModal=document.getElementById('shareExportModal');
   const exportStatus=document.getElementById('exportStatus');
-  const exportBoardCheck=document.getElementById('exportBoardCheck');
-  const exportBoardRow=document.getElementById('exportBoardRow');
+  const exportAnnCheck=document.getElementById('exportAnnCheck');
+  const exportBoardPdfBtn=document.getElementById('exportBoardPdfBtn');
+  const exportBoardTitle=document.getElementById('exportBoardTitle');
+  const exportBoardDesc=document.getElementById('exportBoardDesc');
   document.getElementById('shareExportOpenBtn').addEventListener('click',()=>{
     const cleanLink=location.origin+location.pathname.replace(/\.html$/,'')+location.search;
     document.getElementById('shareModalLinkInput').value=cleanLink;
     const hasBoard=(remoteData.boards||[]).some(b=>(b.els&&b.els.length)||b.drawing) && remoteData.shareSettings.board;
-    exportBoardCheck.disabled=!hasBoard;
-    if(!hasBoard) exportBoardCheck.checked=false;
-    exportBoardRow.classList.toggle('disabled',!hasBoard);
+    exportBoardPdfBtn.style.display=hasBoard?'block':'none';
+    exportBoardTitle.style.display=hasBoard?'block':'none';
+    exportBoardDesc.style.display=hasBoard?'block':'none';
     exportStatus.textContent='';
     exportModal.style.display='flex';
   });
@@ -970,88 +997,41 @@ function runShareViewer(){
     }).catch(()=>{ document.execCommand&&document.execCommand('copy'); exportStatus.textContent='Link copiado!'; });
   });
 
-  /* ── Exportar PDF de verdade (baixa arquivo, não abre impressão) via html2canvas + jsPDF, carregados sob demanda ── */
-  let pdfLibsPromise=null;
-  function loadScriptTag(src){
-    return new Promise((resolve,reject)=>{
-      const s=document.createElement('script');
-      s.src=src; s.onload=resolve; s.onerror=()=>reject(new Error('falha ao carregar '+src));
-      document.head.appendChild(s);
+  /* ── Exportar PDF via impressão do navegador (mantém texto selecionável e escala correta —
+     gerar via captura de imagem distorcia o slide e perdia o texto) ── */
+  function prepareAnnotationOverlays(withAnn){
+    document.querySelectorAll('.print-ann-overlay').forEach(el=>el.remove());
+    if(!withAnn) return;
+    els.forEach((slideEl,i)=>{
+      const saved=remoteData.annBySlide && remoteData.annBySlide[i];
+      if(!saved) return;
+      const img=document.createElement('img');
+      img.className='print-ann-overlay';
+      img.src=saved;
+      slideEl.appendChild(img);
     });
   }
-  function ensurePdfLibs(){
-    if(!pdfLibsPromise){
-      pdfLibsPromise=Promise.all([
-        loadScriptTag('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),
-        loadScriptTag('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),
-      ]);
-    }
-    return pdfLibsPromise;
-  }
-  async function captureSlideCanvas(slideEl, withAnn, slideIdx){
-    const prevOpacity=slideEl.style.opacity, prevTransform=slideEl.style.transform, prevZ=slideEl.style.zIndex, prevPE=slideEl.style.pointerEvents;
-    slideEl.style.opacity='1'; slideEl.style.transform='none'; slideEl.style.zIndex='9999'; slideEl.style.pointerEvents='none';
-    let annTemp=null;
-    if(withAnn){
-      const savedAnn=remoteData.annBySlide && remoteData.annBySlide[slideIdx];
-      if(savedAnn){
-        annTemp=document.createElement('canvas');
-        annTemp.width=1280; annTemp.height=720;
-        annTemp.style.cssText='position:absolute;top:0;left:0;width:1280px;height:720px;pointer-events:none;z-index:2;';
-        await new Promise(res=>{
-          const img=new Image();
-          img.onload=()=>{ annTemp.getContext('2d').drawImage(img,0,0,1280,720); res(); };
-          img.onerror=res;
-          img.src=savedAnn;
-        });
-        slideEl.appendChild(annTemp);
-      }
-    }
-    const canvas=await window.html2canvas(slideEl,{backgroundColor:null,width:1280,height:720,useCORS:true});
-    if(annTemp) annTemp.remove();
-    slideEl.style.opacity=prevOpacity; slideEl.style.transform=prevTransform; slideEl.style.zIndex=prevZ; slideEl.style.pointerEvents=prevPE;
-    return canvas;
-  }
-  async function exportSlidesPdf(withAnn){
-    const { jsPDF } = window.jspdf;
-    const doc=new jsPDF({orientation:'landscape', unit:'px', format:[1280,720]});
-    for(let i=0;i<els.length;i++){
-      exportStatus.textContent=`Gerando slide ${i+1} de ${els.length}...`;
-      const canvas=await captureSlideCanvas(els[i], withAnn, i);
-      if(i>0) doc.addPage([1280,720],'landscape');
-      doc.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',0,0,1280,720);
-    }
-    doc.save('aula-02-slides.pdf');
-  }
-  async function exportBoardPdf(){
+  window.addEventListener('afterprint',()=>{
+    document.querySelectorAll('.print-ann-overlay').forEach(el=>el.remove());
+    delete shareView.dataset.printing;
+    exportModal.style.display='none';
+    exportStatus.textContent='';
+  });
+  document.getElementById('exportSlidesPdfBtn').addEventListener('click',()=>{
+    prepareAnnotationOverlays(exportAnnCheck.checked);
+    shareView.dataset.printing='slide';
+    exportStatus.textContent='Na tela de impressão, escolha "Salvar como PDF" (ou a impressora PDF) como destino.';
+    setTimeout(()=>window.print(),60);
+  });
+  exportBoardPdfBtn.addEventListener('click',()=>{
     const b=remoteData.boards.find(x=>(x.els&&x.els.length)||x.drawing);
     if(!b) return;
-    const wasOpen=boardOverlay.style.display==='flex';
     boardOverlay.style.display='flex';
     renderShareBoard(b);
     resetBoardZoom();
-    exportStatus.textContent='Gerando mapa mental...';
-    const canvas=await window.html2canvas(boardInner,{backgroundColor:'#fafaf8',width:1280,height:720,useCORS:true});
-    if(!wasOpen) boardOverlay.style.display='none';
-    const { jsPDF } = window.jspdf;
-    const doc=new jsPDF({orientation:'landscape', unit:'px', format:[1280,720]});
-    doc.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',0,0,1280,720);
-    doc.save('aula-02-mapa-mental.pdf');
-  }
-  const exportAnnCheck=document.getElementById('exportAnnCheck');
-  document.getElementById('exportPdfConfirmBtn').addEventListener('click',async()=>{
-    const btn=document.getElementById('exportPdfConfirmBtn');
-    btn.disabled=true;
-    try{
-      exportStatus.textContent='Carregando gerador de PDF...';
-      await ensurePdfLibs();
-      await exportSlidesPdf(exportAnnCheck.checked);
-      if(exportBoardCheck.checked && !exportBoardCheck.disabled) await exportBoardPdf();
-      exportStatus.textContent='PDF baixado ✓';
-    }catch(err){
-      exportStatus.textContent='Não consegui gerar o PDF — tenta de novo.';
-    }
-    btn.disabled=false;
+    shareView.dataset.printing='board';
+    exportStatus.textContent='Na tela de impressão, escolha "Salvar como PDF" (ou a impressora PDF) como destino.';
+    setTimeout(()=>window.print(),60);
   });
 
   /* mapa mental (leitura, com zoom/pan) */
